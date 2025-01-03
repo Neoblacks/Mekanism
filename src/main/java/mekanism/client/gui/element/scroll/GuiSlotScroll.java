@@ -19,6 +19,7 @@ import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.MekanismUtils.ResourceType;
 import mekanism.common.util.UnitDisplayUtils;
 import mekanism.common.util.text.TextUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
@@ -33,6 +34,7 @@ public class GuiSlotScroll extends GuiElement implements IRecipeViewerIngredient
 
     private static final ResourceLocation SLOTS = MekanismUtils.getResource(ResourceType.GUI_SLOT, "slots.png");
     private static final ResourceLocation SLOTS_DARK = MekanismUtils.getResource(ResourceType.GUI_SLOT, "slots_dark.png");
+    private static final Component ZERO = TextComponentUtil.build(ChatFormatting.YELLOW, 0);
 
     private final GuiScrollBar scrollBar;
 
@@ -130,14 +132,18 @@ public class GuiSlotScroll extends GuiElement implements IRecipeViewerIngredient
     }
 
     private void renderSlot(GuiGraphics guiGraphics, IScrollableSlot slot, int slotX, int slotY) {
-        // sanity checks
-        if (isSlotEmpty(slot)) {
+        ItemStack stack = slot.getInternalStack();
+        if (stack.isEmpty()) {//Sanity check
             return;
         }
-        gui().renderItemWithOverlay(guiGraphics, slot.getInternalStack(), relativeX + slotX + 1, relativeY + slotY + 1, 1, "");
+        gui().renderItemWithOverlay(guiGraphics, stack, relativeX + slotX + 1, relativeY + slotY + 1, 1, "");
         long count = slot.count();
-        if (count > 1) {
-            Component text;
+        Component text = null;
+        if (count == 0) {
+            //If there is no items stored, display the text in yellow, similar to what mojang does when it has to display a zero count
+            // See: AbstractContainerScreen#render(GuiGraphics, int, int, float) and rendering the dragging item
+            text = ZERO;
+        } else if (count > 1) {
             //Note: For cases like 9,999,999 we intentionally display as 9999.9K instead of 10M so that people
             // do not think they have more stored than they actually have just because it is rounding up
             if (count < 10_000) {
@@ -145,16 +151,17 @@ public class GuiSlotScroll extends GuiElement implements IRecipeViewerIngredient
             } else {
                 text = UnitDisplayUtils.getDisplay(count, 1);
             }
+        }
+        if (text != null) {
             renderSlotText(guiGraphics, text, slotX + 1, slotY + 1);
         }
     }
 
     private void renderSlotTooltip(GuiGraphics guiGraphics, IScrollableSlot slot, int slotX, int slotY) {
-        // sanity checks
-        if (isSlotEmpty(slot)) {
+        ItemStack stack = slot.getInternalStack();
+        if (stack.isEmpty()) {//Sanity check
             return;
         }
-        ItemStack stack = slot.getInternalStack();
         long count = slot.count();
         if (count < 10_000) {
             guiGraphics.renderTooltip(font(), stack, slotX, slotY);
@@ -163,11 +170,6 @@ public class GuiSlotScroll extends GuiElement implements IRecipeViewerIngredient
             gui().renderItemTooltipWithExtra(guiGraphics, stack, slotX, slotY, Collections.singletonList(MekanismLang.QIO_STORED_COUNT.translateColored(EnumColor.GRAY,
                   EnumColor.INDIGO, TextUtils.format(count))));
         }
-    }
-
-    private boolean isSlotEmpty(IScrollableSlot slot) {
-        //Count is not expected to be zero, but validate it anyway
-        return slot.count() == 0 || slot.getInternalStack().isEmpty();
     }
 
     private void renderSlotText(GuiGraphics guiGraphics, Component text, int x, int y) {

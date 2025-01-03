@@ -101,6 +101,7 @@ public class HashedItem implements IHashedItem {
         return hashCode;
     }
 
+    //TODO: Eventually see if we can make it so instead of having this overarching HashedItem extension, make it just a record that is a pair?
     public static class UUIDAwareHashedItem extends HashedItem {
 
         //TODO: Eventually we might want to make it so that we only need to sync the hashed item for types we haven't sent a given client yet so that then

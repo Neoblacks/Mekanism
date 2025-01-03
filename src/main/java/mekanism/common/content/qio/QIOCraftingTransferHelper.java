@@ -47,7 +47,10 @@ public class QIOCraftingTransferHelper {
         isValid = true;
         reverseLookup = new HashMap<>();
         for (IScrollableSlot source : cachedInventory) {
-            reverseLookup.computeIfAbsent(source.asRawHashedItem(), item -> new HashedItemSource()).addQIOSlot(source.itemUUID(), source.count());
+            //Skip any items that are only still in the cache due to sorting being paused, as we don't have any of it available for crafting
+            if (source.count() > 0) {
+                reverseLookup.computeIfAbsent(source.asRawHashedItem(), item -> new HashedItemSource()).addQIOSlot(source.itemUUID(), source.count());
+            }
         }
         byte inventorySlotIndex = 0;
         for (; inventorySlotIndex < 9; inventorySlotIndex++) {

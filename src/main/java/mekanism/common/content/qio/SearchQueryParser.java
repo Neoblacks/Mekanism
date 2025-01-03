@@ -30,15 +30,20 @@ import org.jetbrains.annotations.VisibleForTesting;
  */
 public class SearchQueryParser {
 
-    private static final ISearchQuery INVALID = (level, player, stack) -> false;
     private static final Set<Character> TERMINATORS = Set.of('|', '(', '\"', '\'');
 
     public static ISearchQuery parse(String query) {
+        if (query == null || query.isEmpty()) {
+            return ISearchQuery.INVALID;
+        }
         return parse(query, new HashSet<>());
     }
 
     @VisibleForTesting
     public static ISearchQuery parseOrdered(String query) {
+        if (query == null || query.isEmpty()) {
+            return ISearchQuery.INVALID;
+        }
         return parse(query, new LinkedHashSet<>());
     }
 
@@ -69,7 +74,7 @@ public class SearchQueryParser {
             // read the key string(s) of the given query type
             KeyListResult keyListResult = readKeyList(query, i, type, curQuery);
             if (!keyListResult.hasResult()) {
-                return INVALID;
+                return ISearchQuery.INVALID;
             }
             i = keyListResult.index();
         }
@@ -366,6 +371,8 @@ public class SearchQueryParser {
 
     @FunctionalInterface
     public interface ISearchQuery {
+
+        ISearchQuery INVALID = (level, player, stack) -> false;
 
         boolean test(@Nullable Level level, @Nullable Player player, ItemStack stack);
 

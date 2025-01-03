@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import mekanism.common.content.qio.QIOFrequency;
 import mekanism.common.content.qio.QIOFrequency.QIOItemTypeData;
 import mekanism.common.inventory.ISlotClickHandler.IScrollableSlot;
@@ -15,7 +16,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public record BulkQIOData(Map<UUIDAwareHashedItem, ItemSlotData> inventory, long countCapacity, int typeCapacity, long totalItems, List<IScrollableSlot> items) {
+public record BulkQIOData(Map<UUID, ItemSlotData> inventory, long countCapacity, int typeCapacity, long totalItems, List<IScrollableSlot> items) {
 
     public static final BulkQIOData INITIAL_SERVER = new BulkQIOData(Collections.emptyMap(), 0, 0, 0, Collections.emptyList());
 
@@ -42,14 +43,14 @@ public record BulkQIOData(Map<UUIDAwareHashedItem, ItemSlotData> inventory, long
             long totalItems = 0;
             //Note: We manually handle decoding the map so that we can avoid having to create an intermediary holding map
             int itemMapSize = buffer.readVarInt();
-            //Note: Use a ReferenceArrayList to
+            //Note: Use a ReferenceArrayList to allow for instance equality checking when removing elements
             List<IScrollableSlot> itemList = new ReferenceArrayList<>(itemMapSize);
-            Map<UUIDAwareHashedItem, ItemSlotData> inventory = new Object2ObjectOpenHashMap<>(itemMapSize);
+            Map<UUID, ItemSlotData> inventory = new Object2ObjectOpenHashMap<>(itemMapSize);
             for (int i = 0; i < itemMapSize; i++) {
                 ItemSlotData slotData = new ItemSlotData(UUIDAwareHashedItem.STREAM_CODEC.decode(buffer), buffer.readVarLong());
                 totalItems += slotData.count();
                 itemList.add(slotData);
-                inventory.put(slotData.item(), slotData);
+                inventory.put(slotData.itemUUID(), slotData);
             }
             return new BulkQIOData(inventory, buffer.readVarLong(), buffer.readVarInt(), totalItems, itemList);
         }

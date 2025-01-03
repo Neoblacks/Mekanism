@@ -1,11 +1,8 @@
 package mekanism.common.inventory.container.tile;
 
-import java.util.List;
-import java.util.Map;
 import mekanism.api.security.IBlockSecurityUtils;
 import mekanism.common.inventory.container.QIOItemViewerContainer;
 import mekanism.common.inventory.container.SelectedWindowData;
-import mekanism.common.lib.inventory.HashedItem.UUIDAwareHashedItem;
 import mekanism.common.network.PacketUtils;
 import mekanism.common.network.to_client.qio.BulkQIOData;
 import mekanism.common.network.to_server.PacketGuiInteract;
@@ -24,29 +21,23 @@ public class QIODashboardContainer extends QIOItemViewerContainer {
     private final TileEntityQIODashboard tile;
 
     public QIODashboardContainer(int id, Inventory inv, TileEntityQIODashboard tile, boolean remote, BulkQIOData itemData) {
-        super(MekanismContainerTypes.QIO_DASHBOARD, id, inv, remote, tile, itemData);
-        this.tile = tile;
-        finishConstructor();
+        this(id, inv, tile, remote, itemData,
+              remote ? CachedSearchData.initialClient() : CachedSearchData.INITIAL_SERVER,
+              remote ? CachedSortingData.currentClient() : CachedSortingData.SERVER,
+              null);
     }
 
-    private QIODashboardContainer(int id, Inventory inv, TileEntityQIODashboard tile, boolean remote, Map<UUIDAwareHashedItem, ItemSlotData> cachedInventory,
-          long countCapacity, int typeCapacity, long totalItems, List<IScrollableSlot> itemList, @Nullable List<IScrollableSlot> searchList, ListSortType sortType,
-          SortDirection sortDirection, String searchQuery, @Nullable SelectedWindowData selectedWindow) {
-        super(MekanismContainerTypes.QIO_DASHBOARD, id, inv, remote, tile, cachedInventory, countCapacity, typeCapacity, totalItems, itemList, searchList, searchQuery,
-              sortType, sortDirection, selectedWindow);
+    private QIODashboardContainer(int id, Inventory inv, TileEntityQIODashboard tile, boolean remote, BulkQIOData itemData, CachedSearchData searchData,
+          CachedSortingData sortingData, @Nullable SelectedWindowData selectedWindow) {
+        super(MekanismContainerTypes.QIO_DASHBOARD, id, inv, remote, tile, itemData, searchData, sortingData, selectedWindow);
         this.tile = tile;
-        finishConstructor();
-    }
-
-    private void finishConstructor() {
-        tile.addContainerTrackers(this);
+        this.tile.addContainerTrackers(this);
         addSlotsAndOpen();
     }
 
     @Override
-    public QIODashboardContainer recreate() {
-        return new QIODashboardContainer(containerId, inv, tile, true, cachedInventory, getCountCapacity(), getTypeCapacity(), getTotalItems(), itemList,
-              searchList, getSortType(), getSortDirection(), searchQuery, getSelectedWindow());
+    protected QIODashboardContainer recreateUnchecked() {
+        return new QIODashboardContainer(containerId, inv, tile, true, asBulkData(), asCachedSearchData(), currentSortingData(), getSelectedWindow());
     }
 
     @Override

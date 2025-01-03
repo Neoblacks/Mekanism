@@ -10,6 +10,7 @@ import mekanism.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 public interface ISlotClickHandler {
 
@@ -26,6 +27,7 @@ public interface ISlotClickHandler {
 
         UUID itemUUID();
 
+        @Range(from = 0, to = Long.MAX_VALUE)
         long count();
 
         default String getDisplayName() {

@@ -1,13 +1,16 @@
 package mekanism.common.inventory.container;
 
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import mekanism.api.Action;
@@ -57,6 +60,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.TranslatableEnum;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 import org.lwjgl.glfw.GLFW;
 
 public abstract class QIOItemViewerContainer extends MekanismContainer implements ISlotClickHandler {
@@ -70,10 +74,10 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
         return Mth.clamp(maxY, SLOTS_Y_MIN, SLOTS_Y_MAX);
     }
 
-    protected final Map<UUIDAwareHashedItem, ItemSlotData> cachedInventory;
+    private final Map<UUID, ItemSlotData> cachedInventory;
     protected final IQIOCraftingWindowHolder craftingWindowHolder;
-    protected final List<IScrollableSlot> searchList;
-    protected final List<IScrollableSlot> itemList;
+    private final List<IScrollableSlot> searchList;
+    private final List<IScrollableSlot> itemList;
 
     private long cachedCountCapacity;
     private int cachedTypeCapacity;
@@ -81,7 +85,8 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
 
     private ListSortType sortType;
     private SortDirection sortDirection;
-    protected String searchQuery;
+    private String rawSearchQuery;
+    private ISearchQuery searchQuery;
 
     private int doubleClickTransferTicks = 0;
     private int lastSlot = -1;
@@ -89,37 +94,28 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
     private List<InventoryContainerSlot>[] craftingGridInputSlots;
     private final VirtualInventoryContainerSlot[][] craftingSlots = new VirtualInventoryContainerSlot[IQIOCraftingWindowHolder.MAX_CRAFTING_WINDOWS][10];
 
-    protected QIOItemViewerContainer(ContainerTypeRegistryObject<?> type, int id, Inventory inv, boolean remote, IQIOCraftingWindowHolder craftingWindowHolder,
-          BulkQIOData itemData) {
-        this(type, id, inv, remote, craftingWindowHolder, itemData.inventory(), itemData.countCapacity(), itemData.typeCapacity(), itemData.totalItems(), itemData.items(),
-              remote ? new ArrayList<>() : Collections.emptyList(), "",
-              remote ? MekanismConfig.client.qioItemViewerSortType.get() : ListSortType.NAME,
-              remote ? MekanismConfig.client.qioItemViewerSortDirection.get() : SortDirection.ASCENDING,
-              null
-        );
-
-        //If we are on the client, so we likely have items from the server, make sure we sort it
-        if (remote && craftingWindowHolder != null) {//Crafting window holder should never be null here, but if there was an error we handle it
-            updateSort();
-        }
-    }
+    private boolean sortingPaused;
+    private SortingNeeded sortingNeeded;
+    private final Set<UUID> queuedForRemoval;
 
     protected QIOItemViewerContainer(ContainerTypeRegistryObject<?> type, int id, Inventory inv, boolean remote, IQIOCraftingWindowHolder craftingWindowHolder,
-          Map<UUIDAwareHashedItem, ItemSlotData> cachedInventory, long countCapacity, int typeCapacity, long totalItems, List<IScrollableSlot> itemList,
-          List<IScrollableSlot> searchList, String searchQuery, ListSortType sortType, SortDirection sortDirection, @Nullable SelectedWindowData selectedWindow) {
+          BulkQIOData itemData, CachedSearchData searchData, CachedSortingData sortingData, @Nullable SelectedWindowData selectedWindow) {
         super(type, id, inv);
         this.craftingWindowHolder = craftingWindowHolder;
-        this.cachedInventory = cachedInventory;
-        this.searchList = searchList;
-        this.itemList = itemList;
-        this.cachedCountCapacity = countCapacity;
-        this.cachedTypeCapacity = typeCapacity;
-        this.totalItems = totalItems;
-        this.searchQuery = searchQuery;
-        this.sortType = sortType;
-        this.sortDirection = sortDirection;
+        this.cachedCountCapacity = itemData.countCapacity();
+        this.cachedTypeCapacity = itemData.typeCapacity();
+        this.cachedInventory = itemData.inventory();
+        this.totalItems = itemData.totalItems();
+        this.itemList = itemData.items();
+        this.searchList = searchData.cachedList();
+        this.rawSearchQuery = searchData.rawQuery();
+        this.searchQuery = searchData.query();
+        this.sortType = sortingData.sortType();
+        this.sortDirection = sortingData.sortDirection();
+        this.sortingNeeded = sortingData.sortingNeeded();
         this.selectedWindow = selectedWindow;
-        if (craftingWindowHolder == null) {
+        this.queuedForRemoval = remote ? new HashSet<>() : Collections.emptySet();
+        if (this.craftingWindowHolder == null) {
             //Should never happen, but in case there was an error getting the tile it may have
             Mekanism.logger.error("Error getting crafting window holder, closing.");
             closeInventory(inv.player);
@@ -132,6 +128,16 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
                 MekanismConfig.client.qioItemViewerSlotsY.set(maxY);
                 // save the updated config info
                 MekanismConfig.client.save();
+            }
+
+            //If we are on the client, so we may have items from the server, make sure we sort it;
+            // this ensures it matches the order defined by the sort type and direction stored in the client config
+            //Note: While this also is called when we recreate the viewer, it will get NO-OP'd because the SortingNeeded will be NONE
+            updateSort();
+            //If we want to rebuild the search (such as if we eventually make it so that we can persist the current search query in a client config)
+            // then we need to update the search list
+            if (sortingData.rebuildSearch()) {
+                updateSearch(getLevel(), rawSearchQuery, false);
             }
         } else {
             craftingGridInputSlots = new List[IQIOCraftingWindowHolder.MAX_CRAFTING_WINDOWS];
@@ -150,7 +156,20 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
     /**
      * @apiNote Only used on the client
      */
-    public abstract QIOItemViewerContainer recreate();
+    public QIOItemViewerContainer recreate() {
+        //If sorting is currently paused, unpause it and apply any sorting necessary so that we don't have to transfer what the sorting state is
+        boolean wasPaused = sortingPaused;
+        pauseSorting(false);
+        QIOItemViewerContainer container = recreateUnchecked();
+        //Note: We want to make sure to pause sorting again on the new container as we only pause/unpause on key press/release and not when holding it
+        container.pauseSorting(wasPaused);
+        return container;
+    }
+
+    /**
+     * @apiNote Only used on the client
+     */
+    protected abstract QIOItemViewerContainer recreateUnchecked();
 
     @Override
     protected int getInventoryYOffset() {
@@ -359,44 +378,111 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
             // just short circuit a lot of logic
             return;
         }
-        boolean needsSort = sortType.usesCount();
         for (Object2LongMap.Entry<UUIDAwareHashedItem> entry : itemMap.object2LongEntrySet()) {
             UUIDAwareHashedItem itemKey = entry.getKey();
+            UUID itemUUID = itemKey.getUUID();
             long value = entry.getLongValue();
             if (value == 0) {
-                ItemSlotData oldData = cachedInventory.remove(itemKey);
-                if (oldData != null) {
-                    //If we did in fact have old data stored, remove the item from the stored total count
+                //Note: No sorting is required when removing as the lists will already be in the correct order
+                if (sortingPaused) {
+                    ItemSlotData oldData = cachedInventory.get(itemUUID);
+                    if (oldData == null) {
+                        //Skip any keys we don't actually have stored
+                        continue;
+                    }
+                    //Remove the item from the stored total count. Even if we for some reason already removed it,
+                    // this will just subtract zero so won't make the value incorrect
                     totalItems -= oldData.count();
-                    // and remove the item from the list of items we are tracking
-                    // Note: Implementation detail is that we use a ReferenceArrayList in BulkQIOData#fromPacket to ensure that when removing
-                    // we only need to do reference equality instead of object equality
-                    //TODO: Can we somehow make removing more efficient by taking advantage of the fact that itemList is sorted?
-                    itemList.remove(oldData);
-                    //Mark that we have some items that changed and it isn't just counts that changed
-                    needsSort = true;
+                    oldData.count = 0;
+                    queuedForRemoval.add(itemUUID);
+                } else {
+                    ItemSlotData oldData = removeItemBasic(itemUUID);
+                    if (oldData != null) {
+                        //If we did in fact have old data stored (that has now been removed), remove the item from the stored total count
+                        totalItems -= oldData.count();
+                    }
                 }
             } else {
-                ItemSlotData slotData = cachedInventory.get(itemKey);
+                ItemSlotData slotData = cachedInventory.get(itemUUID);
                 if (slotData == null) {
                     //If it is a new item, add the amount to the total items, and start tracking it
                     totalItems += value;
                     slotData = new ItemSlotData(itemKey, value);
                     itemList.add(slotData);
-                    cachedInventory.put(itemKey, slotData);
-                    //Mark that we have some items that changed and it isn't just counts that changed
-                    needsSort = true;
+                    cachedInventory.put(itemUUID, slotData);
+                    //Mark that we have some items that changed (which may affect the sort order)
+                    sortingNeeded = sortingNeeded.concat(SortingNeeded.ITEMS_ONLY);
+                    //If the item we added matches the current search query
+                    if (searchQuery.test(getLevel(), inv.player, slotData.getInternalStack())) {
+                        // add it to the end of the search list
+                        // Note: We already know it isn't part of the searchList, as it wasn't part of our universe (cachedInventory)
+                        searchList.add(slotData);
+                        // and mark that we will need to sort the search list as well
+                        sortingNeeded = sortingNeeded.concat(SortingNeeded.SEARCH_ONLY);
+                    }
                 } else {
                     //If an existing item is updated, update the stored amount by the change in quantity
                     totalItems += value - slotData.count();
                     slotData.count = value;
+                    if (sortType.usesCount()) {
+                        //If our sort type actually makes use of the item count on some level, then we need to mark that the item list needs to be sorted
+                        sortingNeeded = sortingNeeded.concat(SortingNeeded.ITEMS_ONLY);
+                        if (searchQuery.test(getLevel(), inv.player, slotData.getInternalStack())) {
+                            // and if the item is in our search query, then we also need to sort the search list
+                            sortingNeeded = sortingNeeded.concat(SortingNeeded.SEARCH_ONLY);
+                        }
+                    }
                 }
             }
         }
-        if (needsSort) {
-            //Note: We only need to bother resorting the lists and recalculating the sorted searches if an item was added or removed
-            // or if the sort method we have selected is affected at some level by the stored count
+        if (!sortingPaused) {
+            //Try updating the sort as if anything got added/removed or changed so that it is potentially now in the wrong spot
+            // we will have set how much we need to sort above.
+            // Note: We will properly short circuit in the below method if no sorting is needed
             updateSort();
+        }
+    }
+
+    /**
+     * Removes an item from the cached inventory, item list, and search list
+     *
+     * @return The previously stored cached data, or null if the item was not part of the cached inventory.
+     */
+    @Nullable
+    private ItemSlotData removeItemBasic(UUID itemUUID) {
+        ItemSlotData oldData = cachedInventory.remove(itemUUID);
+        if (oldData != null) {//Note: Implementation detail is that we use a ReferenceArrayList in BulkQIOData#fromPacket to ensure that when removing
+            // we only need to do reference equality instead of object equality
+            //TODO: Can we somehow make removing more efficient by taking advantage of the fact that itemList is sorted?
+            itemList.remove(oldData);
+            if (searchQuery.test(getLevel(), inv.player, oldData.getInternalStack())) {
+                //If item being removed matched the existing search, we want to remove it from the search list as well
+                searchList.remove(oldData);
+            }
+        }
+        return oldData;
+    }
+
+    public void pauseSorting(boolean pause) {
+        if (this.sortingPaused != pause) {
+            this.sortingPaused = pause;
+            if (!this.sortingPaused) {
+                //The user was holding shift (had sorting paused), and no longer is
+                // We now need to perform and queued sorting and item removal
+                for (UUID toRemove : queuedForRemoval) {
+                    ItemSlotData slotData = cachedInventory.get(toRemove);
+                    if (slotData != null && slotData.count() == 0) {
+                        //If we have the item stored, and we haven't gotten any added back since we started pausing (aka we have zero stored), then we want to remove it
+                        // Note: Theoretically this will never be null as we only would add things for removal if we had them stored.
+                        // We also don't have to adjust the total item count, as we did that when we initially got the removal data
+                        removeItemBasic(toRemove);
+                    }
+                }
+                queuedForRemoval.clear();
+                //Attempt to run sorting. This will NO-OP if we didn't actually end up needing any sorting
+                // Note: If all that changed was removal, we won't need to do any sorting, as the lists should already be in the correct order
+                updateSort();
+            }
         }
     }
 
@@ -404,7 +490,11 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
         cachedInventory.clear();
         searchList.clear();
         itemList.clear();
-        searchQuery = "";
+        rawSearchQuery = "";
+        searchQuery = ISearchQuery.INVALID;
+        sortingPaused = false;
+        sortingNeeded = SortingNeeded.NONE;
+        queuedForRemoval.clear();
     }
 
     public QIOCraftingTransferHelper getTransferHelper(Player player, QIOCraftingWindow craftingWindow) {
@@ -415,10 +505,11 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
      * @apiNote Only call this client side
      */
     public void setSortDirection(SortDirection sortDirection) {
-        this.sortDirection = sortDirection;
-        MekanismConfig.client.qioItemViewerSortDirection.set(sortDirection);
-        MekanismConfig.client.save();
-        updateSort();
+        if (this.sortDirection != sortDirection) {
+            this.sortDirection = sortDirection;
+            MekanismConfig.client.qioItemViewerSortDirection.set(sortDirection);
+            applySortingOptionChange();
+        }
     }
 
     public SortDirection getSortDirection() {
@@ -429,9 +520,19 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
      * @apiNote Only call this client side
      */
     public void setSortType(ListSortType sortType) {
-        this.sortType = sortType;
-        MekanismConfig.client.qioItemViewerSortType.set(sortType);
+        if (this.sortType != sortType) {
+            this.sortType = sortType;
+            MekanismConfig.client.qioItemViewerSortType.set(sortType);
+            applySortingOptionChange();
+        }
+    }
+
+    /**
+     * @apiNote Only call this client side
+     */
+    private void applySortingOptionChange() {
         MekanismConfig.client.save();
+        this.sortingNeeded = SortingNeeded.ALL;
         updateSort();
     }
 
@@ -441,7 +542,7 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
 
     @NotNull
     public List<IScrollableSlot> getQIOItemList() {
-        return searchQuery.isEmpty() ? itemList : searchList;
+        return searchQuery.isInvalid() ? itemList : searchList;
     }
 
     public long getCountCapacity() {
@@ -508,34 +609,65 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
     }
 
     private void updateSort() {
-        sortType.sort(itemList, sortDirection);
-        //TODO: Would it be easier to add/remove changed things that no longer match and then just run the sort on the search list as well?
-        // Or in cases where we are just doing a resort without the search query changing, running a sort on the search list as well?
-        // This might be beneficial at the very least in cases where the search list is small, and the list of total items is large
-        //Note: Update the search as well because it is based on the sorted list so that it displays matches in sorted order
-        updateSearch(getLevel(), searchQuery, false);
+        if (sortingNeeded.sortItemList()) {
+            sortType.sort(itemList, sortDirection);
+        }
+        if (sortingNeeded.sortSearchList()) {
+            sortType.sort(searchList, sortDirection);
+        }
+        //Fully sorted, we can unmark that we need to do any sorting
+        sortingNeeded = SortingNeeded.NONE;
     }
 
     public void updateSearch(@Nullable Level level, String queryText, boolean skipSameQuery) {
         // searches should only be updated on the client-side
         if (level == null || !level.isClientSide()) {
             return;
-        } else if (skipSameQuery && searchQuery.equals(queryText)) {
+        } else if (skipSameQuery && rawSearchQuery.equals(queryText)) {
             //Short circuit and skip updating the search if we already have the results
+            //TODO: Do we want to compare if the search queries are equal here instead of just the raw text?
+            // That way we can potentially handle ignoring things like lower vs uppercase of the same letter.
+            // For now it doesn't matter as the search query doesn't match equality if the capitalization is different
             return;
         }
-        //TODO: Realistically we may want to be caching the ISearchQuery rather than or in addition to the query text?
-        searchQuery = queryText;
+        rawSearchQuery = queryText;
+        //TODO: Improve how we cache to allow for some form of incremental updating based on the search text changing?
+        searchQuery = SearchQueryParser.parse(rawSearchQuery);
+
+        if (sortingPaused) {
+            //If we are updating the search and sorting is currently paused, we want to sort everything before processing the changed search text
+            // This is because the most likely occurrence will be when typing a capital letter, and we want to make sure that they can see the results
+            // of their new search.
+            if (sortingNeeded.sortSearchList()) {
+                //If we needed to sort the search list as well, then removal that from the desired sorting type as we will be recreating the search list
+                // from a sorted itemList
+                sortingNeeded = sortingNeeded.sortItemList() ? SortingNeeded.ITEMS_ONLY : SortingNeeded.NONE;
+            }
+            //Note: We unpause sorting and then pause it again rather than just calling updateSort directly so that we can prune any items that are queued for removal
+            pauseSorting(false);
+            pauseSorting(true);
+        }
+
         searchList.clear();
-        if (!itemList.isEmpty() && !searchQuery.isEmpty()) {
-            //TODO: Improve how we cache to allow for some form of incremental updating based on the search text changing?
-            ISearchQuery query = SearchQueryParser.parse(searchQuery);
+        if (!searchQuery.isInvalid()) {
             for (IScrollableSlot slot : itemList) {
-                if (query.test(level, inv.player, slot.getInternalStack())) {
+                if (searchQuery.test(level, inv.player, slot.getInternalStack())) {
                     searchList.add(slot);
                 }
             }
         }
+    }
+
+    protected BulkQIOData asBulkData() {
+        return new BulkQIOData(cachedInventory, getCountCapacity(), getTypeCapacity(), getTotalItems(), itemList);
+    }
+
+    protected CachedSearchData asCachedSearchData() {
+        return new CachedSearchData(searchQuery, rawSearchQuery, searchList);
+    }
+
+    protected CachedSortingData currentSortingData() {
+        return new CachedSortingData(sortType, sortDirection);
     }
 
     @Override
@@ -548,7 +680,7 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
         } else if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT || button == GLFW.GLFW_MOUSE_BUTTON_RIGHT || button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE) {
             if (heldItem.isEmpty()) {
                 IScrollableSlot slot = slotProvider.get();
-                if (slot != null) {
+                if (slot != null && slot.count() > 0) {
                     int maxStackSize = Math.min(MathUtils.clampToInt(slot.count()), slot.item().getMaxStackSize());
                     //Left click -> as much as possible, right click -> half of a stack, middle click -> 1
                     //Cap it out at the max stack size of the item, but otherwise try to take the desired amount (taking at least one if it is a single item)
@@ -602,6 +734,7 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
         }
 
         @Override
+        @Range(from = 0, to = Long.MAX_VALUE)
         public long count() {
             return count;
         }
@@ -613,6 +746,9 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
             } else if (obj == null || obj.getClass() != this.getClass()) {
                 return false;
             }
+            //TODO: Strictly speaking we might be able to get away with just checking the uuid instead of if the entire item is equal
+            // Or maybe we want to just use custom hash strategy? Though maybe none of that matters as I think we only use this for a reference array list
+            // so we already skip using this method
             ItemSlotData other = (ItemSlotData) obj;
             return this.count == other.count && this.item.equals(other.item);
         }
@@ -716,6 +852,68 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
         @Override
         public Component getTranslatedName() {
             return getShortName();
+        }
+    }
+
+    private enum SortingNeeded {
+        NONE(false, false),
+        ITEMS_ONLY(true, false),
+        SEARCH_ONLY(false, true),
+        ALL(true, true);
+
+        private final boolean sortItems, sortSearch;
+
+        SortingNeeded(boolean sortItems, boolean sortSearch) {
+            this.sortItems = sortItems;
+            this.sortSearch = sortSearch;
+        }
+
+        public SortingNeeded concat(SortingNeeded toConcat) {
+            boolean sortSearch = sortSearchList() || toConcat.sortSearchList();
+            if (sortItemList() || toConcat.sortItemList()) {
+                return sortSearch ? ALL : ITEMS_ONLY;
+            }
+            return sortSearch ? SEARCH_ONLY : NONE;
+        }
+
+        public boolean sortItemList() {
+            return sortItems;
+        }
+
+        public boolean sortSearchList() {
+            return sortSearch;
+        }
+    }
+
+    public record CachedSearchData(ISearchQuery query, String rawQuery, List<IScrollableSlot> cachedList) {
+
+        public static final CachedSearchData INITIAL_SERVER = new CachedSearchData(ISearchQuery.INVALID, "", Collections.emptyList());
+
+        public static CachedSearchData initialClient() {
+            //Note: Use a ReferenceArrayList to allow for instance equality checking when removing elements
+            return new CachedSearchData(ISearchQuery.INVALID, "", new ReferenceArrayList<>());
+        }
+    }
+
+    public record CachedSortingData(ListSortType sortType, SortDirection sortDirection, SortingNeeded sortingNeeded, boolean rebuildSearch) {
+
+        public static final CachedSortingData SERVER = new CachedSortingData(ListSortType.NAME, SortDirection.ASCENDING);
+
+        public static CachedSortingData currentClient() {
+            //Note: As we are receiving this from packet, we have no existing search data, so we can skip attempting to recreate the search list
+            return new CachedSortingData(MekanismConfig.client.qioItemViewerSortType.get(), MekanismConfig.client.qioItemViewerSortDirection.get(),
+                  SortingNeeded.ITEMS_ONLY, false);
+        }
+
+        public CachedSortingData(ListSortType sortType, SortDirection sortDirection) {
+            this(sortType, sortDirection, SortingNeeded.NONE, false);
+        }
+
+        public CachedSortingData {
+            //If we want to rebuild the search, don't bother also sorting the search list first
+            if (rebuildSearch && sortingNeeded.sortSearchList()) {
+                sortingNeeded = sortingNeeded.sortItemList() ? SortingNeeded.ITEMS_ONLY : SortingNeeded.NONE;
+            }
         }
     }
 }
