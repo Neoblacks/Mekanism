@@ -310,11 +310,18 @@ public abstract class LogisticalTransporterBase extends Transmitter<IItemHandler
     @Override
     public void remove() {
         super.remove();
+        capabilityCache.clear();
         if (!isRemote()) {
             for (TransporterStack stack : getTransit()) {
                 TransporterManager.remove(getLevel(), stack);
             }
         }
+    }
+
+    @Override
+    public void refreshConnections() {
+        super.refreshConnections();
+        capabilityCache.clear();
     }
 
     @Override
