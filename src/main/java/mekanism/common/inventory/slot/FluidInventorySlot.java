@@ -135,7 +135,7 @@ public class FluidInventorySlot extends BasicInventorySlot implements IFluidHand
                 if (fluidInTank.isEmpty()) {
                     return isNonFullFluidContainer(itemFluidHandler);
                 }
-                return itemFluidHandler.fill(fluidInTank, FluidAction.SIMULATE) > 0;
+                return itemFluidHandler.fill(fluidInTank.copy(), FluidAction.SIMULATE) > 0;
             }
             return false;
         }, listener, x, y);
