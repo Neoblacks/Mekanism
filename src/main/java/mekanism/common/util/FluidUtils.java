@@ -46,24 +46,25 @@ public final class FluidUtils {
         return toFill;
     }
 
-    public static OptionalInt getRGBDurabilityForDisplay(ItemStack stack) {
-        return getRGBDurabilityForDisplay(StorageUtils.getStoredFluidFromAttachment(stack));
+    public static int getRGBDurabilityForDisplay(ItemStack stack) {
+        return getRGBDurabilityForDisplay(StorageUtils.getFirstFluidFromAttachment(stack));
     }
 
-    public static OptionalInt getRGBDurabilityForDisplay(FluidStack stack) {
-        if (!stack.isEmpty()) {
-            //TODO: Technically doesn't support things where the color is part of the texture such as lava
-            // for chemicals it is supported via allowing people to override getColorRepresentation in their
-            // chemicals
-            if (stack.getFluid().isSame(Fluids.LAVA)) {//Special case lava
-                return OptionalInt.of(0xFFDB6B19);
-            } else if (FMLEnvironment.dist.isClient()) {
-                //Note: We can only return an accurate result on the client side. This method should never be called from the server
-                // but in case it is make sure we only run on the client side
-                return OptionalInt.of(IClientFluidTypeExtensions.of(stack.getFluid()).getTintColor(stack));
-            }
+    public static int getRGBDurabilityForDisplay(FluidStack stack) {
+        if (stack.isEmpty()) {
+            return 0xFFFFFFFF;
         }
-        return OptionalInt.empty();
+        //TODO: Technically doesn't support things where the color is part of the texture such as lava
+        // for chemicals it is supported via allowing people to override getColorRepresentation in their
+        // chemicals
+        if (stack.getFluid().isSame(Fluids.LAVA)) {//Special case lava
+            return 0xFFDB6B19;
+        } else if (FMLEnvironment.dist.isClient()) {
+            //Note: We can only return an accurate result on the client side. This method should never be called from the server
+            // but in case it is make sure we only run on the client side
+            return IClientFluidTypeExtensions.of(stack.getFluid()).getTintColor(stack);
+        }
+        return 0xFFFFFFFF;
     }
 
     public static void emit(Collection<BlockCapabilityCache<IFluidHandler, @Nullable Direction>> targets, IExtendedFluidTank tank) {

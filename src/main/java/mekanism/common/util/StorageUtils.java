@@ -184,48 +184,113 @@ public class StorageUtils {
      */
     @NotNull
     public static FluidStack getStoredFluidFromAttachment(ItemStack stack) {
-        FluidStack fluid = FluidStack.EMPTY;
-        for (IExtendedFluidTank tank : ContainerType.FLUID.getAttachmentContainersIfPresent(stack)) {
-            if (tank.isEmpty()) {
-                continue;
-            }
-            if (fluid.isEmpty()) {
-                fluid = tank.getFluid().copy();
-            } else if (tank.isFluidEqual(fluid)) {
-                if (fluid.getAmount() < Integer.MAX_VALUE - tank.getFluidAmount()) {
-                    fluid.grow(tank.getFluidAmount());
-                } else {
-                    fluid.setAmount(Integer.MAX_VALUE);
+        List<IExtendedFluidTank> containers = ContainerType.FLUID.getAttachmentContainersIfPresent(stack);
+        switch (containers.size()) {
+            case 0:
+                return FluidStack.EMPTY;
+            case 1:
+                return containers.getFirst().getFluid().copy();
+            default:
+                FluidStack fluid = FluidStack.EMPTY;
+                for (IExtendedFluidTank tank : containers) {
+                    if (tank.isEmpty()) {
+                        continue;
+                    }
+                    if (fluid.isEmpty()) {
+                        fluid = tank.getFluid().copy();
+                    } else if (tank.isFluidEqual(fluid)) {
+                        if (fluid.getAmount() < Integer.MAX_VALUE - tank.getFluidAmount()) {
+                            fluid.grow(tank.getFluidAmount());
+                        } else {
+                            fluid.setAmount(Integer.MAX_VALUE);
+                        }
+                    }
+                    //Note: If we have multiple tanks that have different types stored we only return the first type
                 }
-            }
-            //Note: If we have multiple tanks that have different types stored we only return the first type
+                return fluid;
         }
-        return fluid;
     }
 
     /**
-     * Gets the pigment stored in an item's container by checking the attachment. This is for cases when we may not actually have a chemical handler provided as a
+     * Gets the FIRST fluid stored in an item's container by checking the attachment. This is for cases when we may not actually have a fluid handler provided as a
+     * capability from our item, but it may have stored data in its container from when it was a block. Do NOT modify the result
+     *
+     * @return the first found fluid FOR DISPLAY. Do NOT modify.
+     */
+    public static FluidStack getFirstFluidFromAttachment(ItemStack stack) {
+        List<IExtendedFluidTank> containers = ContainerType.FLUID.getAttachmentContainersIfPresent(stack);
+        switch (containers.size()) {
+            case 0:
+                return FluidStack.EMPTY;
+            case 1:
+                return containers.getFirst().getFluid();
+            default:
+                for (IExtendedFluidTank tank : containers) {
+                    if (tank.isEmpty()) {
+                        continue;
+                    }
+                    return tank.getFluid();
+                }
+                return FluidStack.EMPTY;
+        }
+    }
+
+    /**
+     * Gets the chemical stored in an item's container by checking the attachment. This is for cases when we may not actually have a chemical handler provided as a
      * capability from our item, but it may have stored data in its container from when it was a block
      */
     @NotNull
     public static ChemicalStack getStoredChemicalFromAttachment(ItemStack stack) {
-        ChemicalStack chemicalStack = ChemicalStack.EMPTY;
-        for (IChemicalTank tank : ContainerType.CHEMICAL.getAttachmentContainersIfPresent(stack)) {
-            if (tank.isEmpty()) {
-                continue;
-            }
-            if (chemicalStack.isEmpty()) {
-                chemicalStack = tank.getStack().copy();
-            } else if (tank.isTypeEqual(chemicalStack)) {
-                if (chemicalStack.getAmount() < Long.MAX_VALUE - tank.getStored()) {
-                    chemicalStack.grow(tank.getStored());
-                } else {
-                    chemicalStack.setAmount(Long.MAX_VALUE);
+        List<IChemicalTank> containers = ContainerType.CHEMICAL.getAttachmentContainersIfPresent(stack);
+        switch (containers.size()) {
+            case 0:
+                return ChemicalStack.EMPTY;
+            case 1:
+                return containers.getFirst().getStack().copy();
+            default:
+                ChemicalStack chemicalStack = ChemicalStack.EMPTY;
+                for (IChemicalTank tank : containers) {
+                    if (tank.isEmpty()) {
+                        continue;
+                    }
+                    if (chemicalStack.isEmpty()) {
+                        chemicalStack = tank.getStack().copy();
+                    } else if (tank.isTypeEqual(chemicalStack)) {
+                        if (chemicalStack.getAmount() < Long.MAX_VALUE - tank.getStored()) {
+                            chemicalStack.grow(tank.getStored());
+                        } else {
+                            chemicalStack.setAmount(Long.MAX_VALUE);
+                        }
+                    }
+                    //Note: If we have multiple tanks that have different types stored we only return the first type
                 }
-            }
-            //Note: If we have multiple tanks that have different types stored we only return the first type
+                return chemicalStack;
         }
-        return chemicalStack;
+    }
+
+    /**
+     * Gets the FIRST chemical stored in an item's container by checking the attachment. This is for cases when we may not actually have a chemical handler provided as a
+     * capability from our item, but it may have stored data in its container from when it was a block. Do NOT modify the result
+     *
+     * @return the first found chemical FOR DISPLAY. Do NOT modify.
+     */
+    @NotNull
+    public static ChemicalStack getFirstChemicalFromAttachment(ItemStack stack) {
+        List<IChemicalTank> containers = ContainerType.CHEMICAL.getAttachmentContainersIfPresent(stack);
+        switch (containers.size()) {
+            case 0:
+                return ChemicalStack.EMPTY;
+            case 1:
+                return containers.getFirst().getStack();
+            default:
+                for (IChemicalTank tank : containers) {
+                    if (tank.isEmpty()) {
+                        continue;
+                    }
+                    return tank.getStack();
+                }
+                return ChemicalStack.EMPTY;
+        }
     }
 
     /**
