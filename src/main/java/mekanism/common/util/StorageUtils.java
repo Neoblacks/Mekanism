@@ -185,12 +185,10 @@ public class StorageUtils {
     @NotNull
     public static FluidStack getStoredFluidFromAttachment(ItemStack stack) {
         List<IExtendedFluidTank> containers = ContainerType.FLUID.getAttachmentContainersIfPresent(stack);
-        switch (containers.size()) {
-            case 0:
-                return FluidStack.EMPTY;
-            case 1:
-                return containers.getFirst().getFluid().copy();
-            default:
+        return switch (containers.size()) {
+            case 0 -> FluidStack.EMPTY;
+            case 1 -> containers.getFirst().getFluid().copy();
+            default -> {
                 FluidStack fluid = FluidStack.EMPTY;
                 for (IExtendedFluidTank tank : containers) {
                     if (tank.isEmpty()) {
@@ -207,8 +205,9 @@ public class StorageUtils {
                     }
                     //Note: If we have multiple tanks that have different types stored we only return the first type
                 }
-                return fluid;
-        }
+                yield fluid;
+            }
+        };
     }
 
     /**
@@ -219,20 +218,20 @@ public class StorageUtils {
      */
     public static FluidStack getFirstFluidFromAttachment(ItemStack stack) {
         List<IExtendedFluidTank> containers = ContainerType.FLUID.getAttachmentContainersIfPresent(stack);
-        switch (containers.size()) {
-            case 0:
-                return FluidStack.EMPTY;
-            case 1:
-                return containers.getFirst().getFluid();
-            default:
-                for (IExtendedFluidTank tank : containers) {
-                    if (tank.isEmpty()) {
-                        continue;
+        int size = containers.size();
+        return switch (size) {
+            case 0 -> FluidStack.EMPTY;
+            case 1 -> containers.getFirst().getFluid();
+            default -> {
+                for (int i = 0; i < size; i++) {
+                    FluidStack fluid = containers.get(i).getFluid();
+                    if (!fluid.isEmpty()) {
+                        yield fluid;
                     }
-                    return tank.getFluid();
                 }
-                return FluidStack.EMPTY;
-        }
+                yield FluidStack.EMPTY;
+            }
+        };
     }
 
     /**
@@ -242,12 +241,10 @@ public class StorageUtils {
     @NotNull
     public static ChemicalStack getStoredChemicalFromAttachment(ItemStack stack) {
         List<IChemicalTank> containers = ContainerType.CHEMICAL.getAttachmentContainersIfPresent(stack);
-        switch (containers.size()) {
-            case 0:
-                return ChemicalStack.EMPTY;
-            case 1:
-                return containers.getFirst().getStack().copy();
-            default:
+        return switch (containers.size()) {
+            case 0 -> ChemicalStack.EMPTY;
+            case 1 -> containers.getFirst().getStack().copy();
+            default -> {
                 ChemicalStack chemicalStack = ChemicalStack.EMPTY;
                 for (IChemicalTank tank : containers) {
                     if (tank.isEmpty()) {
@@ -264,8 +261,9 @@ public class StorageUtils {
                     }
                     //Note: If we have multiple tanks that have different types stored we only return the first type
                 }
-                return chemicalStack;
-        }
+                yield chemicalStack;
+            }
+        };
     }
 
     /**
@@ -277,20 +275,20 @@ public class StorageUtils {
     @NotNull
     public static ChemicalStack getFirstChemicalFromAttachment(ItemStack stack) {
         List<IChemicalTank> containers = ContainerType.CHEMICAL.getAttachmentContainersIfPresent(stack);
-        switch (containers.size()) {
-            case 0:
-                return ChemicalStack.EMPTY;
-            case 1:
-                return containers.getFirst().getStack();
-            default:
-                for (IChemicalTank tank : containers) {
-                    if (tank.isEmpty()) {
-                        continue;
+        int size = containers.size();
+        return switch (size) {
+            case 0 -> ChemicalStack.EMPTY;
+            case 1 -> containers.getFirst().getStack();
+            default -> {
+                for (int i = 0; i < size; i++) {
+                    ChemicalStack chemicalStack = containers.get(i).getStack();
+                    if (!chemicalStack.isEmpty()) {
+                        yield chemicalStack;
                     }
-                    return tank.getStack();
                 }
-                return ChemicalStack.EMPTY;
-        }
+                yield ChemicalStack.EMPTY;
+            }
+        };
     }
 
     /**
