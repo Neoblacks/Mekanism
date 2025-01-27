@@ -306,7 +306,7 @@ public final class MekanismUtils {
      */
     public static int getTicks(IUpgradeTile tile, int def) {
         if (tile.supportsUpgrades()) {
-            return MathUtils.clampToInt(def * Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), -fractionUpgrades(tile, Upgrade.SPEED)));
+            return Math.max(1, MathUtils.clampToInt(def * Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(), -fractionUpgrades(tile, Upgrade.SPEED))));
         }
         return def;
     }
