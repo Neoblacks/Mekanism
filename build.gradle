@@ -375,7 +375,7 @@ static void exclusiveRepo(RepositoryHandler handler, String url, Consumer<Inclus
 
 repositories { RepositoryHandler handler ->
     exclusiveRepo(handler, 'https://maven.blamejared.com', filter -> {
-        filter.includeGroupByRegex('com\\.blamejared.*')
+        filter.includeGroupAndSubgroups('com.blamejared')
         filter.includeGroup('mezz.jei')
         filter.includeGroup('org.openzen.zencode')
     })
