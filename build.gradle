@@ -273,7 +273,7 @@ neoForge {
 
     runs {
         configureEach {
-            if (hasProperty('forge_force_ansi')) {
+            if (project.hasProperty('forge_force_ansi')) {
                 //Force ansi if declared as a gradle variable, as the auto detection doesn't detect IntelliJ properly
                 // or eclipse's plugin that adds support for ansi escape in console
                 systemProperties.put('terminal.ansi', (String) property('forge_force_ansi'))
