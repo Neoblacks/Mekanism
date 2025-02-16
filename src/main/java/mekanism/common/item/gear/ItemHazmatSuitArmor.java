@@ -41,12 +41,17 @@ public class ItemHazmatSuitArmor extends ArmorItem implements ICapabilityAware {
     }
 
     @Override
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
+    public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
         return isEnchantable(stack) && super.isBookEnchantable(stack, book);
     }
 
     @Override
-    public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
+    public boolean isPrimaryItemFor(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
         return isEnchantable(stack) && super.isPrimaryItemFor(stack, enchantment);
+    }
+
+    @Override
+    public boolean supportsEnchantment(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
+        return isEnchantable(stack) && super.supportsEnchantment(stack, enchantment);
     }
 }
