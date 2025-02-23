@@ -1,4 +1,4 @@
-// Recipes	2024-12-20T21:09:35.9172747	Recipes
+// 1.21.1	2025-02-23T13:40:04.2184492	Recipes
 0fc9e539372429b3e5df0dc0595978c4fc45d201 data/mekanism/recipe/antiprotonic_nucleosynthesizer.json
 6d20b08ca1cc993d4c39a761361dce522fe45a7a data/mekanism/recipe/atomic_disassembler.json
 00928ea6e8b57d257c773343c0dc0d337c9d4f5f data/mekanism/recipe/bin/advanced.json
@@ -599,7 +599,7 @@ db17d1e50c6b7122c205104e1827dd80f86ce5a3 data/mekanism/recipe/crushing/granite/s
 8d52a29dc2f4fe5715669c107d5c6a8025c5c6e0 data/mekanism/recipe/crushing/honeycomb_from_block.json
 ee2bafa3ff608bad9f16724e57af89374b15d11d data/mekanism/recipe/crushing/mud_bricks_to_packed.json
 fcfc1c514e4dddbacb6556d930112e708ae50863 data/mekanism/recipe/crushing/nether_bricks_to_cracked_nether_bricks.json
-6cb8b3ac3b258a8f82adb4fb412098cb0be02f43 data/mekanism/recipe/crushing/obsidian_to_dust.json
+8fa0d547a12d6473661a41825a806f22d75fa77f data/mekanism/recipe/crushing/obsidian_to_dust.json
 bab74b1489c464fb6956b2b38713825054cb7084 data/mekanism/recipe/crushing/pointed_dripstone_from_block.json
 1e96a12a269a87948f7ee35f3bb3c16dafe543a9 data/mekanism/recipe/crushing/polished_or_smooth_basalt_to_basalt.json
 1733ae03ecc82b3ec239cda1a5361b158d6402b2 data/mekanism/recipe/crushing/prismarine/shard_from_block.json
@@ -985,7 +985,7 @@ e4a78eaf7965730c6ad9900b95bf95a8baf88e56 data/mekanism/recipe/module_shearing_un
 e2b1f45cd851718e0c4f86126045fd8c2f75f828 data/mekanism/recipe/network_reader.json
 0e349e9d2eb65e821b41d71dd0081dd903ab6113 data/mekanism/recipe/nucleosynthesizing/chorus_flower.json
 dcb61e2874269483580e1b9385cd8c9f792aa249 data/mekanism/recipe/nucleosynthesizing/crossbow.json
-e9617b80a895e2f2927f3b7eff8e54f3dffe7b02 data/mekanism/recipe/nucleosynthesizing/crying_obsidian.json
+8d6e44cf8eb6ad70bb3916caf1846ae2b31a7a59 data/mekanism/recipe/nucleosynthesizing/crying_obsidian.json
 bd9e784b8be9909f2c2f56e2c1085bc801179efc data/mekanism/recipe/nucleosynthesizing/diamond.json
 5e8643b487eab6b1625a4a52cbbb948768831ec9 data/mekanism/recipe/nucleosynthesizing/dragon_egg.json
 1eb208be7692f8bb539151aa60620f95694c708d data/mekanism/recipe/nucleosynthesizing/echo_shard.json

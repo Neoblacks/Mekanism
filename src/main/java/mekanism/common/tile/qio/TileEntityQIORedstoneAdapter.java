@@ -134,7 +134,7 @@ public class TileEntityQIORedstoneAdapter extends TileEntityQIOComponent {
     @Override
     public ModelData getModelData() {
         if (isEmitting) {
-            return ModelData.builder().with(DataBasedModelLoader.EMITTING, null).build();
+            return ModelData.of(DataBasedModelLoader.EMITTING, null);
         }
         return super.getModelData();
     }

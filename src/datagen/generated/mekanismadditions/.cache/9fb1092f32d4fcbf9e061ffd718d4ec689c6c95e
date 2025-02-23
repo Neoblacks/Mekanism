@@ -1,4 +1,4 @@
-// 1.21.1	2024-08-19T21:37:51.7405748	Recipes
+// 1.21.1	2025-02-23T13:37:25.5686458	Recipes
 e7ca8c12278b172eb35c1ce5aa7ea9e7fb978b51 data/mekanismadditions/recipe/balloon/black.json
 75865d25b344f342ceb74197da0f0d64001aa28e data/mekanismadditions/recipe/balloon/blue.json
 871a833288d066491c49d34a4a8a5bbcc99edf32 data/mekanismadditions/recipe/balloon/brown.json
@@ -99,7 +99,7 @@ c6043527327d06a879ebf95c74c760eb868e7058 data/mekanismadditions/recipe/glow_pane
 397bf8c0f6df84d04fe6cb092fc35763c5b4de21 data/mekanismadditions/recipe/glow_panel/red.json
 72487c03d34c8aa2e62051ddfd06292b459069c8 data/mekanismadditions/recipe/glow_panel/white.json
 c334dee1554b0de36222e2320af9627a3a216c05 data/mekanismadditions/recipe/glow_panel/yellow.json
-22778ad0118b9354b17bf6f21cafe1eb4696be7a data/mekanismadditions/recipe/obsidian_tnt.json
+a9c493a4d52420ff6e4e8bd43d0d877668a3b01e data/mekanismadditions/recipe/obsidian_tnt.json
 7e1806f6223dabc4512202a52712706d37b66140 data/mekanismadditions/recipe/pigment_extracting/plastic/block/aqua.json
 2606920bedb36c15b8da1ac325d69912c5bcbc0a data/mekanismadditions/recipe/pigment_extracting/plastic/block/black.json
 3d213776358bbf58c679a975e4bf69c3bb944e76 data/mekanismadditions/recipe/pigment_extracting/plastic/block/blue.json
