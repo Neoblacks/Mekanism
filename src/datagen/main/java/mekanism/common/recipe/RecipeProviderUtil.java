@@ -1,6 +1,8 @@
 package mekanism.common.recipe;
 
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+import it.unimi.dsi.fastutil.objects.Object2FloatMaps;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import java.util.function.Predicate;
 import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.api.datagen.recipe.MekanismRecipeBuilder;
@@ -51,7 +53,8 @@ public class RecipeProviderUtil {
     public static void addCrusherBioFuelRecipes(RecipeOutput consumer, String basePath, Predicate<String> shouldHandle, @Nullable ICondition condition) {
         //Generate baseline recipes from Composter recipe set
         //TODO - 1.21: Move these to being "generated" recipes at runtime (maybe behind a config option) that uses the compostable datamap?
-        for (Object2FloatMap.Entry<ItemLike> chance : ComposterBlock.COMPOSTABLES.object2FloatEntrySet()) {
+        for (ObjectIterator<Object2FloatMap.Entry<ItemLike>> iterator = Object2FloatMaps.fastIterator(ComposterBlock.COMPOSTABLES); iterator.hasNext(); ) {
+            Object2FloatMap.Entry<ItemLike> chance = iterator.next();
             Item input = chance.getKey().asItem();
             ResourceLocation name = RegistryUtils.getName(input);
             if (shouldHandle.test(name.getNamespace())) {

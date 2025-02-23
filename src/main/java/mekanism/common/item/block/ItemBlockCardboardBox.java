@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
@@ -72,7 +73,7 @@ public class ItemBlockCardboardBox extends ItemBlockMekanism<BlockCardboardBox> 
         BlockPos pos = context.getClickedPos();
         if (!stack.has(MekanismDataComponents.BLOCK_DATA) && !player.isShiftKeyDown()) {
             BlockState state = world.getBlockState(pos);
-            if (!state.isAir() && state.getDestroySpeed(world, pos) != -1) {
+            if (!state.isAir() && state.getDestroySpeed(world, pos) != Block.INDESTRUCTIBLE) {
                 if (state.is(MekanismTags.Blocks.CARDBOARD_BLACKLIST) ||
                     MekanismConfig.general.cardboardModBlacklist.get().contains(RegistryUtils.getNamespace(state.getBlock())) ||
                     !canReplace(world, player, pos, context.getClickedFace(), state, stack)) {

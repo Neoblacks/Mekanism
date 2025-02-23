@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntSortedMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import java.util.ArrayList;
@@ -447,8 +448,8 @@ public class TileEntityDigitalMiner extends TileEntityMekanism implements IChunk
         BlockPos startingPos = getStartingPos();
         int diameter = getDiameter();
         long target = targetChunk == null ? ChunkPos.INVALID_CHUNK_POS : targetChunk.toLong();
-        for (ObjectIterator<Long2ObjectMap.Entry<BitSet>> it = oresToMine.long2ObjectEntrySet().iterator(); it.hasNext(); ) {
-            Long2ObjectMap.Entry<BitSet> entry = it.next();
+        for (ObjectIterator<Long2ObjectMap.Entry<BitSet>> iterator = Long2ObjectMaps.fastIterator(oresToMine); iterator.hasNext(); ) {
+            Long2ObjectMap.Entry<BitSet> entry = iterator.next();
             long chunk = entry.getLongKey();
             BitSet chunkToMine = entry.getValue();
             ChunkPos currentChunk = null;
@@ -469,7 +470,7 @@ public class TileEntityDigitalMiner extends TileEntityMekanism implements IChunk
                 int index = chunkToMine.previousSetBit(previous);
                 if (index == -1) {
                     //If there is no found index, remove it and continue on
-                    it.remove();
+                    iterator.remove();
                     break;
                 } else if (currentChunk == null) {
                     //Lazy init the current chunk so that if it is empty, and we are just going to remove it
@@ -510,7 +511,7 @@ public class TileEntityDigitalMiner extends TileEntityMekanism implements IChunk
                                     if (chunkToMine.isEmpty()) {
                                         // if we are out of stored elements then we remove this chunk and continue to check other chunks
                                         // remove it so that we don't have to check the chunk next time around
-                                        it.remove();
+                                        iterator.remove();
                                         // we no longer have a chunk we are targeting, so remove it. We might get a new chunk to target
                                         // next time we try to mine but there is no reason to keep the old chunk in memory in the meantime
                                         updateTargetChunk(null);
@@ -536,7 +537,7 @@ public class TileEntityDigitalMiner extends TileEntityMekanism implements IChunk
                 chunkToMine.clear(index);
                 if (chunkToMine.isEmpty()) {
                     // if we are out of stored elements then we remove this chunk and continue to check other chunks
-                    it.remove();
+                    iterator.remove();
                     break;
                 }
                 // if we still have elements in this chunk that can potentially be mined, decrement our index
@@ -763,7 +764,7 @@ public class TileEntityDigitalMiner extends TileEntityMekanism implements IChunk
         if (hasOverflow) {
             //Try to add any existing overflow to our inventory
             boolean recheck = false;
-            for (ObjectIterator<Object2IntMap.Entry<HashedItem>> iter = overflow.object2IntEntrySet().iterator(); iter.hasNext(); ) {
+            for (ObjectIterator<Object2IntMap.Entry<HashedItem>> iter = Object2IntMaps.fastIterator(overflow); iter.hasNext(); ) {
                 Object2IntMap.Entry<HashedItem> entry = iter.next();
                 int amount = entry.getIntValue();
                 ItemStack stack = entry.getKey().createStack(amount);
