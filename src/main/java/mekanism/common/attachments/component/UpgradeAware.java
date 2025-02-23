@@ -81,6 +81,9 @@ public record UpgradeAware(Map<Upgrade, Integer> upgrades, ItemStack inputSlot, 
     public int hashCode() {
         int hash = upgrades.hashCode();
         hash = 31 * hash + ItemStack.hashItemAndComponents(inputSlot);
-        return 31 * hash + ItemStack.hashItemAndComponents(outputSlot);
+        hash = 31 * hash + inputSlot.getCount();
+        hash = 31 * hash + ItemStack.hashItemAndComponents(outputSlot);
+        hash = 31 * hash + outputSlot.getCount();
+        return hash;
     }
 }

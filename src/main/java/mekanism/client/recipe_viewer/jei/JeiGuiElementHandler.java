@@ -75,7 +75,7 @@ public class JeiGuiElementHandler implements IGuiContainerHandler<GuiMekanism<?>
                     //Note: We do not need to check if there is a window over the child as if we are currently hovering any window
                     // we only check the children that are part of that window
                     if (categories != null && recipeArea.isMouseOverRecipeViewerArea(mouseX, mouseY)) {
-                        //TODO: Decide if we want our own implementation to overwrite the getTooltipStrings and have it show something like "Crusher Recipes"
+                        //TODO: Decide if we want our own implementation to overwrite the getTooltip and have it show something like "Crusher Recipes"
                         IGuiClickableArea clickableArea = IGuiClickableArea.createBasic(element.getRelativeX(), element.getRelativeY(),
                               element.getWidth(), element.getHeight(), MekanismJEI.recipeType(categories));
                         return Collections.singleton(clickableArea);
