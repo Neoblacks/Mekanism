@@ -94,7 +94,7 @@ public class ItemBlockCardboardBox extends ItemBlockMekanism<BlockCardboardBox> 
                     // and then replace the block with the cardboard box, which will cause items to drop and then get
                     // cancelled by our listener in CommonWorldTickHandler
                     CommonWorldTickHandler.monitoringCardboardBox = true;
-                    world.setBlockAndUpdate(pos, defaultState().setValue(BlockStateHelper.storageProperty, true));
+                    world.setBlock(pos, defaultState().setValue(BlockStateHelper.storageProperty, true), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
                     CommonWorldTickHandler.monitoringCardboardBox = false;
                     TileEntityCardboardBox box = WorldUtils.getTileEntity(TileEntityCardboardBox.class, world, pos);
                     if (box != null) {
