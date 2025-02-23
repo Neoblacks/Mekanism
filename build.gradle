@@ -164,9 +164,10 @@ def setupExtraSourceSets(SourceSet base, boolean includeExtra = true) {
             project.configurations.maybeCreate(extraSourceSet.getTaskName(null, 'localRuntime')).extendsFrom(baseLocalRuntime)
         }
     }
-
-    sourceSets.runMain.compileClasspath += base.output
-    sourceSets.runMain.runtimeClasspath += base.runtimeClasspath
+    if (base != project.sourceSets.gameTest) {
+        sourceSets.runMain.compileClasspath += base.output
+        sourceSets.runMain.runtimeClasspath += base.runtimeClasspath
+    }
 }
 
 SourceSet setupExtraSourceSet(SourceSet baseSourceSet, String extra) {
