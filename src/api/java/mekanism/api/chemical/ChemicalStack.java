@@ -9,6 +9,7 @@ import io.netty.handler.codec.EncoderException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import mekanism.api.MekanismAPI;
@@ -38,6 +39,8 @@ import org.jetbrains.annotations.Nullable;
 
 @NothingNullByDefault
 public final class ChemicalStack implements IHasTextComponent, IHasTranslationKey, IChemicalAttributeContainer<ChemicalStack> {
+
+    private static final Consumer<String> ON_STACK_LOAD_ERROR = error -> MekanismAPI.logger.error("Tried to load invalid chemical: '{}'", error);
 
     /**
      * Empty ChemicalStack instance.
@@ -78,7 +81,14 @@ public final class ChemicalStack implements IHasTextComponent, IHasTranslationKe
      *
      * @since 10.6.0
      */
-    public static final Codec<ChemicalStack> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC).xmap(optional -> optional.orElse(EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
+    public static final Codec<ChemicalStack> OPTIONAL_CODEC = ExtraCodecs.optionalEmptyMap(CODEC)
+          .xmap(optional -> optional.orElse(EMPTY), stack -> stack.isEmpty() ? Optional.empty() : Optional.of(stack));
+    /**
+     * A standard codec for Chemical stacks that accepts empty stacks, serializing them as {@code {}}.
+     *
+     * @since 10.7.9
+     */
+    public static final Codec<ChemicalStack> LENIENT_OPTIONAL_CODEC = OPTIONAL_CODEC.promotePartial(ON_STACK_LOAD_ERROR).orElse(EMPTY);
     /**
      * A stream codec for Chemical stacks that accepts empty stacks.
      *
@@ -133,11 +143,11 @@ public final class ChemicalStack implements IHasTextComponent, IHasTranslationKe
     /**
      * A standard codec for chemical stacks that always deserializes with a fixed amount, and does not accept empty stacks.
      * <p>
-     * Chemical equivalent of {@link ItemStack#SINGLE_ITEM_CODEC}.
+     * Chemical equivalent of {@link ItemStack#SINGLE_ITEM_CODEC}. and {@link net.neoforged.neoforge.fluids.FluidStack#fixedAmountCodec(int)}
      *
      * @since 10.6.0
      */
-    public static Codec<ChemicalStack> fixedAmountCodec(int amount) {
+    public static Codec<ChemicalStack> fixedAmountCodec(long amount) {
         return RecordCodecBuilder.create(instance -> instance.group(
               CHEMICAL_NON_EMPTY_CODEC.fieldOf(SerializationConstants.ID).forGetter(ChemicalStack::getChemical)
         ).apply(instance, holder -> new ChemicalStack(holder, amount)));
@@ -521,8 +531,7 @@ public final class ChemicalStack implements IHasTextComponent, IHasTranslationKe
      * @since 10.6.0
      */
     public static Optional<ChemicalStack> parse(HolderLookup.Provider lookupProvider, Tag tag) {
-        return CODEC.parse(lookupProvider.createSerializationContext(NbtOps.INSTANCE), tag)
-              .resultOrPartial(error -> MekanismAPI.logger.error("Tried to load invalid chemical: '{}'", error));
+        return CODEC.parse(lookupProvider.createSerializationContext(NbtOps.INSTANCE), tag).resultOrPartial(ON_STACK_LOAD_ERROR);
     }
 
     /**
