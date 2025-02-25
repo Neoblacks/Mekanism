@@ -37,7 +37,7 @@ public class ItemHazmatSuitArmor extends ArmorItem implements ICapabilityAware {
 
     @Override
     public boolean isEnchantable(@NotNull ItemStack stack) {
-        return material.value().enchantmentValue() > 0 && super.isEnchantable(stack);
+        return material.value().enchantmentValue() > 0 && stack.getMaxStackSize() == 1;
     }
 
     @Override

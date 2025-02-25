@@ -18,7 +18,7 @@ public abstract class ItemSpecialArmor extends ArmorItem implements ICapabilityA
 
     @Override
     public boolean isEnchantable(@NotNull ItemStack stack) {
-        return material.value().enchantmentValue() > 0 && super.isEnchantable(stack);
+        return material.value().enchantmentValue() > 0 && stack.getMaxStackSize() == 1;
     }
 
     @Override
