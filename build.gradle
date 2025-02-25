@@ -414,7 +414,7 @@ repositories { RepositoryHandler handler ->
     exclusiveRepo(handler, 'https://www.cursemaven.com', 'curse.maven')
     exclusiveRepo(handler, 'https://modmaven.dev/', 'mcjty.theoneprobe', 'dev.technici4n')
     exclusiveRepo(handler, 'https://maven.minecraftforge.net/releases/', 'com.github.glitchfiend')
-    exclusiveRepo(handler, 'https://maven.thiakil.com', 'com.thiakil', 'moze_intel')
+    exclusiveRepo(handler, 'https://maven.thiakil.com', 'com.thiakil', 'moze_intel.projecte')
     exclusiveRepo(handler, 'https://maven.parchmentmc.org/', 'org.parchmentmc.data')
     handler.exclusiveContent {
         it.forRepositories(handler.mavenCentral())
@@ -480,7 +480,7 @@ dependencies {
 
     //Mods we have dependencies on but don't bother loading into the dev environment
     //compileOnly("curse.maven:projecte-api-226410:${projecte_api_id}")
-    compileOnly('moze_intel:ProjectE-api:1.0.1')
+    compileOnly('moze_intel.projecte:ProjectE:1.0.1:api')
     compileOnly("curse.maven:flux-networks-248020:${flux_networks_id}")
     compileOnly("dev.technici4n:GrandPower:${grand_power_version}")
     compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}:api")
@@ -503,6 +503,8 @@ dependencies {
     datagenMainImplementation("curse.maven:farmers-delight-398521:${farmers_delight_id}")
     //TODO - 1.21: Re-enable after projecte is updated
     //datagenMainRuntimeOnly("curse.maven:projecte-226410:${projecte_id}")
+    //TODO: Enable after we bump to 10.7.9 so that projecte can load
+    //datagenMainRuntimeOnly('moze_intel.projecte:ProjectE:1.0.1')
 
     //Note: Even though yaml ops defines a FMLModType we have to pretend FML doesn't know how to handle it due to a lib yaml ops bundles not defining it
     datagenNonMod("com.thiakil:yaml-ops:${yamlops_version}")
