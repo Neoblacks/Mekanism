@@ -15,6 +15,7 @@ import net.neoforged.neoforge.common.data.DataMapProvider;
 import net.neoforged.neoforge.registries.datamaps.builtin.FurnaceFuel;
 import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 import net.neoforged.neoforge.registries.datamaps.builtin.VibrationFrequency;
+import org.jetbrains.annotations.NotNull;
 
 public class MekanismDataMapsProvider extends DataMapProvider {
 
@@ -23,7 +24,7 @@ public class MekanismDataMapsProvider extends DataMapProvider {
     }
 
     @Override
-    protected void gather() {
+    protected void gather(@NotNull HolderLookup.Provider provider) {
         builder(NeoForgeDataMaps.VIBRATION_FREQUENCIES)
               //Follows vanilla's logic for what gives what sort of frequency
               // A frequency of four is used for gliding with an elytra or unique mob actions
