@@ -20,7 +20,6 @@ import mekanism.api.chemical.attribute.ChemicalAttribute;
 import mekanism.api.chemical.attribute.IChemicalAttributeContainer;
 import mekanism.api.text.IHasTextComponent;
 import mekanism.api.text.IHasTranslationKey;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -29,7 +28,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -94,28 +92,24 @@ public final class ChemicalStack implements IHasTextComponent, IHasTranslationKe
      *
      * @since 10.6.0
      */
-    public static final StreamCodec<RegistryFriendlyByteBuf, ChemicalStack> OPTIONAL_STREAM_CODEC = Util.make(() -> {
-        StreamCodec<RegistryFriendlyByteBuf, Chemical> chemicalStreamCodec = ByteBufCodecs.registry(MekanismAPI.CHEMICAL_REGISTRY_NAME);
-        return new StreamCodec<>() {
-            @Override
-            public ChemicalStack decode(RegistryFriendlyByteBuf buffer) {
-                long amount = buffer.readVarLong();
-                if (amount <= 0) {
-                    return EMPTY;
-                }
-                Chemical chemical = chemicalStreamCodec.decode(buffer);
-                return new ChemicalStack(chemical, amount);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ChemicalStack> OPTIONAL_STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public ChemicalStack decode(RegistryFriendlyByteBuf buffer) {
+            long amount = buffer.readVarLong();
+            if (amount <= 0) {
+                return EMPTY;
             }
+            return new ChemicalStack(Chemical.STREAM_CODEC.decode(buffer), amount);
+        }
 
-            @Override
-            public void encode(RegistryFriendlyByteBuf buffer, ChemicalStack stack) {
-                buffer.writeVarLong(stack.getAmount());
-                if (!stack.isEmpty()) {
-                    chemicalStreamCodec.encode(buffer, stack.getChemical());
-                }
+        @Override
+        public void encode(RegistryFriendlyByteBuf buffer, ChemicalStack stack) {
+            buffer.writeVarLong(stack.getAmount());
+            if (!stack.isEmpty()) {
+                Chemical.STREAM_CODEC.encode(buffer, stack.getChemical());
             }
-        };
-    });
+        }
+    };
     /**
      * A stream codec for Chemical stacks that does not accept empty stacks.
      *
