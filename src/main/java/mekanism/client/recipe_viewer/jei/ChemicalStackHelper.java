@@ -93,7 +93,7 @@ public class ChemicalStackHelper implements IIngredientHelper<ChemicalStack> {
 
     @Override
     public Stream<ResourceLocation> getTagStream(ChemicalStack ingredient) {
-        return ingredient.getChemical().getTags().map(TagKey::location);
+        return ingredient.getTags().map(TagKey::location);
     }
 
     @Override
