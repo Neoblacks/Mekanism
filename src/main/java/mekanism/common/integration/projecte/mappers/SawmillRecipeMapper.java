@@ -2,7 +2,7 @@ package mekanism.common.integration.projecte.mappers;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import java.util.List;
+import java.util.SequencedCollection;
 import java.util.function.Function;
 import mekanism.api.recipes.SawmillRecipe;
 import mekanism.api.recipes.SawmillRecipe.ChanceOutput;
@@ -62,7 +62,7 @@ public class SawmillRecipeMapper extends TypedMekanismRecipeMapper<SawmillRecipe
             );
             return addConversions(mapper, output, ingredients);
         }
-        Function<List<ItemStack>, Object2IntMap<NormalizedSimpleStack>> representationGetter;
+        Function<SequencedCollection<ItemStack>, Object2IntMap<NormalizedSimpleStack>> representationGetter;
         if (primaryMultiplier == 1) {
             representationGetter = fakeGroupHelper::forItems;
         } else {
