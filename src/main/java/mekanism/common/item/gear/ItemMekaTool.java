@@ -429,17 +429,17 @@ public class ItemMekaTool extends ItemEnergized implements IRadialModuleContaine
 
     @Override
     public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
-        return false;
+        return isEnchantable(stack) && super.isBookEnchantable(stack, book);
     }
 
     @Override
     public boolean isPrimaryItemFor(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
-        return false;
+        return isEnchantable(stack) && super.isPrimaryItemFor(stack, enchantment);
     }
 
     @Override
     public boolean supportsEnchantment(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
-        return false;
+        return isEnchantable(stack) && super.supportsEnchantment(stack, enchantment);
     }
 
     @Override
