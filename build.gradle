@@ -503,8 +503,7 @@ dependencies {
     datagenMainImplementation("curse.maven:farmers-delight-398521:${farmers_delight_id}")
     //TODO - 1.21: Re-enable after projecte is updated
     //datagenMainRuntimeOnly("curse.maven:projecte-226410:${projecte_id}")
-    //TODO: Enable after we bump to 10.7.9 so that projecte can load
-    //datagenMainRuntimeOnly('moze_intel.projecte:ProjectE:1.0.1')
+    datagenMainRuntimeOnly('moze_intel.projecte:ProjectE:1.0.1')
 
     //Note: Even though yaml ops defines a FMLModType we have to pretend FML doesn't know how to handle it due to a lib yaml ops bundles not defining it
     datagenNonMod("com.thiakil:yaml-ops:${yamlops_version}")
