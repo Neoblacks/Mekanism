@@ -17,13 +17,16 @@ import mekanism.common.util.EnumUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.common.conditions.NotCondition;
+import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 import net.potionstudios.biomeswevegone.world.level.block.BWGBlocks;
 import net.potionstudios.biomeswevegone.world.level.block.sand.BWGSandSet;
 import net.potionstudios.biomeswevegone.world.level.block.set.BWGBlockSet;
@@ -81,11 +84,14 @@ public class BWGRecipeProvider extends CompatRecipeProvider {
             makeTarget = "2_" + makeTarget;
             name = "large_" + name;
         }
-        ItemStackIngredient inputIngredient = IngredientCreatorAccess.item().from(Ingredient.of(tag("dye/makes_" + makeTarget + "_dye")));
+        TagKey<Item> makesDyeTag = tag("dye/makes_" + makeTarget + "_dye");
+        ICondition tagNotEmpty = new NotCondition(new TagEmptyCondition(makesDyeTag));
+        ItemStackIngredient inputIngredient = IngredientCreatorAccess.item().from(makesDyeTag);
         ItemStackToItemStackRecipeBuilder.enriching(
                     inputIngredient,
                     new ItemStack(output, large ? 4 : 2)
               ).addCondition(modLoaded)
+              .addCondition(tagNotEmpty)
               .build(consumer, Mekanism.rl(basePath + "dye/" + name));
         //Flowers -> 4x dye output (See PigmentExtractingRecipeProvider#addFlowerExtractionRecipes for note)
         long flowerRate = 3 * PigmentExtractingRecipeProvider.DYE_RATE;
@@ -93,6 +99,7 @@ public class BWGRecipeProvider extends CompatRecipeProvider {
                     inputIngredient,
                     MekanismChemicals.PIGMENT_COLOR_LOOKUP.get(color).asStack(large ? 2 * flowerRate : flowerRate)
               ).addCondition(modLoaded)
+              .addCondition(tagNotEmpty)
               .build(consumer, Mekanism.rl(basePath + "pigment_extracting/" + name));
     }
 
