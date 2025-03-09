@@ -1,4 +1,4 @@
-// 1.21.1	2025-03-01T13:11:14.3455063	Tags: mekanism
+// 1.21.1	2025-03-09T10:50:27.1447216	Tags: mekanism
 8a89da3b810e00ad44b7ee4d062a88db6298c8fe data/create/tags/fluid/no_infinite_draining.json
 b881c0bb158879ac88758c2b0562b422271e6397 data/c/tags/block/barrels.json
 adb3ecfd3180c123cdc984320eab5ce930bdc5be data/c/tags/block/barrels/personal.json
@@ -310,3 +310,4 @@ c0ce6a50075da89bf71f5aebe24272ed6f32b70f data/minecraft/tags/item/enchantable/he
 2a7a0ca44ecbdfdfcda188a4fee34692dc24e2cf data/neoforge/tags/block/enderman_place_on_blacklist.json
 87b902979fae3b74fea0244d63fdc6b8cd2ecd0d data/neoforge/tags/damage_type/is_environment.json
 903060898e7790a3059ae8734191a498ce75e0cb data/per-viam-invenire/tags/entity_type/replace_vanilla_navigator.json
+b79a9a1e0ddcf1344df98002024bc070480b51d7 data/projecte/tags/block/vein/shovel.json

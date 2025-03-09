@@ -166,6 +166,7 @@ public class MekanismTagProvider extends BaseTagProvider {
 
         addBlocksToTag(FRAMEABLE, MekanismBlocks.STRUCTURAL_GLASS);
         addBlocksToTag(FB_BE_WHITELIST, MekanismBlocks.STRUCTURAL_GLASS);
+        addBlocksToTag(PE_VEIN_SHOVEL, MekanismBlocks.SALT_BLOCK);
 
         getItemBuilder(MekanismAPITags.Items.MEKA_UNITS).add(MekanismItems.ITEMS.getEntries().stream().filter(item -> item.get() instanceof IModuleItem).toList());
     }
