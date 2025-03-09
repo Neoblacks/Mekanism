@@ -19,6 +19,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -66,14 +67,21 @@ public class BWGRecipeProvider extends CompatRecipeProvider {
         for (EnumColor color : EnumUtils.COLORS) {
             DyeColor dyeColor = color.getDyeColor();
             if (dyeColor != null) {
-                dye(consumer, basePath, DyeItem.byColor(dyeColor), false, color);
+                Item dye = DyeItem.byColor(dyeColor);
+                dye(consumer, basePath, dye, false, color);
+                dye(consumer, basePath, dye, true, color);
             }
         }
     }
 
     private void dye(RecipeOutput consumer, String basePath, ItemLike output, boolean large, EnumColor color) {
-        ItemStackIngredient inputIngredient = IngredientCreatorAccess.item().from(Ingredient.of(tag("dye/makes_" + color.getRegistryPrefix() + "_dye")));
-        String name = large ? "large_" + color.getRegistryPrefix() : color.getRegistryPrefix();
+        String name = color.getRegistryPrefix();
+        String makeTarget = name;
+        if (large) {
+            makeTarget = "2_" + makeTarget;
+            name = "large_" + name;
+        }
+        ItemStackIngredient inputIngredient = IngredientCreatorAccess.item().from(Ingredient.of(tag("dye/makes_" + makeTarget + "_dye")));
         ItemStackToItemStackRecipeBuilder.enriching(
                     inputIngredient,
                     new ItemStack(output, large ? 4 : 2)
