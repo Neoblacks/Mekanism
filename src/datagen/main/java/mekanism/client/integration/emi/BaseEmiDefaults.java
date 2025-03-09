@@ -11,7 +11,7 @@ import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.api.tier.BaseTier;
 import mekanism.client.recipe_viewer.RecipeViewerUtils;
 import mekanism.common.DataGenSerializationConstants;
-import mekanism.common.integration.MekanismHooks;
+import mekanism.common.Mekanism;
 import mekanism.common.registration.INamedEntry;
 import mekanism.common.util.EnumUtils;
 import mekanism.common.util.RegistryUtils;
@@ -59,7 +59,7 @@ public abstract class BaseEmiDefaults implements DataProvider {
             //Sort to make the output more stable
             List<ResourceLocation> sortedRecipes = new ArrayList<>(recipes);
             sortedRecipes.sort(ResourceLocation::compareNamespaced);
-            Path path = pathProvider.json(ResourceLocation.fromNamespaceAndPath(MekanismHooks.EMI_MOD_ID, modid));
+            Path path = pathProvider.json(Mekanism.hooks.emi.rl(modid));
             return DataProvider.saveStable(cachedOutput, lookupProvider, CODEC, sortedRecipes, path);
         });
     }

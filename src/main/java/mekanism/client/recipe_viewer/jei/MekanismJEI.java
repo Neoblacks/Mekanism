@@ -90,7 +90,7 @@ public class MekanismJEI implements IModPlugin {
 
     public static boolean shouldLoad() {
         //Skip handling if both EMI and JEI are loaded as otherwise some things behave strangely
-        return !Mekanism.hooks.EmiLoaded;
+        return !Mekanism.hooks.emi.isLoaded();
     }
 
     public static RecipeType<?> genericRecipeType(IRecipeViewerRecipeType<?> recipeType) {

@@ -32,6 +32,7 @@ import mekanism.common.attachments.containers.chemical.ComponentBackedChemicalTa
 import mekanism.common.attachments.containers.fluid.ComponentBackedFluidTank;
 import mekanism.common.attachments.containers.fluid.FluidTanksBuilder;
 import mekanism.common.capabilities.Capabilities;
+import mekanism.common.capabilities.ICapabilityAware;
 import mekanism.common.capabilities.chemical.item.ChemicalTankSpec;
 import mekanism.common.capabilities.fluid.item.FluidTankSpec;
 import mekanism.common.capabilities.laser.item.LaserDissipationHandler;
@@ -81,7 +82,7 @@ import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ItemMekaSuitArmor extends ItemSpecialArmor implements IModuleContainerItem, IJetpackItem, ICustomCreativeTabContents, IAttachmentAware {
+public class ItemMekaSuitArmor extends ItemSpecialArmor implements IModuleContainerItem, IJetpackItem, ICustomCreativeTabContents, IAttachmentAware, ICapabilityAware {
 
     //TODO: Expand this system so that modules can maybe define needed tanks?
     private final List<ChemicalTankSpec> chemicalTankSpecs = new ArrayList<>();
@@ -263,7 +264,6 @@ public class ItemMekaSuitArmor extends ItemSpecialArmor implements IModuleContai
 
     @Override
     public void attachCapabilities(RegisterCapabilitiesEvent event) {
-        super.attachCapabilities(event);
         //Note: The all our providers only expose the capabilities (both those via attachments and those here) if the required configs for initializing that capability are loaded
         event.registerItem(Capabilities.RADIATION_SHIELDING, (stack, ctx) -> {
             if (!MekanismConfig.gear.isLoaded() || !isModuleEnabled(stack, MekanismModules.RADIATION_SHIELDING_UNIT)) {

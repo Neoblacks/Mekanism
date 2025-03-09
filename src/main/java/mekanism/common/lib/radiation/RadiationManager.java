@@ -351,7 +351,7 @@ public class RadiationManager implements IRadiationManager {
                 }
             }
         }
-        if (resistance < 1 && Mekanism.hooks.CuriosLoaded) {
+        if (resistance < 1 && Mekanism.hooks.curios.isLoaded()) {
             IItemHandler handler = CuriosIntegration.getCuriosInventory(entity);
             if (handler != null) {
                 for (int i = 0, slots = handler.getSlots(); i < slots; i++) {

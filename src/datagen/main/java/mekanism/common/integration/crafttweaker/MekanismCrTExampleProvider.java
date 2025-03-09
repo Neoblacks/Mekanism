@@ -9,7 +9,6 @@ import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess;
 import mekanism.api.text.EnumColor;
 import mekanism.common.Mekanism;
-import mekanism.common.integration.MekanismHooks;
 import mekanism.common.integration.crafttweaker.chemical.CrTChemicalStack;
 import mekanism.common.integration.crafttweaker.chemical.ICrTChemicalStack;
 import mekanism.common.integration.crafttweaker.example.BaseCrTExampleProvider;
@@ -96,7 +95,7 @@ public class MekanismCrTExampleProvider extends BaseCrTExampleProvider {
         ;
         //JEITweaker integration
         exampleBuilder("mekanism/jeitweaker_integration")
-              .addComponent(() -> "#modloaded " + MekanismHooks.JEITWEAKER_MOD_ID)
+              .addComponent(() -> "#modloaded " + Mekanism.hooks.jeiTweaker.modid())
               .blankLine()
               .imports()
               .comment("If JEITweaker is installed, Mekanism will add integration with it that allows for hiding our chemicals, and adding descriptions to them.")

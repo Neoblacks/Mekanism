@@ -209,6 +209,24 @@ public class Mekanism {
         modEventBus.addListener(MekanismConfig::onConfigLoad);
         modEventBus.addListener(this::imcQueue);
         modEventBus.addListener(this::imcHandle);
+        addRegistrationListeners(modEventBus);
+        packetHandler = new PacketHandler(modEventBus, versionNumber);
+        //Super early hooks, only reliable thing is for checking dependencies that we declare we are after
+        hooks.hookConstructor(modEventBus);
+    }
+
+    public static synchronized void addModule(IModModule modModule) {
+        modulesLoaded.add(modModule);
+    }
+
+    public static PacketHandler packetHandler() {
+        return instance.packetHandler;
+    }
+
+    private void addRegistrationListeners(IEventBus modEventBus) {
+        modEventBus.addListener(this::registerEventListener);
+        modEventBus.addListener(this::registerRegistries);
+
         MekanismItems.ITEMS.register(modEventBus);
         MekanismBlocks.BLOCKS.register(modEventBus);
         MekanismFluids.FLUIDS.register(modEventBus);
@@ -238,19 +256,6 @@ public class Mekanism {
         MekanismRecipeConditions.CONDITION_CODECS.register(modEventBus);
         MekanismItemPredicates.PREDICATES.register(modEventBus);
         MekanismDataMapTypes.REGISTER.register(modEventBus);
-        modEventBus.addListener(this::registerEventListener);
-        modEventBus.addListener(this::registerRegistries);
-        packetHandler = new PacketHandler(modEventBus, versionNumber);
-        //Super early hooks, only reliable thing is for checking dependencies that we declare we are after
-        hooks.hookConstructor(modEventBus);
-    }
-
-    public static synchronized void addModule(IModModule modModule) {
-        modulesLoaded.add(modModule);
-    }
-
-    public static PacketHandler packetHandler() {
-        return instance.packetHandler;
     }
 
     private void registerRegistries(NewRegistryEvent event) {

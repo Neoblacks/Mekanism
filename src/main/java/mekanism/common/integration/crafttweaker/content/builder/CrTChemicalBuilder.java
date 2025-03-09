@@ -5,8 +5,8 @@ import com.blamejared.crafttweaker.api.tag.type.KnownTag;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalBuilder;
 import mekanism.api.chemical.attribute.ChemicalAttribute;
+import mekanism.common.Mekanism;
 import mekanism.common.integration.crafttweaker.CrTConstants;
-import mekanism.common.integration.crafttweaker.CrTUtils;
 import mekanism.common.integration.crafttweaker.content.CrTContentUtils;
 import mekanism.common.util.ChemicalUtil;
 import net.minecraft.resources.ResourceLocation;
@@ -69,7 +69,7 @@ public class CrTChemicalBuilder {
      */
     @ZenCodeType.Method
     public void build(String name) {
-        build(CrTUtils.rl(name));
+        build(Mekanism.hooks.craftTweaker.rl(name));
     }
 
     /**

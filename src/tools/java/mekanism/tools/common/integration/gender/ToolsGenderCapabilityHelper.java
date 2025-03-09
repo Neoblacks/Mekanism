@@ -2,29 +2,24 @@ package mekanism.tools.common.integration.gender;
 
 import mekanism.common.Mekanism;
 import mekanism.common.integration.gender.MekanismGenderArmor;
-import mekanism.tools.common.item.ItemMekanismArmor;
+import mekanism.tools.common.MekanismTools;
 import mekanism.tools.common.registries.ToolsItems;
-import net.minecraft.world.item.ArmorItem;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
+@EventBusSubscriber(modid = MekanismTools.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ToolsGenderCapabilityHelper {
 
-    public static void addGenderCapability(ItemMekanismArmor item, RegisterCapabilitiesEvent event) {
-        //Validate the mod is loaded and that this is for the correct slot
-        if (Mekanism.hooks.WildfireGenderModLoaded && item.getType() == ArmorItem.Type.CHESTPLATE) {
-            if (ToolsItems.BRONZE_CHESTPLATE.is(item)) {
-                ArmorSettings.BRONZE.register(event, item);
-            } else if (ToolsItems.LAPIS_LAZULI_CHESTPLATE.is(item)) {
-                ArmorSettings.LAPIS_LAZULI.register(event, item);
-            } else if (ToolsItems.OSMIUM_CHESTPLATE.is(item)) {
-                ArmorSettings.OSMIUM.register(event, item);
-            } else if (ToolsItems.REFINED_GLOWSTONE_CHESTPLATE.is(item)) {
-                ArmorSettings.REFINED_GLOWSTONE.register(event, item);
-            } else if (ToolsItems.REFINED_OBSIDIAN_CHESTPLATE.is(item)) {
-                ArmorSettings.REFINED_OBSIDIAN.register(event, item);
-            } else if (ToolsItems.STEEL_CHESTPLATE.is(item)) {
-                ArmorSettings.STEEL.register(event, item);
-            }
+    @SubscribeEvent
+    public static void addGenderCapability(RegisterCapabilitiesEvent event) {
+        if (Mekanism.hooks.genderMod.isLoaded()) {
+            ArmorSettings.BRONZE.register(event, ToolsItems.BRONZE_CHESTPLATE);
+            ArmorSettings.LAPIS_LAZULI.register(event, ToolsItems.LAPIS_LAZULI_CHESTPLATE);
+            ArmorSettings.OSMIUM.register(event, ToolsItems.OSMIUM_CHESTPLATE);
+            ArmorSettings.REFINED_GLOWSTONE.register(event, ToolsItems.REFINED_GLOWSTONE_CHESTPLATE);
+            ArmorSettings.REFINED_OBSIDIAN.register(event, ToolsItems.REFINED_OBSIDIAN_CHESTPLATE);
+            ArmorSettings.STEEL.register(event, ToolsItems.STEEL_CHESTPLATE);
         }
     }
 
