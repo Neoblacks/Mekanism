@@ -3,6 +3,7 @@ package mekanism.client.gui.element.bar;
 import java.util.List;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.chemical.IChemicalTank;
+import mekanism.api.math.MathUtils;
 import mekanism.client.gui.IGuiWrapper;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.MekanismLang;
@@ -75,7 +76,7 @@ public class GuiChemicalBar extends GuiTankBar<ChemicalStack> {
 
             @Override
             public double getLevel() {
-                return tank.getStored() / (double) tank.getCapacity();
+                return MathUtils.divideToLevel(tank.getStored(), tank.getCapacity());
             }
         };
     }

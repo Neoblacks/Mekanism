@@ -45,7 +45,7 @@ public class ChemicalElement extends LookingAtElement {
         if (capacity == 0 || stored.getAmount() == Long.MAX_VALUE) {
             return level;
         }
-        return MathUtils.clampToInt(level * (double) stored.getAmount() / capacity);
+        return MathUtils.clampToInt(level * MathUtils.divideToLevel(stored.getAmount(), capacity));
     }
 
     @NotNull
