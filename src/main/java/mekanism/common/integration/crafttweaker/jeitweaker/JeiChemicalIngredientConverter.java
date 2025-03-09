@@ -2,6 +2,7 @@ package mekanism.common.integration.crafttweaker.jeitweaker;
 
 import com.blamejared.jeitweaker.common.api.ingredient.JeiIngredientConverter;
 import com.blamejared.jeitweaker.common.api.ingredient.JeiIngredientCreator;
+import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.common.integration.crafttweaker.chemical.CrTChemicalStack;
 import mekanism.common.integration.crafttweaker.chemical.ICrTChemicalStack;
@@ -42,6 +43,6 @@ class JeiChemicalIngredientConverter implements JeiIngredientConverter<ChemicalS
 
     @Override
     public ResourceLocation toRegistryNameFromJei(ChemicalStack jeiType) {
-        return RegistryUtils.getName(jeiType.getChemicalHolder());
+        return RegistryUtils.getName(jeiType.getChemicalHolder(), MekanismAPI.CHEMICAL_REGISTRY);
     }
 }

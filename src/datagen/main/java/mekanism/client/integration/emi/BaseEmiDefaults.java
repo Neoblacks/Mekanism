@@ -14,8 +14,6 @@ import mekanism.common.DataGenSerializationConstants;
 import mekanism.common.Mekanism;
 import mekanism.common.registration.INamedEntry;
 import mekanism.common.util.EnumUtils;
-import mekanism.common.util.RegistryUtils;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -26,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.util.ExtraCodecs;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 @NothingNullByDefault
 public abstract class BaseEmiDefaults implements DataProvider {
@@ -74,12 +73,8 @@ public abstract class BaseEmiDefaults implements DataProvider {
         }
     }
 
-    protected void addRecipe(Holder<?> output) {
-        ResourceLocation registryName = RegistryUtils.getName(output);
-        if (registryName == null) {
-            throw new IllegalStateException("Could not retrieve registry name for output.");
-        }
-        addRecipe(registryName);
+    protected void addRecipe(DeferredHolder<?, ?> output) {
+        addRecipe(output.getId());
     }
 
     protected void addRotaryRecipe(INamedEntry gas) {

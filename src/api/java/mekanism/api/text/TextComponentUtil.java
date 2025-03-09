@@ -3,6 +3,7 @@ package mekanism.api.text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import mekanism.api.inventory.IHashedItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -77,6 +78,7 @@ public class TextComponentUtil {
                 case Block block -> current = block.getName().copy();
                 case Item item -> current = item.getDescription().copy();
                 case ItemStack stack -> current = stack.getHoverName().copy();
+                case IHashedItem item -> current = item.getInternalStack().getHoverName().copy();
                 case FluidStack stack -> current = stack.getHoverName().copy();
                 case Fluid fluid -> current = fluid.getFluidType().getDescription().copy();
                 case EntityType<?> entityType -> current = entityType.getDescription().copy();
@@ -210,6 +212,8 @@ public class TextComponentUtil {
                 current = item.getDescription().copy();
             } else if (component instanceof ItemStack stack) {
                 current = stack.getHoverName().copy();
+            } else if (component instanceof IHashedItem item) {
+                current = item.getInternalStack().getHoverName().copy();
             } else if (component instanceof FluidStack stack) {
                 current = stack.getHoverName().copy();
             } else if (component instanceof Fluid fluid) {

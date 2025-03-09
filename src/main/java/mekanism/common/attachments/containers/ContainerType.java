@@ -37,6 +37,7 @@ import mekanism.common.config.IMekanismConfig;
 import mekanism.common.integration.energy.EnergyCompatUtils;
 import mekanism.common.registries.MekanismDataComponents;
 import mekanism.common.tile.base.TileEntityMekanism;
+import net.minecraft.Util;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -135,7 +136,8 @@ public class ContainerType<CONTAINER extends INBTSerializable<CompoundTag>, ATTA
                 return DataResult.success(type);
             }
         }
-        return DataResult.error(() -> "Data Component type " + BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(componentType) + " does not have a corresponding container type");
+        return DataResult.error(() -> "Data Component type " + Util.getRegisteredName(BuiltInRegistries.DATA_COMPONENT_TYPE, componentType) +
+                                      " does not have a corresponding container type");
     }, containerType -> containerType.component.get());
 
     private final Map<Item, Lazy<? extends IContainerCreator<? extends CONTAINER, ATTACHED>>> knownDefaultCreators = new Reference2ObjectOpenHashMap<>();
@@ -172,9 +174,8 @@ public class ContainerType<CONTAINER extends INBTSerializable<CompoundTag>, ATTA
         return component;
     }
 
-    @Nullable
     public ResourceLocation getComponentName() {
-        return BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(component.get());
+        return component.getId();
     }
 
     public String getTag() {

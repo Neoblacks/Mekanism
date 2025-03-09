@@ -14,8 +14,8 @@ import mekanism.common.recipe.RecipeProviderUtil;
 import mekanism.common.recipe.impl.PigmentExtractingRecipeProvider;
 import mekanism.common.registries.MekanismChemicals;
 import mekanism.common.util.EnumUtils;
+import mekanism.common.util.RegistryUtils;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
@@ -137,7 +137,7 @@ public class BWGRecipeProvider extends CompatRecipeProvider {
     }
 
     private void crushing(RecipeOutput consumer, String basePath, BWGBlockSet from, BWGBlockSet to) {
-        String name = BuiltInRegistries.BLOCK.getKey(from.getBase()).getPath();
+        String name = RegistryUtils.getPath(from.getBase());
         crushing(consumer, from.getBase(), to.getBase(), basePath + "conversion_" + name);
         crushing(consumer, from.getSlab(), to.getSlab(), basePath + "slabs_conversion_" + name);
         crushing(consumer, from.getStairs(), to.getStairs(), basePath + "stairs_conversion_" + name);
@@ -160,7 +160,7 @@ public class BWGRecipeProvider extends CompatRecipeProvider {
 
     private void addMossyStoneEnrichingRecipes(RecipeOutput consumer, String basePath) {
         BWGBlockSet from = BWGBlocks.MOSSY_STONE_SET;
-        String name = BuiltInRegistries.BLOCK.getKey(from.getBase()).getPath();
+        String name = RegistryUtils.getPath(from.getBase());
         enriching(consumer, from.getBase(), Items.STONE, basePath + "conversion_" + name);
         enriching(consumer, from.getSlab(), Items.STONE_SLAB, basePath + "slabs_conversion_" + name);
         enriching(consumer, from.getStairs(), Items.STONE_STAIRS, basePath + "stairs_conversion_" + name);
@@ -192,7 +192,7 @@ public class BWGRecipeProvider extends CompatRecipeProvider {
     }
 
     private void enriching(RecipeOutput consumer, String basePath, BWGBlockSet from, BWGBlockSet to) {
-        String name = BuiltInRegistries.BLOCK.getKey(from.getBase()).getPath();
+        String name = RegistryUtils.getPath(from.getBase());
         enriching(consumer, from.getBase(), to.getBase(), basePath + "conversion_" + name);
         enriching(consumer, from.getSlab(), to.getSlab(), basePath + "slabs_conversion_" + name);
         enriching(consumer, from.getStairs(), to.getStairs(), basePath + "stairs_conversion_" + name);
@@ -222,7 +222,7 @@ public class BWGRecipeProvider extends CompatRecipeProvider {
     }
 
     private void infuseMoss(RecipeOutput consumer, String basePath, BWGBlockSet from, BWGBlockSet to) {
-        String name = BuiltInRegistries.BLOCK.getKey(from.getBase()).getPath();
+        String name = RegistryUtils.getPath(from.getBase());
         infuseMoss(consumer, from.getBase(), to.getBase(), basePath + "conversion_" + name);
         infuseMoss(consumer, from.getSlab(), to.getSlab(), basePath + "slabs_conversion_" + name);
         infuseMoss(consumer, from.getStairs(), to.getStairs(), basePath + "stairs_conversion_" + name);

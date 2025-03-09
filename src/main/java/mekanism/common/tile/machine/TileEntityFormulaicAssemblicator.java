@@ -165,7 +165,7 @@ public class TileEntityFormulaicAssemblicator extends TileEntityConfigurableMach
                     } else if (stockControl) {
                         HashedItem stockItem = stockControlMap[index];
                         if (stockItem != null) {
-                            return ItemStack.isSameItemSameComponents(stockItem.getInternalStack(), stack);
+                            return stockItem.isSameItemSameComponents(stack);
                         }
                     }
                     return formula.isValidIngredient(level, stack);

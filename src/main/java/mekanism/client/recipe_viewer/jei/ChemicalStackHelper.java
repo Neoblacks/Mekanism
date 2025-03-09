@@ -4,7 +4,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import mekanism.api.MekanismAPI;
@@ -57,7 +56,7 @@ public class ChemicalStackHelper implements IIngredientHelper<ChemicalStack> {
 
     @Override
     public ResourceLocation getResourceLocation(ChemicalStack ingredient) {
-        return Objects.requireNonNullElse(RegistryUtils.getName(ingredient.getChemicalHolder()), MekanismAPI.CHEMICAL_REGISTRY.getDefaultKey());
+        return RegistryUtils.getName(ingredient.getChemicalHolder(), MekanismAPI.CHEMICAL_REGISTRY);
     }
 
     @Override

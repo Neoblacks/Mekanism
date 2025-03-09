@@ -15,7 +15,6 @@ import mekanism.common.registries.MekanismChemicals;
 import mekanism.common.registries.MekanismItems;
 import mekanism.common.tier.FactoryTier;
 import mekanism.common.util.EnumUtils;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
@@ -293,7 +292,7 @@ public class MekanismEmiDefaults extends BaseEmiDefaults {
 
     private void addGearModuleRecipes() {
         addRecipe(MekanismItems.MODULE_BASE);
-        for (Holder<Item> entry : MekanismItems.ITEMS.getEntries()) {
+        for (DeferredHolder<Item, ?> entry : MekanismItems.ITEMS.getEntries()) {
             if (entry.value() instanceof ItemModule) {
                 addRecipe(entry);
             }

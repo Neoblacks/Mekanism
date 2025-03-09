@@ -3,7 +3,7 @@ package mekanism.tools.common;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import mekanism.common.tag.BaseTagProvider;
-import mekanism.common.tag.IntrinsicMekanismTagBuilder;
+import mekanism.common.tag.MekanismTagBuilder;
 import mekanism.tools.common.item.ItemMekanismAxe;
 import mekanism.tools.common.item.ItemMekanismPaxel;
 import mekanism.tools.common.item.ItemMekanismPickaxe;
@@ -28,7 +28,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     @Override
     protected void registerTags(HolderLookup.Provider registries) {
         addToolTags();
-        addItemsToTag(ItemTags.PIGLIN_LOVED,
+        getItemBuilder(ItemTags.PIGLIN_LOVED).add(
               ToolsItems.GOLD_PAXEL,
               ToolsItems.REFINED_GLOWSTONE_PICKAXE,
               ToolsItems.REFINED_GLOWSTONE_AXE,
@@ -43,7 +43,7 @@ public class ToolsTagProvider extends BaseTagProvider {
               ToolsItems.REFINED_GLOWSTONE_SHIELD
         );
         //Make refined glowstone armor make you immune to freezing because of the light it gives off
-        addItemsToTag(ItemTags.FREEZE_IMMUNE_WEARABLES,
+        getItemBuilder(ItemTags.FREEZE_IMMUNE_WEARABLES).add(
               ToolsItems.REFINED_GLOWSTONE_HELMET,
               ToolsItems.REFINED_GLOWSTONE_CHESTPLATE,
               ToolsItems.REFINED_GLOWSTONE_LEGGINGS,
@@ -90,7 +90,7 @@ public class ToolsTagProvider extends BaseTagProvider {
         getItemBuilder(ItemTags.MINING_LOOT_ENCHANTABLE).add(ToolsTags.Items.TOOLS_PAXEL);
         getItemBuilder(ItemTags.DURABILITY_ENCHANTABLE).add(ToolsTags.Items.TOOLS_PAXEL);
         getItemBuilder(Tags.Items.TOOLS).add(ToolsTags.Items.TOOLS_PAXEL);
-        addItemsToTag(ToolsTags.Items.TOOLS_PAXEL,
+        getItemBuilder(ToolsTags.Items.TOOLS_PAXEL).add(
               //Vanilla Paxels
               ToolsItems.WOOD_PAXEL,
               ToolsItems.STONE_PAXEL,
@@ -109,7 +109,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addSwords() {
-        addItemsToTag(ItemTags.SWORDS,
+        getItemBuilder(ItemTags.SWORDS).add(
               ToolsItems.BRONZE_SWORD,
               ToolsItems.LAPIS_LAZULI_SWORD,
               ToolsItems.OSMIUM_SWORD,
@@ -120,7 +120,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addAxes() {
-        addItemsToTag(ItemTags.AXES,
+        getItemBuilder(ItemTags.AXES).add(
               ToolsItems.BRONZE_AXE,
               ToolsItems.LAPIS_LAZULI_AXE,
               ToolsItems.OSMIUM_AXE,
@@ -131,7 +131,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addPickaxes() {
-        addItemsToTag(ItemTags.PICKAXES,
+        getItemBuilder(ItemTags.PICKAXES).add(
               ToolsItems.BRONZE_PICKAXE,
               ToolsItems.LAPIS_LAZULI_PICKAXE,
               ToolsItems.OSMIUM_PICKAXE,
@@ -142,7 +142,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addShovels() {
-        addItemsToTag(ItemTags.SHOVELS,
+        getItemBuilder(ItemTags.SHOVELS).add(
               ToolsItems.BRONZE_SHOVEL,
               ToolsItems.LAPIS_LAZULI_SHOVEL,
               ToolsItems.OSMIUM_SHOVEL,
@@ -153,7 +153,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addHoes() {
-        addItemsToTag(ItemTags.HOES,
+        getItemBuilder(ItemTags.HOES).add(
               ToolsItems.BRONZE_HOE,
               ToolsItems.LAPIS_LAZULI_HOE,
               ToolsItems.OSMIUM_HOE,
@@ -165,12 +165,12 @@ public class ToolsTagProvider extends BaseTagProvider {
 
     @SafeVarargs
     private void addShields(Holder<Item>... shields) {
-        addItemsToTag(Tags.Items.TOOLS_SHIELD, shields);
-        addItemsToTag(ItemTags.DURABILITY_ENCHANTABLE, shields);
+        getItemBuilder(Tags.Items.TOOLS_SHIELD).add(shields);
+        getItemBuilder(ItemTags.DURABILITY_ENCHANTABLE).add(shields);
     }
 
     private void addHelmets() {
-        addItemsToTag(ItemTags.HEAD_ARMOR,
+        getItemBuilder(ItemTags.HEAD_ARMOR).add(
               ToolsItems.BRONZE_HELMET,
               ToolsItems.LAPIS_LAZULI_HELMET,
               ToolsItems.OSMIUM_HELMET,
@@ -181,7 +181,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addChestplates() {
-        addItemsToTag(ItemTags.CHEST_ARMOR,
+        getItemBuilder(ItemTags.CHEST_ARMOR).add(
               ToolsItems.BRONZE_CHESTPLATE,
               ToolsItems.LAPIS_LAZULI_CHESTPLATE,
               ToolsItems.OSMIUM_CHESTPLATE,
@@ -192,7 +192,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addLeggings() {
-        addItemsToTag(ItemTags.LEG_ARMOR,
+        getItemBuilder(ItemTags.LEG_ARMOR).add(
               ToolsItems.BRONZE_LEGGINGS,
               ToolsItems.LAPIS_LAZULI_LEGGINGS,
               ToolsItems.OSMIUM_LEGGINGS,
@@ -203,7 +203,7 @@ public class ToolsTagProvider extends BaseTagProvider {
     }
 
     private void addBoots() {
-        addItemsToTag(ItemTags.FOOT_ARMOR,
+        getItemBuilder(ItemTags.FOOT_ARMOR).add(
               ToolsItems.BRONZE_BOOTS,
               ToolsItems.LAPIS_LAZULI_BOOTS,
               ToolsItems.OSMIUM_BOOTS,
@@ -213,11 +213,11 @@ public class ToolsTagProvider extends BaseTagProvider {
         );
     }
 
-    private void createTag(IntrinsicMekanismTagBuilder<Item> tag, Predicate<Item> matcher) {
+    private void createTag(MekanismTagBuilder<Item> tag, Predicate<Item> matcher) {
         for (Holder<Item> itemProvider : ToolsItems.ITEMS.getEntries()) {
             Item item = itemProvider.value();
             if (matcher.test(item)) {
-                tag.add(item);
+                tag.add(itemProvider);
             }
         }
     }

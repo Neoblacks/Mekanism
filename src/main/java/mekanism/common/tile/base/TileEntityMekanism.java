@@ -128,6 +128,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -140,7 +141,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
@@ -1013,7 +1013,8 @@ public abstract class TileEntityMekanism extends CapabilityTileEntity implements
                 // but double check just in case before logging
                 Mekanism.logger.warn("Error invalid block for tile {} at {} in {}. Unable to get direction, falling back to north, "
                                      + "things will probably not work correctly. This is almost certainly due to another mod incorrectly "
-                                     + "trying to move this tile and not properly updating the position.", BlockEntityType.getKey(getType()), worldPosition, level);
+                                     + "trying to move this tile and not properly updating the position.",
+                      Util.getRegisteredName(BuiltInRegistries.BLOCK_ENTITY_TYPE, getType()), worldPosition, level);
             }
         }
         //TODO: Remove, give it some better default, or allow it to be null
@@ -1094,12 +1095,12 @@ public abstract class TileEntityMekanism extends CapabilityTileEntity implements
 
     public final boolean isRedstoneActivated() {
         return !supportsRedstone() ||
-            switch (controlType) {
-                case DISABLED -> true;
-                case HIGH -> isPowered();
-                case LOW -> !isPowered();
-                case PULSE -> isPowered() && !redstoneLastTick;
-            };
+               switch (controlType) {
+                   case DISABLED -> true;
+                   case HIGH -> isPowered();
+                   case LOW -> !isPowered();
+                   case PULSE -> isPowered() && !redstoneLastTick;
+               };
     }
 
     public boolean canFunction() {

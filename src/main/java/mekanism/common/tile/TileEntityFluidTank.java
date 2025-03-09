@@ -365,10 +365,11 @@ public class TileEntityFluidTank extends TileEntityMekanism implements IConfigur
             fluidData.putInt(SerializationConstants.AMOUNT, fluid.getAmount());
         }
         if (!fluid.isEmpty()) {
-            //Note: This should never be null as it returns a reference holder
-            // We throw if it is, so that we can find the bug if it gets introduced during porting
             ResourceLocation key = RegistryUtils.getName(fluid.getFluidHolder());
-            if (key != null) {
+            if (key == null) {
+                //Note: This should never be null as it returns a reference holder, but if it is, log an error
+                Mekanism.logger.error("Attempted to sync a fluid tank that is storing an unregistered fluid. This should not happen, and likely indicates a porting bug.");
+            } else {
                 fluidData.putString(SerializationConstants.ID, key.toString());
                 if (!fluid.isComponentsPatchEmpty()) {
                     //Note: This isn't necessarily optimal, but it does mean in general we can avoid codecs unless it happens to be a fluid that
@@ -410,7 +411,7 @@ public class TileEntityFluidTank extends TileEntityMekanism implements IConfigur
             CompoundTag fluidData = tag.getCompound(SerializationConstants.FLUID);
             if (!fluidData.isEmpty()) {
                 String fluidId = fluidData.getString(SerializationConstants.ID);
-                Optional<Reference<Fluid>> holder = BuiltInRegistries.FLUID.getHolder(ResourceLocation.parse(fluidId));
+                Optional<Reference<Fluid>> holder = Optional.ofNullable(ResourceLocation.tryParse(fluidId)).flatMap(BuiltInRegistries.FLUID::getHolder);
                 if (holder.isEmpty()) {
                     Mekanism.logger.info("Received update packet for a fluid tank for an unregistered fluid with expected id: {}", fluidId);
                 } else {

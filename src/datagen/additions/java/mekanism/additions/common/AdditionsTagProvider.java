@@ -11,6 +11,7 @@ import mekanism.common.registration.impl.BlockRegistryObject;
 import mekanism.common.tag.BaseTagProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
@@ -50,20 +51,39 @@ public class AdditionsTagProvider extends BaseTagProvider {
         addGlowPanels();
         addPlasticBlocks();
         addHarvestRequirements();
-        addToTag(BlockTags.IMPERMEABLE, AdditionsBlocks.TRANSPARENT_PLASTIC_BLOCKS);
+        getBlockBuilder(BlockTags.IMPERMEABLE).add(AdditionsBlocks.TRANSPARENT_PLASTIC_BLOCKS.values());
     }
 
     private void addEntities() {
-        addEntitiesToTag(EntityTypeTags.FALL_DAMAGE_IMMUNE, AdditionsEntityTypes.BALLOON);
-        addEntitiesToTag(EntityTypeTags.SKELETONS, AdditionsEntityTypes.BABY_BOGGED, AdditionsEntityTypes.BABY_SKELETON, AdditionsEntityTypes.BABY_STRAY,
-              AdditionsEntityTypes.BABY_WITHER_SKELETON);
-        addEntitiesToTag(EntityTypeTags.NO_ANGER_FROM_WIND_CHARGE, AdditionsEntityTypes.BABY_BOGGED, AdditionsEntityTypes.BABY_SKELETON, AdditionsEntityTypes.BABY_STRAY);
-        getEntityTypeBuilder(AdditionsTags.Entities.BOGGED).add(EntityType.BOGGED, AdditionsEntityTypes.BABY_BOGGED.value());
-        getEntityTypeBuilder(AdditionsTags.Entities.CREEPERS).add(EntityType.CREEPER, AdditionsEntityTypes.BABY_CREEPER.value());
-        getEntityTypeBuilder(AdditionsTags.Entities.ENDERMEN).add(EntityType.ENDERMAN, AdditionsEntityTypes.BABY_ENDERMAN.value());
-        addEntitiesToTag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES, AdditionsEntityTypes.BABY_STRAY);
-        addEntitiesToTag(PVI_COMPAT, AdditionsEntityTypes.BABY_CREEPER, AdditionsEntityTypes.BABY_ENDERMAN, AdditionsEntityTypes.BABY_SKELETON,
-              AdditionsEntityTypes.BABY_STRAY, AdditionsEntityTypes.BABY_WITHER_SKELETON);
+        getEntityTypeBuilder(EntityTypeTags.FALL_DAMAGE_IMMUNE).add(AdditionsEntityTypes.BALLOON);
+        getEntityTypeBuilder(EntityTypeTags.SKELETONS).add(
+              AdditionsEntityTypes.BABY_BOGGED,
+              AdditionsEntityTypes.BABY_SKELETON,
+              AdditionsEntityTypes.BABY_STRAY,
+              AdditionsEntityTypes.BABY_WITHER_SKELETON
+        );
+        getEntityTypeBuilder(EntityTypeTags.NO_ANGER_FROM_WIND_CHARGE).add(
+              AdditionsEntityTypes.BABY_BOGGED,
+              AdditionsEntityTypes.BABY_SKELETON,
+              AdditionsEntityTypes.BABY_STRAY
+        );
+        getEntityTypeBuilder(AdditionsTags.Entities.BOGGED)
+              .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.BOGGED)
+              .add(AdditionsEntityTypes.BABY_BOGGED);
+        getEntityTypeBuilder(AdditionsTags.Entities.CREEPERS)
+              .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.CREEPER)
+              .add(AdditionsEntityTypes.BABY_CREEPER);
+        getEntityTypeBuilder(AdditionsTags.Entities.ENDERMEN)
+              .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.ENDERMAN)
+              .add(AdditionsEntityTypes.BABY_ENDERMAN);
+        getEntityTypeBuilder(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(AdditionsEntityTypes.BABY_STRAY);
+        getEntityTypeBuilder(PVI_COMPAT).add(
+              AdditionsEntityTypes.BABY_CREEPER,
+              AdditionsEntityTypes.BABY_ENDERMAN,
+              AdditionsEntityTypes.BABY_SKELETON,
+              AdditionsEntityTypes.BABY_STRAY,
+              AdditionsEntityTypes.BABY_WITHER_SKELETON
+        );
     }
 
     private void addDamageTypes() {
@@ -149,7 +169,7 @@ public class AdditionsTagProvider extends BaseTagProvider {
     }
 
     private void addToTags(TagKey<Item> itemTag, TagKey<Block> blockTag, Map<EnumColor, ? extends BlockRegistryObject<?, ?>> blockProviders) {
-        addToTags(itemTag, blockTag, blockProviders.values().toArray(new BlockRegistryObject[0]));
+        addToTags(itemTag, blockTag, blockProviders.values());
         for (Map.Entry<EnumColor, ? extends BlockRegistryObject<?, ?>> entry : blockProviders.entrySet()) {
             DyeColor dyeColor = entry.getKey().getDyeColor();
             if (dyeColor != null) {
@@ -160,12 +180,12 @@ public class AdditionsTagProvider extends BaseTagProvider {
     }
 
     private void addToTag(TagKey<Item> itemTag, Map<EnumColor, ? extends Holder<Item>> itemProviders) {
-        getItemBuilder(itemTag).addHolders(itemProviders.values());
+        getItemBuilder(itemTag).add(itemProviders.values());
         for (Map.Entry<EnumColor, ? extends Holder<Item>> entry : itemProviders.entrySet()) {
             DyeColor dyeColor = entry.getKey().getDyeColor();
             if (dyeColor != null) {
-                addItemsToTag(Tags.Items.DYED, entry.getValue());
-                addItemsToTag(dyeColor.getDyedTag(), entry.getValue());
+                getItemBuilder(Tags.Items.DYED).add(entry.getValue());
+                getItemBuilder(dyeColor.getDyedTag()).add(entry.getValue());
             }
         }
     }

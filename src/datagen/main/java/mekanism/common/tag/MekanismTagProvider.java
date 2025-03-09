@@ -28,7 +28,9 @@ import mekanism.common.resource.ore.OreType;
 import mekanism.common.tags.MekanismTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.DamageTypeTags;
@@ -36,6 +38,7 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.GameEventTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
@@ -90,9 +93,9 @@ public class MekanismTagProvider extends BaseTagProvider {
         getBlockBuilder(MekanismTags.Blocks.ATOMIC_DISASSEMBLER_ORE).add(Tags.Blocks.ORES, BlockTags.LOGS);
         getBlockBuilder(MekanismTags.Blocks.INCORRECT_FOR_DISASSEMBLER);
         getBlockBuilder(MekanismTags.Blocks.INCORRECT_FOR_MEKA_TOOL);
-        addBlocksToTag(BlockTags.GUARDED_BY_PIGLINS, MekanismBlocks.REFINED_GLOWSTONE_BLOCK, MekanismBlocks.PERSONAL_BARREL, MekanismBlocks.PERSONAL_CHEST);
-        addBlocksToTag(BlockTags.HOGLIN_REPELLENTS, MekanismBlocks.TELEPORTER, MekanismBlocks.QUANTUM_ENTANGLOPORTER);
-        getItemBuilder(ItemTags.PIGLIN_LOVED).addHolders(
+        getBlockBuilder(BlockTags.GUARDED_BY_PIGLINS).add(MekanismBlocks.REFINED_GLOWSTONE_BLOCK, MekanismBlocks.PERSONAL_BARREL, MekanismBlocks.PERSONAL_CHEST);
+        getBlockBuilder(BlockTags.HOGLIN_REPELLENTS).add(MekanismBlocks.TELEPORTER, MekanismBlocks.QUANTUM_ENTANGLOPORTER);
+        getItemBuilder(ItemTags.PIGLIN_LOVED).add(
               MekanismBlocks.REFINED_GLOWSTONE_BLOCK.getItemHolder(),
               MekanismItems.REFINED_GLOWSTONE_INGOT,
               MekanismItems.PROCESSED_RESOURCES.get(ResourceType.DUST, PrimaryResource.GOLD)
@@ -103,7 +106,7 @@ public class MekanismTagProvider extends BaseTagProvider {
               MekanismTags.Items.PROCESSED_RESOURCES.get(ResourceType.DIRTY_DUST, PrimaryResource.GOLD),
               MekanismTags.Items.PROCESSED_RESOURCES.get(ResourceType.CLUMP, PrimaryResource.GOLD)
         );
-        addItemsToTag(MekanismTags.Items.MEKASUIT_HUD_RENDERER, MekanismItems.MEKASUIT_HELMET);
+        getItemBuilder(MekanismTags.Items.MEKASUIT_HUD_RENDERER).add(MekanismItems.MEKASUIT_HELMET);
         getItemBuilder(MekanismTags.Items.STONE_CRAFTING_MATERIALS).add(ItemTags.STONE_CRAFTING_MATERIALS, Tags.Items.COBBLESTONES_NORMAL);
         getItemBuilder(MekanismTags.Items.MUFFLING_CENTER).add(
               Tags.Items.BRICKS,
@@ -118,22 +121,27 @@ public class MekanismTagProvider extends BaseTagProvider {
         addEntities();
         getBlockBuilder(MekanismTags.Blocks.MINER_BLACKLIST);
         addHarvestRequirements();
-        addBlocksToTag(BlockTags.IMPERMEABLE, MekanismBlocks.STRUCTURAL_GLASS);
+        getBlockBuilder(BlockTags.IMPERMEABLE).add(MekanismBlocks.STRUCTURAL_GLASS);
         //Note: Axolotls live in a brackish water (mix between fresh and salt), so it is reasonable there may be salt nearby
-        addBlocksToTag(BlockTags.AXOLOTLS_SPAWNABLE_ON, MekanismBlocks.SALT_BLOCK);
-        addItemsToTag(ItemTags.CLUSTER_MAX_HARVESTABLES, MekanismItems.ATOMIC_DISASSEMBLER, MekanismItems.MEKA_TOOL);
-        addItemsToTag(ItemTags.FREEZE_IMMUNE_WEARABLES, MekanismItems.MEKASUIT_HELMET, MekanismItems.MEKASUIT_BODYARMOR, MekanismItems.MEKASUIT_PANTS, MekanismItems.MEKASUIT_BOOTS);
-        addBlocksToTag(BlockTags.SCULK_REPLACEABLE, MekanismBlocks.SALT_BLOCK);
+        getBlockBuilder(BlockTags.AXOLOTLS_SPAWNABLE_ON).add(MekanismBlocks.SALT_BLOCK);
+        getItemBuilder(ItemTags.CLUSTER_MAX_HARVESTABLES).add(MekanismItems.ATOMIC_DISASSEMBLER, MekanismItems.MEKA_TOOL);
+        getItemBuilder(ItemTags.FREEZE_IMMUNE_WEARABLES).add(
+              MekanismItems.MEKASUIT_HELMET,
+              MekanismItems.MEKASUIT_BODYARMOR,
+              MekanismItems.MEKASUIT_PANTS,
+              MekanismItems.MEKASUIT_BOOTS
+        );
+        getBlockBuilder(BlockTags.SCULK_REPLACEABLE).add(MekanismBlocks.SALT_BLOCK);
         getMobEffectBuilder(MekanismAPITags.MobEffects.SPEED_UP_BLACKLIST);
 
-        getBlockBuilder(MekanismTags.Blocks.FARMING_OVERRIDE).add(
+        getBlockBuilder(MekanismTags.Blocks.FARMING_OVERRIDE).addIntrinsic(BuiltInRegistries.BLOCK,
               Blocks.PINK_PETALS
         );
-        addBlocksToTag(BlockTags.CAMEL_SAND_STEP_SOUND_BLOCKS, MekanismBlocks.SALT_BLOCK);
+        getBlockBuilder(BlockTags.CAMEL_SAND_STEP_SOUND_BLOCKS).add(MekanismBlocks.SALT_BLOCK);
 
         addToTags(Tags.Items.HIDDEN_FROM_RECIPE_VIEWERS, Tags.Blocks.HIDDEN_FROM_RECIPE_VIEWERS, MekanismBlocks.BOUNDING_BLOCK);
 
-        addBlocksToTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON,
+        getBlockBuilder(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON).add(
               MekanismBlocks.STRUCTURAL_GLASS,
 
               MekanismBlocks.BOILER_CASING,
@@ -164,42 +172,44 @@ public class MekanismTagProvider extends BaseTagProvider {
               MekanismBlocks.DYNAMIC_VALVE
         );
 
-        addBlocksToTag(FRAMEABLE, MekanismBlocks.STRUCTURAL_GLASS);
-        addBlocksToTag(FB_BE_WHITELIST, MekanismBlocks.STRUCTURAL_GLASS);
-        addBlocksToTag(PE_VEIN_SHOVEL, MekanismBlocks.SALT_BLOCK);
+        getBlockBuilder(FRAMEABLE).add(MekanismBlocks.STRUCTURAL_GLASS);
+        getBlockBuilder(FB_BE_WHITELIST).add(MekanismBlocks.STRUCTURAL_GLASS);
+        getBlockBuilder(PE_VEIN_SHOVEL).add(MekanismBlocks.SALT_BLOCK);
 
-        getItemBuilder(MekanismAPITags.Items.MEKA_UNITS).add(MekanismItems.ITEMS.getEntries().stream().filter(item -> item.get() instanceof IModuleItem).toList());
+        getItemBuilder(MekanismAPITags.Items.MEKA_UNITS).add(MekanismItems.ITEMS.getEntries().stream()
+              .filter(item -> item.get() instanceof IModuleItem)
+              .toList());
     }
 
     private void addEntities() {
-        addEntitiesToTag(EntityTypeTags.IMPACT_PROJECTILES, MekanismEntityTypes.FLAME);
-        addEntitiesToTag(PVI_COMPAT, MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.IMPACT_PROJECTILES).add(MekanismEntityTypes.FLAME);
+        getEntityTypeBuilder(PVI_COMPAT).add(MekanismEntityTypes.ROBIT);
 
-        addEntitiesToTag(MekanismAPITags.Entities.RADIATION_IMMUNE, MekanismEntityTypes.ROBIT);
-        getEntityTypeBuilder(MekanismAPITags.Entities.MEK_RADIATION_IMMUNE).add(MekanismAPITags.Entities.RADIATION_IMMUNE).add(
+        getEntityTypeBuilder(MekanismAPITags.Entities.RADIATION_IMMUNE).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(MekanismAPITags.Entities.MEK_RADIATION_IMMUNE).add(MekanismAPITags.Entities.RADIATION_IMMUNE).addIntrinsic(BuiltInRegistries.ENTITY_TYPE,
               EntityType.IRON_GOLEM,
               EntityType.SNOW_GOLEM
         );
 
-        addEntitiesToTag(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.CAN_BREATHE_UNDER_WATER, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.IGNORES_POISON_AND_REGEN, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.IMMUNE_TO_INFESTED, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.IMMUNE_TO_OOZING, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.FALL_DAMAGE_IMMUNE, MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.POWDER_SNOW_WALKABLE_MOBS).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.CAN_BREATHE_UNDER_WATER).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.IGNORES_POISON_AND_REGEN).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.IMMUNE_TO_INFESTED).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.IMMUNE_TO_OOZING).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.FALL_DAMAGE_IMMUNE).add(MekanismEntityTypes.ROBIT);
         //Robit's don't need to breathe
-        addEntitiesToTag(EntityTypeTags.CAN_BREATHE_UNDER_WATER, MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.CAN_BREATHE_UNDER_WATER).add(MekanismEntityTypes.ROBIT);
         //Robit's are not scary, they are friends!
-        addEntitiesToTag(EntityTypeTags.NOT_SCARY_FOR_PUFFERFISH, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.ILLAGER_FRIENDS, MekanismEntityTypes.ROBIT);
-        addEntitiesToTag(EntityTypeTags.WITHER_FRIENDS, MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.NOT_SCARY_FOR_PUFFERFISH).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.ILLAGER_FRIENDS).add(MekanismEntityTypes.ROBIT);
+        getEntityTypeBuilder(EntityTypeTags.WITHER_FRIENDS).add(MekanismEntityTypes.ROBIT);
     }
 
     private void addProcessedResources() {
         for (Cell<ResourceType, PrimaryResource, ? extends Holder<Item>> item : MekanismItems.PROCESSED_RESOURCES.cellSet()) {
             TagKey<Item> tag = MekanismTags.Items.PROCESSED_RESOURCES.get(item.getRowKey(), item.getColumnKey());
-            addItemsToTag(tag, item.getValue());
+            getItemBuilder(tag).add(item.getValue());
             getItemBuilder(switch (item.getRowKey()) {
                 case SHARD -> MekanismTags.Items.SHARDS;
                 case CRYSTAL -> MekanismTags.Items.CRYSTALS;
@@ -216,7 +226,7 @@ public class MekanismTagProvider extends BaseTagProvider {
 
     private void addBeaconTags() {
         //Beacon bases
-        addBlocksToTag(BlockTags.BEACON_BASE_BLOCKS,
+        getBlockBuilder(BlockTags.BEACON_BASE_BLOCKS).add(
               MekanismBlocks.PROCESSED_RESOURCE_BLOCKS.get(PrimaryResource.OSMIUM),
               MekanismBlocks.PROCESSED_RESOURCE_BLOCKS.get(PrimaryResource.TIN),
               MekanismBlocks.PROCESSED_RESOURCE_BLOCKS.get(PrimaryResource.LEAD),
@@ -227,7 +237,7 @@ public class MekanismTagProvider extends BaseTagProvider {
               MekanismBlocks.STEEL_BLOCK
         );
         //Beacon payment items
-        addItemsToTag(ItemTags.BEACON_PAYMENT_ITEMS,
+        getItemBuilder(ItemTags.BEACON_PAYMENT_ITEMS).add(
               MekanismItems.PROCESSED_RESOURCES.get(ResourceType.INGOT, PrimaryResource.OSMIUM),
               MekanismItems.PROCESSED_RESOURCES.get(ResourceType.INGOT, PrimaryResource.TIN),
               MekanismItems.PROCESSED_RESOURCES.get(ResourceType.INGOT, PrimaryResource.LEAD),
@@ -240,7 +250,7 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addBoxBlacklist() {
-        addBlocksToTag(Tags.Blocks.RELOCATION_NOT_SUPPORTED,
+        getBlockBuilder(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(
               MekanismBlocks.CARDBOARD_BOX,
               MekanismBlocks.BOUNDING_BLOCK,
               MekanismBlocks.SECURITY_DESK,
@@ -274,31 +284,34 @@ public class MekanismTagProvider extends BaseTagProvider {
         );
         getBlockBuilder(MekanismTags.Blocks.CARDBOARD_BLACKLIST)
               .add(Tags.Blocks.RELOCATION_NOT_SUPPORTED, BlockTags.BEDS, BlockTags.DOORS)
-              .add(Blocks.TRIAL_SPAWNER, Blocks.VAULT);
+              .addIntrinsic(BuiltInRegistries.BLOCK,
+                    Blocks.TRIAL_SPAWNER,
+                    Blocks.VAULT
+              );
     }
 
     private void addTools() {
         addWrenches();
-        addItemsToTag(ItemTags.BREAKS_DECORATED_POTS, MekanismItems.ATOMIC_DISASSEMBLER, MekanismItems.MEKA_TOOL);
-        addItemsToTag(Tags.Items.MINING_TOOL_TOOLS, MekanismItems.ATOMIC_DISASSEMBLER, MekanismItems.MEKA_TOOL);
-        addItemsToTag(Tags.Items.TOOLS_BOW, MekanismItems.ELECTRIC_BOW);
-        addItemsToTag(Tags.Items.RANGED_WEAPON_TOOLS, MekanismItems.ELECTRIC_BOW);
-        addItemsToTag(ItemTags.BOW_ENCHANTABLE, MekanismItems.ELECTRIC_BOW);
-        addItemsToTag(ItemTags.DURABILITY_ENCHANTABLE, MekanismItems.HDPE_REINFORCED_ELYTRA);
-        addItemsToTag(ItemTags.EQUIPPABLE_ENCHANTABLE, MekanismItems.HDPE_REINFORCED_ELYTRA);
+        getItemBuilder(ItemTags.BREAKS_DECORATED_POTS).add(MekanismItems.ATOMIC_DISASSEMBLER, MekanismItems.MEKA_TOOL);
+        getItemBuilder(Tags.Items.MINING_TOOL_TOOLS).add(MekanismItems.ATOMIC_DISASSEMBLER, MekanismItems.MEKA_TOOL);
+        getItemBuilder(Tags.Items.TOOLS_BOW).add(MekanismItems.ELECTRIC_BOW);
+        getItemBuilder(Tags.Items.RANGED_WEAPON_TOOLS).add(MekanismItems.ELECTRIC_BOW);
+        getItemBuilder(ItemTags.BOW_ENCHANTABLE).add(MekanismItems.ELECTRIC_BOW);
+        getItemBuilder(ItemTags.DURABILITY_ENCHANTABLE).add(MekanismItems.HDPE_REINFORCED_ELYTRA);
+        getItemBuilder(ItemTags.EQUIPPABLE_ENCHANTABLE).add(MekanismItems.HDPE_REINFORCED_ELYTRA);
     }
 
     private void addWrenches() {
         //Note: We don't add wrenches to the vanilla tools tag as that is for a different style of tool and used for things like breaking pots
-        addItemsToTag(Tags.Items.TOOLS_WRENCH, MekanismItems.CONFIGURATOR);
+        getItemBuilder(Tags.Items.TOOLS_WRENCH).add(MekanismItems.CONFIGURATOR);
         getItemBuilder(MekanismTags.Items.CONFIGURATORS).add(Tags.Items.TOOLS_WRENCH);
     }
 
     private void addArmor() {
-        addItemsToTag(ItemTags.HEAD_ARMOR, MekanismItems.HAZMAT_MASK, MekanismItems.MEKASUIT_HELMET);
-        addItemsToTag(ItemTags.CHEST_ARMOR, MekanismItems.HAZMAT_GOWN, MekanismItems.MEKASUIT_BODYARMOR);
-        addItemsToTag(ItemTags.LEG_ARMOR, MekanismItems.HAZMAT_PANTS, MekanismItems.MEKASUIT_PANTS);
-        addItemsToTag(ItemTags.FOOT_ARMOR, MekanismItems.HAZMAT_BOOTS, MekanismItems.MEKASUIT_BOOTS);
+        getItemBuilder(ItemTags.HEAD_ARMOR).add(MekanismItems.HAZMAT_MASK, MekanismItems.MEKASUIT_HELMET);
+        getItemBuilder(ItemTags.CHEST_ARMOR).add(MekanismItems.HAZMAT_GOWN, MekanismItems.MEKASUIT_BODYARMOR);
+        getItemBuilder(ItemTags.LEG_ARMOR).add(MekanismItems.HAZMAT_PANTS, MekanismItems.MEKASUIT_PANTS);
+        getItemBuilder(ItemTags.FOOT_ARMOR).add(MekanismItems.HAZMAT_BOOTS, MekanismItems.MEKASUIT_BOOTS);
         getItemBuilder(ItemTags.TRIMMABLE_ARMOR).remove(
               MekanismItems.HAZMAT_MASK,
               MekanismItems.HAZMAT_GOWN,
@@ -324,24 +337,24 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addRods() {
-        addItemsToTag(MekanismTags.Items.RODS_PLASTIC, MekanismItems.HDPE_STICK);
+        getItemBuilder(MekanismTags.Items.RODS_PLASTIC).add(MekanismItems.HDPE_STICK);
         getItemBuilder(Tags.Items.RODS).add(MekanismTags.Items.RODS_PLASTIC);
     }
 
     private void addFuels() {
-        addItemsToTag(MekanismTags.Items.FUELS_BIO, MekanismItems.BIO_FUEL);
-        addItemsToTag(MekanismTags.Items.FUELS_BLOCK_BIO, MekanismBlocks.BIO_FUEL_BLOCK.getItemHolder());
+        getItemBuilder(MekanismTags.Items.FUELS_BIO).add(MekanismItems.BIO_FUEL);
+        getItemBuilder(MekanismTags.Items.FUELS_BLOCK_BIO).add(MekanismBlocks.BIO_FUEL_BLOCK.getItemHolder());
         getItemBuilder(MekanismTags.Items.FUELS).add(MekanismTags.Items.FUELS_BIO, MekanismTags.Items.FUELS_BLOCK_BIO);
     }
 
     private void addAlloys() {
         //Alloy Tags that go in the forge domain
-        addItemsToTag(MekanismTags.Items.ALLOYS_ADVANCED, MekanismItems.INFUSED_ALLOY);
-        addItemsToTag(MekanismTags.Items.ALLOYS_ELITE, MekanismItems.REINFORCED_ALLOY);
-        addItemsToTag(MekanismTags.Items.ALLOYS_ULTIMATE, MekanismItems.ATOMIC_ALLOY);
+        getItemBuilder(MekanismTags.Items.ALLOYS_ADVANCED).add(MekanismItems.INFUSED_ALLOY);
+        getItemBuilder(MekanismTags.Items.ALLOYS_ELITE).add(MekanismItems.REINFORCED_ALLOY);
+        getItemBuilder(MekanismTags.Items.ALLOYS_ULTIMATE).add(MekanismItems.ATOMIC_ALLOY);
         getItemBuilder(MekanismTags.Items.COMMON_ALLOYS).add(MekanismTags.Items.ALLOYS_ADVANCED, MekanismTags.Items.ALLOYS_ELITE, MekanismTags.Items.ALLOYS_ULTIMATE);
         //Alloy tags that go in our domain
-        getItemBuilder(MekanismTags.Items.ALLOYS_BASIC).add(Items.REDSTONE);
+        getItemBuilder(MekanismTags.Items.ALLOYS_BASIC).addIntrinsic(BuiltInRegistries.ITEM, Items.REDSTONE);
         getItemBuilder(MekanismTags.Items.ALLOYS_INFUSED).add(MekanismTags.Items.ALLOYS_ADVANCED);
         getItemBuilder(MekanismTags.Items.ALLOYS_REINFORCED).add(MekanismTags.Items.ALLOYS_ELITE);
         getItemBuilder(MekanismTags.Items.ALLOYS_ATOMIC).add(MekanismTags.Items.ALLOYS_ULTIMATE);
@@ -350,16 +363,16 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addCircuits() {
-        addItemsToTag(MekanismTags.Items.CIRCUITS_BASIC, MekanismItems.BASIC_CONTROL_CIRCUIT);
-        addItemsToTag(MekanismTags.Items.CIRCUITS_ADVANCED, MekanismItems.ADVANCED_CONTROL_CIRCUIT);
-        addItemsToTag(MekanismTags.Items.CIRCUITS_ELITE, MekanismItems.ELITE_CONTROL_CIRCUIT);
-        addItemsToTag(MekanismTags.Items.CIRCUITS_ULTIMATE, MekanismItems.ULTIMATE_CONTROL_CIRCUIT);
+        getItemBuilder(MekanismTags.Items.CIRCUITS_BASIC).add(MekanismItems.BASIC_CONTROL_CIRCUIT);
+        getItemBuilder(MekanismTags.Items.CIRCUITS_ADVANCED).add(MekanismItems.ADVANCED_CONTROL_CIRCUIT);
+        getItemBuilder(MekanismTags.Items.CIRCUITS_ELITE).add(MekanismItems.ELITE_CONTROL_CIRCUIT);
+        getItemBuilder(MekanismTags.Items.CIRCUITS_ULTIMATE).add(MekanismItems.ULTIMATE_CONTROL_CIRCUIT);
         getItemBuilder(MekanismTags.Items.CIRCUITS).add(MekanismTags.Items.CIRCUITS_BASIC, MekanismTags.Items.CIRCUITS_ADVANCED, MekanismTags.Items.CIRCUITS_ELITE,
               MekanismTags.Items.CIRCUITS_ULTIMATE);
     }
 
     private void addEndermanBlacklist() {
-        addBlocksToTag(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST,
+        getBlockBuilder(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST).add(
               MekanismBlocks.DYNAMIC_TANK,
               MekanismBlocks.DYNAMIC_VALVE,
               MekanismBlocks.BOILER_CASING,
@@ -379,23 +392,23 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addEnriched() {
-        addItemsToTag(MekanismTags.Items.ENRICHED_CARBON, MekanismItems.ENRICHED_CARBON);
-        addItemsToTag(MekanismTags.Items.ENRICHED_DIAMOND, MekanismItems.ENRICHED_DIAMOND);
-        addItemsToTag(MekanismTags.Items.ENRICHED_OBSIDIAN, MekanismItems.ENRICHED_OBSIDIAN);
-        addItemsToTag(MekanismTags.Items.ENRICHED_REDSTONE, MekanismItems.ENRICHED_REDSTONE);
-        addItemsToTag(MekanismTags.Items.ENRICHED_GOLD, MekanismItems.ENRICHED_GOLD);
-        addItemsToTag(MekanismTags.Items.ENRICHED_TIN, MekanismItems.ENRICHED_TIN);
+        getItemBuilder(MekanismTags.Items.ENRICHED_CARBON).add(MekanismItems.ENRICHED_CARBON);
+        getItemBuilder(MekanismTags.Items.ENRICHED_DIAMOND).add(MekanismItems.ENRICHED_DIAMOND);
+        getItemBuilder(MekanismTags.Items.ENRICHED_OBSIDIAN).add(MekanismItems.ENRICHED_OBSIDIAN);
+        getItemBuilder(MekanismTags.Items.ENRICHED_REDSTONE).add(MekanismItems.ENRICHED_REDSTONE);
+        getItemBuilder(MekanismTags.Items.ENRICHED_GOLD).add(MekanismItems.ENRICHED_GOLD);
+        getItemBuilder(MekanismTags.Items.ENRICHED_TIN).add(MekanismItems.ENRICHED_TIN);
         getItemBuilder(MekanismTags.Items.ENRICHED).add(MekanismTags.Items.ENRICHED_CARBON, MekanismTags.Items.ENRICHED_DIAMOND, MekanismTags.Items.ENRICHED_OBSIDIAN,
               MekanismTags.Items.ENRICHED_REDSTONE, MekanismTags.Items.ENRICHED_GOLD, MekanismTags.Items.ENRICHED_TIN);
     }
 
     private void addStorage() {
-        addBlocksToTag(MekanismTags.Blocks.BARRELS_PERSONAL, MekanismBlocks.PERSONAL_BARREL);
+        getBlockBuilder(MekanismTags.Blocks.BARRELS_PERSONAL).add(MekanismBlocks.PERSONAL_BARREL);
         getBlockBuilder(Tags.Blocks.BARRELS).add(MekanismTags.Blocks.BARRELS_PERSONAL);
-        addBlocksToTag(MekanismTags.Blocks.CHESTS_ELECTRIC, MekanismBlocks.PERSONAL_CHEST);
-        addBlocksToTag(MekanismTags.Blocks.CHESTS_PERSONAL, MekanismBlocks.PERSONAL_CHEST);
+        getBlockBuilder(MekanismTags.Blocks.CHESTS_ELECTRIC).add(MekanismBlocks.PERSONAL_CHEST);
+        getBlockBuilder(MekanismTags.Blocks.CHESTS_PERSONAL).add(MekanismBlocks.PERSONAL_CHEST);
         getBlockBuilder(Tags.Blocks.CHESTS).add(MekanismTags.Blocks.CHESTS_ELECTRIC, MekanismTags.Blocks.CHESTS_PERSONAL);
-        addItemsToTag(MekanismTags.Items.PERSONAL_STORAGE, MekanismBlocks.PERSONAL_BARREL.getItemHolder(), MekanismBlocks.PERSONAL_CHEST.getItemHolder());
+        getItemBuilder(MekanismTags.Items.PERSONAL_STORAGE).add(MekanismBlocks.PERSONAL_BARREL.getItemHolder(), MekanismBlocks.PERSONAL_CHEST.getItemHolder());
         getBlockBuilder(MekanismTags.Blocks.PERSONAL_STORAGE).add(MekanismTags.Blocks.BARRELS_PERSONAL, MekanismTags.Blocks.CHESTS_PERSONAL);
     }
 
@@ -415,8 +428,8 @@ public class MekanismTagProvider extends BaseTagProvider {
             }
             addToTags(Tags.Items.ORES_IN_GROUND_DEEPSLATE, Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, oreBlockType.deepslate());
             addToTags(Tags.Items.ORES_IN_GROUND_STONE, Tags.Blocks.ORES_IN_GROUND_STONE, oreBlockType.stone());
-            addBlocksToTag(BlockTags.OVERWORLD_CARVER_REPLACEABLES, oreBlockType.stone(), oreBlockType.deepslate());
-            addBlocksToTag(BlockTags.SNAPS_GOAT_HORN, oreBlockType.stone(), oreBlockType.deepslate());
+            getBlockBuilder(BlockTags.OVERWORLD_CARVER_REPLACEABLES).add(oreBlockType.stone(), oreBlockType.deepslate());
+            getBlockBuilder(BlockTags.SNAPS_GOAT_HORN).add(oreBlockType.stone(), oreBlockType.deepslate());
         }
     }
 
@@ -444,40 +457,40 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addIngots() {
-        addItemsToTag(MekanismTags.Items.INGOTS_BRONZE, MekanismItems.BRONZE_INGOT);
-        addItemsToTag(MekanismTags.Items.INGOTS_REFINED_GLOWSTONE, MekanismItems.REFINED_GLOWSTONE_INGOT);
-        addItemsToTag(MekanismTags.Items.INGOTS_REFINED_OBSIDIAN, MekanismItems.REFINED_OBSIDIAN_INGOT);
-        addItemsToTag(MekanismTags.Items.INGOTS_STEEL, MekanismItems.STEEL_INGOT);
+        getItemBuilder(MekanismTags.Items.INGOTS_BRONZE).add(MekanismItems.BRONZE_INGOT);
+        getItemBuilder(MekanismTags.Items.INGOTS_REFINED_GLOWSTONE).add(MekanismItems.REFINED_GLOWSTONE_INGOT);
+        getItemBuilder(MekanismTags.Items.INGOTS_REFINED_OBSIDIAN).add(MekanismItems.REFINED_OBSIDIAN_INGOT);
+        getItemBuilder(MekanismTags.Items.INGOTS_STEEL).add(MekanismItems.STEEL_INGOT);
         getItemBuilder(Tags.Items.INGOTS).add(MekanismTags.Items.INGOTS_BRONZE,
               MekanismTags.Items.INGOTS_REFINED_GLOWSTONE, MekanismTags.Items.INGOTS_REFINED_OBSIDIAN, MekanismTags.Items.INGOTS_STEEL);
     }
 
     private void addNuggets() {
-        addItemsToTag(MekanismTags.Items.NUGGETS_BRONZE, MekanismItems.BRONZE_NUGGET);
-        addItemsToTag(MekanismTags.Items.NUGGETS_REFINED_GLOWSTONE, MekanismItems.REFINED_GLOWSTONE_NUGGET);
-        addItemsToTag(MekanismTags.Items.NUGGETS_REFINED_OBSIDIAN, MekanismItems.REFINED_OBSIDIAN_NUGGET);
-        addItemsToTag(MekanismTags.Items.NUGGETS_STEEL, MekanismItems.STEEL_NUGGET);
+        getItemBuilder(MekanismTags.Items.NUGGETS_BRONZE).add(MekanismItems.BRONZE_NUGGET);
+        getItemBuilder(MekanismTags.Items.NUGGETS_REFINED_GLOWSTONE).add(MekanismItems.REFINED_GLOWSTONE_NUGGET);
+        getItemBuilder(MekanismTags.Items.NUGGETS_REFINED_OBSIDIAN).add(MekanismItems.REFINED_OBSIDIAN_NUGGET);
+        getItemBuilder(MekanismTags.Items.NUGGETS_STEEL).add(MekanismItems.STEEL_NUGGET);
         getItemBuilder(Tags.Items.NUGGETS).add(MekanismTags.Items.NUGGETS_BRONZE,
               MekanismTags.Items.NUGGETS_REFINED_GLOWSTONE, MekanismTags.Items.NUGGETS_REFINED_OBSIDIAN, MekanismTags.Items.NUGGETS_STEEL);
     }
 
     private void addDusts() {
-        addItemsToTag(MekanismTags.Items.DUSTS_BRONZE, MekanismItems.BRONZE_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_CHARCOAL, MekanismItems.CHARCOAL_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_COAL, MekanismItems.COAL_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_DIAMOND, MekanismItems.DIAMOND_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_EMERALD, MekanismItems.EMERALD_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_NETHERITE, MekanismItems.NETHERITE_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_LAPIS, MekanismItems.LAPIS_LAZULI_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_LITHIUM, MekanismItems.LITHIUM_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_OBSIDIAN, MekanismItems.OBSIDIAN_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_QUARTZ, MekanismItems.QUARTZ_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_REFINED_OBSIDIAN, MekanismItems.REFINED_OBSIDIAN_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_SALT, MekanismItems.SALT);
-        addItemsToTag(MekanismTags.Items.DUSTS_STEEL, MekanismItems.STEEL_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_SULFUR, MekanismItems.SULFUR_DUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_WOOD, MekanismItems.SAWDUST);
-        addItemsToTag(MekanismTags.Items.DUSTS_FLUORITE, MekanismItems.FLUORITE_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_BRONZE).add(MekanismItems.BRONZE_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_CHARCOAL).add(MekanismItems.CHARCOAL_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_COAL).add(MekanismItems.COAL_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_DIAMOND).add(MekanismItems.DIAMOND_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_EMERALD).add(MekanismItems.EMERALD_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_NETHERITE).add(MekanismItems.NETHERITE_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_LAPIS).add(MekanismItems.LAPIS_LAZULI_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_LITHIUM).add(MekanismItems.LITHIUM_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_OBSIDIAN).add(MekanismItems.OBSIDIAN_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_QUARTZ).add(MekanismItems.QUARTZ_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_REFINED_OBSIDIAN).add(MekanismItems.REFINED_OBSIDIAN_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_SALT).add(MekanismItems.SALT);
+        getItemBuilder(MekanismTags.Items.DUSTS_STEEL).add(MekanismItems.STEEL_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_SULFUR).add(MekanismItems.SULFUR_DUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_WOOD).add(MekanismItems.SAWDUST);
+        getItemBuilder(MekanismTags.Items.DUSTS_FLUORITE).add(MekanismItems.FLUORITE_DUST);
         getItemBuilder(Tags.Items.DUSTS).add(MekanismTags.Items.DUSTS_BRONZE, MekanismTags.Items.DUSTS_CHARCOAL, MekanismTags.Items.DUSTS_COAL,
               MekanismTags.Items.DUSTS_DIAMOND, MekanismTags.Items.DUSTS_EMERALD, MekanismTags.Items.DUSTS_NETHERITE, MekanismTags.Items.DUSTS_LAPIS,
               MekanismTags.Items.DUSTS_LITHIUM, MekanismTags.Items.DUSTS_OBSIDIAN, MekanismTags.Items.DUSTS_QUARTZ, MekanismTags.Items.DUSTS_REFINED_OBSIDIAN,
@@ -486,50 +499,53 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addGems() {
-        addItemsToTag(MekanismTags.Items.GEMS_FLUORITE, MekanismItems.FLUORITE_GEM);
+        getItemBuilder(MekanismTags.Items.GEMS_FLUORITE).add(MekanismItems.FLUORITE_GEM);
         getItemBuilder(Tags.Items.GEMS).add(MekanismTags.Items.GEMS_FLUORITE);
     }
 
     private void addPellets() {
-        addItemsToTag(MekanismTags.Items.PELLETS_ANTIMATTER, MekanismItems.ANTIMATTER_PELLET);
-        addItemsToTag(MekanismTags.Items.PELLETS_PLUTONIUM, MekanismItems.PLUTONIUM_PELLET);
-        addItemsToTag(MekanismTags.Items.PELLETS_POLONIUM, MekanismItems.POLONIUM_PELLET);
+        getItemBuilder(MekanismTags.Items.PELLETS_ANTIMATTER).add(MekanismItems.ANTIMATTER_PELLET);
+        getItemBuilder(MekanismTags.Items.PELLETS_PLUTONIUM).add(MekanismItems.PLUTONIUM_PELLET);
+        getItemBuilder(MekanismTags.Items.PELLETS_POLONIUM).add(MekanismItems.POLONIUM_PELLET);
     }
 
     private void addColorableItems() {
-        getItemBuilder(MekanismTags.Items.COLORABLE_WOOL).add(Items.WHITE_WOOL, Items.ORANGE_WOOL, Items.MAGENTA_WOOL, Items.LIGHT_BLUE_WOOL, Items.YELLOW_WOOL,
-              Items.LIME_WOOL, Items.PINK_WOOL, Items.GRAY_WOOL, Items.LIGHT_GRAY_WOOL, Items.CYAN_WOOL, Items.PURPLE_WOOL, Items.BLUE_WOOL, Items.BROWN_WOOL,
-              Items.GREEN_WOOL, Items.RED_WOOL, Items.BLACK_WOOL);
-        getItemBuilder(MekanismTags.Items.COLORABLE_CARPETS).add(Items.WHITE_CARPET, Items.ORANGE_CARPET, Items.MAGENTA_CARPET, Items.LIGHT_BLUE_CARPET, Items.YELLOW_CARPET,
-              Items.LIME_CARPET, Items.PINK_CARPET, Items.GRAY_CARPET, Items.LIGHT_GRAY_CARPET, Items.CYAN_CARPET, Items.PURPLE_CARPET, Items.BLUE_CARPET,
-              Items.BROWN_CARPET, Items.GREEN_CARPET, Items.RED_CARPET, Items.BLACK_CARPET);
-        getItemBuilder(MekanismTags.Items.COLORABLE_BEDS).add(Items.WHITE_BED, Items.ORANGE_BED, Items.MAGENTA_BED, Items.LIGHT_BLUE_BED, Items.YELLOW_BED,
-              Items.LIME_BED, Items.PINK_BED, Items.GRAY_BED, Items.LIGHT_GRAY_BED, Items.CYAN_BED, Items.PURPLE_BED, Items.BLUE_BED, Items.BROWN_BED,
+        getItemBuilder(MekanismTags.Items.COLORABLE_WOOL).addIntrinsic(BuiltInRegistries.ITEM, Items.WHITE_WOOL, Items.ORANGE_WOOL, Items.MAGENTA_WOOL,
+              Items.LIGHT_BLUE_WOOL, Items.YELLOW_WOOL, Items.LIME_WOOL, Items.PINK_WOOL, Items.GRAY_WOOL, Items.LIGHT_GRAY_WOOL, Items.CYAN_WOOL, Items.PURPLE_WOOL,
+              Items.BLUE_WOOL, Items.BROWN_WOOL, Items.GREEN_WOOL, Items.RED_WOOL, Items.BLACK_WOOL);
+        getItemBuilder(MekanismTags.Items.COLORABLE_CARPETS).addIntrinsic(BuiltInRegistries.ITEM, Items.WHITE_CARPET, Items.ORANGE_CARPET, Items.MAGENTA_CARPET,
+              Items.LIGHT_BLUE_CARPET, Items.YELLOW_CARPET, Items.LIME_CARPET, Items.PINK_CARPET, Items.GRAY_CARPET, Items.LIGHT_GRAY_CARPET, Items.CYAN_CARPET,
+              Items.PURPLE_CARPET, Items.BLUE_CARPET, Items.BROWN_CARPET, Items.GREEN_CARPET, Items.RED_CARPET, Items.BLACK_CARPET);
+        getItemBuilder(MekanismTags.Items.COLORABLE_BEDS).addIntrinsic(BuiltInRegistries.ITEM, Items.WHITE_BED, Items.ORANGE_BED, Items.MAGENTA_BED, Items.LIGHT_BLUE_BED,
+              Items.YELLOW_BED, Items.LIME_BED, Items.PINK_BED, Items.GRAY_BED, Items.LIGHT_GRAY_BED, Items.CYAN_BED, Items.PURPLE_BED, Items.BLUE_BED, Items.BROWN_BED,
               Items.GREEN_BED, Items.RED_BED, Items.BLACK_BED);
-        getItemBuilder(MekanismTags.Items.COLORABLE_GLASS).add(Items.GLASS, Items.WHITE_STAINED_GLASS, Items.ORANGE_STAINED_GLASS, Items.MAGENTA_STAINED_GLASS,
-              Items.LIGHT_BLUE_STAINED_GLASS, Items.YELLOW_STAINED_GLASS, Items.LIME_STAINED_GLASS, Items.PINK_STAINED_GLASS, Items.GRAY_STAINED_GLASS,
-              Items.LIGHT_GRAY_STAINED_GLASS, Items.CYAN_STAINED_GLASS, Items.PURPLE_STAINED_GLASS, Items.BLUE_STAINED_GLASS, Items.BROWN_STAINED_GLASS,
-              Items.GREEN_STAINED_GLASS, Items.RED_STAINED_GLASS, Items.BLACK_STAINED_GLASS);
-        getItemBuilder(MekanismTags.Items.COLORABLE_GLASS_PANES).add(Items.GLASS_PANE, Items.WHITE_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE,
-              Items.MAGENTA_STAINED_GLASS_PANE, Items.LIGHT_BLUE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.LIME_STAINED_GLASS_PANE,
-              Items.PINK_STAINED_GLASS_PANE, Items.GRAY_STAINED_GLASS_PANE, Items.LIGHT_GRAY_STAINED_GLASS_PANE, Items.CYAN_STAINED_GLASS_PANE,
-              Items.PURPLE_STAINED_GLASS_PANE, Items.BLUE_STAINED_GLASS_PANE, Items.BROWN_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE,
-              Items.RED_STAINED_GLASS_PANE, Items.BLACK_STAINED_GLASS_PANE);
-        getItemBuilder(MekanismTags.Items.COLORABLE_TERRACOTTA).add(Items.TERRACOTTA, Items.WHITE_TERRACOTTA, Items.ORANGE_TERRACOTTA, Items.MAGENTA_TERRACOTTA,
-              Items.LIGHT_BLUE_TERRACOTTA, Items.YELLOW_TERRACOTTA, Items.LIME_TERRACOTTA, Items.PINK_TERRACOTTA, Items.GRAY_TERRACOTTA,
-              Items.LIGHT_GRAY_TERRACOTTA, Items.CYAN_TERRACOTTA, Items.PURPLE_TERRACOTTA, Items.BLUE_TERRACOTTA, Items.BROWN_TERRACOTTA,
-              Items.GREEN_TERRACOTTA, Items.RED_TERRACOTTA, Items.BLACK_TERRACOTTA);
-        getItemBuilder(MekanismTags.Items.COLORABLE_CANDLE).add(Items.CANDLE, Items.WHITE_CANDLE, Items.ORANGE_CANDLE, Items.MAGENTA_CANDLE, Items.LIGHT_BLUE_CANDLE,
-              Items.YELLOW_CANDLE, Items.LIME_CANDLE, Items.PINK_CANDLE, Items.GRAY_CANDLE, Items.LIGHT_GRAY_CANDLE, Items.CYAN_CANDLE, Items.PURPLE_CANDLE,
-              Items.BLUE_CANDLE, Items.BROWN_CANDLE, Items.GREEN_CANDLE, Items.RED_CANDLE, Items.BLACK_CANDLE);
-        getItemBuilder(MekanismTags.Items.COLORABLE_CONCRETE).add(Items.WHITE_CONCRETE, Items.ORANGE_CONCRETE, Items.MAGENTA_CONCRETE, Items.LIGHT_BLUE_CONCRETE,
-              Items.YELLOW_CONCRETE, Items.LIME_CONCRETE, Items.PINK_CONCRETE, Items.GRAY_CONCRETE, Items.LIGHT_GRAY_CONCRETE, Items.CYAN_CONCRETE,
-              Items.PURPLE_CONCRETE, Items.BLUE_CONCRETE, Items.BROWN_CONCRETE, Items.GREEN_CONCRETE, Items.RED_CONCRETE, Items.BLACK_CONCRETE);
-        getItemBuilder(MekanismTags.Items.COLORABLE_CONCRETE_POWDER).add(Items.WHITE_CONCRETE_POWDER, Items.ORANGE_CONCRETE_POWDER, Items.MAGENTA_CONCRETE_POWDER,
-              Items.LIGHT_BLUE_CONCRETE_POWDER, Items.YELLOW_CONCRETE_POWDER, Items.LIME_CONCRETE_POWDER, Items.PINK_CONCRETE_POWDER, Items.GRAY_CONCRETE_POWDER,
-              Items.LIGHT_GRAY_CONCRETE_POWDER, Items.CYAN_CONCRETE_POWDER, Items.PURPLE_CONCRETE_POWDER, Items.BLUE_CONCRETE_POWDER, Items.BROWN_CONCRETE_POWDER,
-              Items.GREEN_CONCRETE_POWDER, Items.RED_CONCRETE_POWDER, Items.BLACK_CONCRETE_POWDER);
-        getItemBuilder(MekanismTags.Items.COLORABLE_BANNERS).addTyped(color -> BannerBlock.byColor(color).asItem(), DyeColor.values());
+        getItemBuilder(MekanismTags.Items.COLORABLE_GLASS).addIntrinsic(BuiltInRegistries.ITEM, Items.GLASS, Items.WHITE_STAINED_GLASS, Items.ORANGE_STAINED_GLASS,
+              Items.MAGENTA_STAINED_GLASS, Items.LIGHT_BLUE_STAINED_GLASS, Items.YELLOW_STAINED_GLASS, Items.LIME_STAINED_GLASS, Items.PINK_STAINED_GLASS,
+              Items.GRAY_STAINED_GLASS, Items.LIGHT_GRAY_STAINED_GLASS, Items.CYAN_STAINED_GLASS, Items.PURPLE_STAINED_GLASS, Items.BLUE_STAINED_GLASS,
+              Items.BROWN_STAINED_GLASS, Items.GREEN_STAINED_GLASS, Items.RED_STAINED_GLASS, Items.BLACK_STAINED_GLASS);
+        getItemBuilder(MekanismTags.Items.COLORABLE_GLASS_PANES).addIntrinsic(BuiltInRegistries.ITEM, Items.GLASS_PANE, Items.WHITE_STAINED_GLASS_PANE,
+              Items.ORANGE_STAINED_GLASS_PANE, Items.MAGENTA_STAINED_GLASS_PANE, Items.LIGHT_BLUE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE,
+              Items.LIME_STAINED_GLASS_PANE, Items.PINK_STAINED_GLASS_PANE, Items.GRAY_STAINED_GLASS_PANE, Items.LIGHT_GRAY_STAINED_GLASS_PANE,
+              Items.CYAN_STAINED_GLASS_PANE, Items.PURPLE_STAINED_GLASS_PANE, Items.BLUE_STAINED_GLASS_PANE, Items.BROWN_STAINED_GLASS_PANE,
+              Items.GREEN_STAINED_GLASS_PANE, Items.RED_STAINED_GLASS_PANE, Items.BLACK_STAINED_GLASS_PANE);
+        getItemBuilder(MekanismTags.Items.COLORABLE_TERRACOTTA).addIntrinsic(BuiltInRegistries.ITEM, Items.TERRACOTTA, Items.WHITE_TERRACOTTA, Items.ORANGE_TERRACOTTA,
+              Items.MAGENTA_TERRACOTTA, Items.LIGHT_BLUE_TERRACOTTA, Items.YELLOW_TERRACOTTA, Items.LIME_TERRACOTTA, Items.PINK_TERRACOTTA, Items.GRAY_TERRACOTTA,
+              Items.LIGHT_GRAY_TERRACOTTA, Items.CYAN_TERRACOTTA, Items.PURPLE_TERRACOTTA, Items.BLUE_TERRACOTTA, Items.BROWN_TERRACOTTA, Items.GREEN_TERRACOTTA,
+              Items.RED_TERRACOTTA, Items.BLACK_TERRACOTTA);
+        getItemBuilder(MekanismTags.Items.COLORABLE_CANDLE).addIntrinsic(BuiltInRegistries.ITEM, Items.CANDLE, Items.WHITE_CANDLE, Items.ORANGE_CANDLE,
+              Items.MAGENTA_CANDLE, Items.LIGHT_BLUE_CANDLE, Items.YELLOW_CANDLE, Items.LIME_CANDLE, Items.PINK_CANDLE, Items.GRAY_CANDLE, Items.LIGHT_GRAY_CANDLE,
+              Items.CYAN_CANDLE, Items.PURPLE_CANDLE, Items.BLUE_CANDLE, Items.BROWN_CANDLE, Items.GREEN_CANDLE, Items.RED_CANDLE, Items.BLACK_CANDLE);
+        getItemBuilder(MekanismTags.Items.COLORABLE_CONCRETE).addIntrinsic(BuiltInRegistries.ITEM, Items.WHITE_CONCRETE, Items.ORANGE_CONCRETE, Items.MAGENTA_CONCRETE,
+              Items.LIGHT_BLUE_CONCRETE, Items.YELLOW_CONCRETE, Items.LIME_CONCRETE, Items.PINK_CONCRETE, Items.GRAY_CONCRETE, Items.LIGHT_GRAY_CONCRETE,
+              Items.CYAN_CONCRETE, Items.PURPLE_CONCRETE, Items.BLUE_CONCRETE, Items.BROWN_CONCRETE, Items.GREEN_CONCRETE, Items.RED_CONCRETE, Items.BLACK_CONCRETE);
+        getItemBuilder(MekanismTags.Items.COLORABLE_CONCRETE_POWDER).addIntrinsic(BuiltInRegistries.ITEM, Items.WHITE_CONCRETE_POWDER, Items.ORANGE_CONCRETE_POWDER,
+              Items.MAGENTA_CONCRETE_POWDER, Items.LIGHT_BLUE_CONCRETE_POWDER, Items.YELLOW_CONCRETE_POWDER, Items.LIME_CONCRETE_POWDER, Items.PINK_CONCRETE_POWDER,
+              Items.GRAY_CONCRETE_POWDER, Items.LIGHT_GRAY_CONCRETE_POWDER, Items.CYAN_CONCRETE_POWDER, Items.PURPLE_CONCRETE_POWDER, Items.BLUE_CONCRETE_POWDER,
+              Items.BROWN_CONCRETE_POWDER, Items.GREEN_CONCRETE_POWDER, Items.RED_CONCRETE_POWDER, Items.BLACK_CONCRETE_POWDER);
+        MekanismTagBuilder<Item> colorableBanners = getItemBuilder(MekanismTags.Items.COLORABLE_BANNERS);
+        for (DyeColor color : DyeColor.values()) {
+            colorableBanners.addIntrinsic(BuiltInRegistries.ITEM, BannerBlock.byColor(color).asItem());
+        }
     }
 
     private void addBiomes() {
@@ -537,19 +553,21 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addDamageTypes() {
-        addToTag(Tags.DamageTypes.IS_ENVIRONMENT, MekanismDamageTypes.RADIATION);
-        addToTag(DamageTypeTags.BYPASSES_ARMOR, MekanismDamageTypes.RADIATION);
-        addToTag(DamageTypeTags.BYPASSES_RESISTANCE, MekanismDamageTypes.RADIATION);
-        addToTag(DamageTypeTags.BYPASSES_SHIELD, MekanismDamageTypes.RADIATION);
-        addToTag(DamageTypeTags.BYPASSES_WOLF_ARMOR, MekanismDamageTypes.RADIATION);
-        addToTag(DamageTypeTags.BYPASSES_COOLDOWN, MekanismDamageTypes.LASER);
-        addToTag(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS, MekanismDamageTypes.LASER);
-        addToTag(DamageTypeTags.PANIC_CAUSES, MekanismDamageTypes.LASER);
-        addToTag(DamageTypeTags.NO_KNOCKBACK, MekanismDamageTypes.LASER, MekanismDamageTypes.RADIATION);
-        addToTag(DamageTypeTags.PANIC_ENVIRONMENTAL_CAUSES, MekanismDamageTypes.RADIATION);
+        ResourceKey<DamageType> laser = MekanismDamageTypes.LASER.key();
+        ResourceKey<DamageType> radiation = MekanismDamageTypes.RADIATION.key();
+        getDamageTypeBuilder(Tags.DamageTypes.IS_ENVIRONMENT).add(radiation);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ARMOR).add(radiation);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_RESISTANCE).add(radiation);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_SHIELD).add(radiation);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_WOLF_ARMOR).add(radiation);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_COOLDOWN).add(laser);
+        getDamageTypeBuilder(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS).add(laser);
+        getDamageTypeBuilder(DamageTypeTags.PANIC_CAUSES).add(laser);
+        getDamageTypeBuilder(DamageTypeTags.NO_KNOCKBACK).add(laser, radiation);
+        getDamageTypeBuilder(DamageTypeTags.PANIC_ENVIRONMENTAL_CAUSES).add(radiation);
         getDamageTypeBuilder(MekanismAPITags.DamageTypes.IS_PREVENTABLE_MAGIC).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC);
 
-        addToTag(MekanismAPITags.DamageTypes.MEKASUIT_ALWAYS_SUPPORTED, DamageTypes.FALLING_ANVIL, DamageTypes.CACTUS, DamageTypes.CRAMMING,
+        getDamageTypeBuilder(MekanismAPITags.DamageTypes.MEKASUIT_ALWAYS_SUPPORTED).add(DamageTypes.FALLING_ANVIL, DamageTypes.CACTUS, DamageTypes.CRAMMING,
               DamageTypes.DRAGON_BREATH, DamageTypes.DRY_OUT, DamageTypes.FALL, DamageTypes.FALLING_BLOCK, DamageTypes.FLY_INTO_WALL, DamageTypes.GENERIC,
               DamageTypes.HOT_FLOOR, DamageTypes.IN_FIRE, DamageTypes.IN_WALL, DamageTypes.LAVA, DamageTypes.LIGHTNING_BOLT, DamageTypes.ON_FIRE,
               DamageTypes.SWEET_BERRY_BUSH, DamageTypes.WITHER, DamageTypes.FREEZE, DamageTypes.FALLING_STALACTITE, DamageTypes.STALAGMITE, DamageTypes.SONIC_BOOM);
@@ -579,24 +597,32 @@ public class MekanismTagProvider extends BaseTagProvider {
     }
 
     private void addGameEvents() {
-        addToTag(GameEventTags.VIBRATIONS, MekanismGameEvents.SEISMIC_VIBRATION, MekanismGameEvents.JETPACK_BURN, MekanismGameEvents.GRAVITY_MODULATE,
-              MekanismGameEvents.GRAVITY_MODULATE_BOOSTED);
-        addToTag(GameEventTags.WARDEN_CAN_LISTEN, MekanismGameEvents.SEISMIC_VIBRATION, MekanismGameEvents.JETPACK_BURN, MekanismGameEvents.GRAVITY_MODULATE,
-              MekanismGameEvents.GRAVITY_MODULATE_BOOSTED);
+        getGameEventBuilder(GameEventTags.VIBRATIONS).add(
+              MekanismGameEvents.SEISMIC_VIBRATION,
+              MekanismGameEvents.JETPACK_BURN,
+              MekanismGameEvents.GRAVITY_MODULATE,
+              MekanismGameEvents.GRAVITY_MODULATE_BOOSTED
+        );
+        getGameEventBuilder(GameEventTags.WARDEN_CAN_LISTEN).add(
+              MekanismGameEvents.SEISMIC_VIBRATION,
+              MekanismGameEvents.JETPACK_BURN,
+              MekanismGameEvents.GRAVITY_MODULATE,
+              MekanismGameEvents.GRAVITY_MODULATE_BOOSTED
+        );
     }
 
     private void addChemicalTags() {
-        addChemicalsToTag(MekanismTags.Chemicals.WATER_VAPOR, MekanismChemicals.WATER_VAPOR, MekanismChemicals.STEAM);
-        addChemicalsToTag(MekanismAPITags.Chemicals.WASTE_BARREL_DECAY_BLACKLIST, MekanismChemicals.PLUTONIUM, MekanismChemicals.POLONIUM);
+        getChemicalBuilder(MekanismTags.Chemicals.WATER_VAPOR).add(MekanismChemicals.WATER_VAPOR, MekanismChemicals.STEAM);
+        getChemicalBuilder(MekanismAPITags.Chemicals.WASTE_BARREL_DECAY_BLACKLIST).add(MekanismChemicals.PLUTONIUM, MekanismChemicals.POLONIUM);
 
         // add dynamic slurry tags
-        getChemicalBuilder(MekanismAPITags.Chemicals.DIRTY).addHolders(MekanismChemicals.PROCESSED_RESOURCES.values());
-        IntrinsicMekanismTagBuilder<Chemical> cleanTagBuilder = getChemicalBuilder(MekanismAPITags.Chemicals.CLEAN);
+        getChemicalBuilder(MekanismAPITags.Chemicals.DIRTY).add(MekanismChemicals.PROCESSED_RESOURCES.values());
+        MekanismTagBuilder<Chemical> cleanTagBuilder = getChemicalBuilder(MekanismAPITags.Chemicals.CLEAN);
         for (SlurryRegistryObject<?, ?> slurryRO : MekanismChemicals.PROCESSED_RESOURCES.values()) {
-            cleanTagBuilder.addHolders(slurryRO.getCleanSlurry());
+            cleanTagBuilder.add(slurryRO.getCleanSlurry());
         }
 
-        addChemicalsToTag(MekanismAPITags.Chemicals.GASEOUS,
+        getChemicalBuilder(MekanismAPITags.Chemicals.GASEOUS).add(
               MekanismChemicals.WATER_VAPOR,
               MekanismChemicals.STEAM,
               MekanismChemicals.BRINE,
@@ -608,14 +634,14 @@ public class MekanismTagProvider extends BaseTagProvider {
               MekanismChemicals.ETHENE
         );
 
-        addChemicalsToTag(MekanismAPITags.Chemicals.CARBON, MekanismChemicals.CARBON);
-        addChemicalsToTag(MekanismAPITags.Chemicals.REDSTONE, MekanismChemicals.REDSTONE);
-        addChemicalsToTag(MekanismAPITags.Chemicals.DIAMOND, MekanismChemicals.DIAMOND);
-        addChemicalsToTag(MekanismAPITags.Chemicals.REFINED_OBSIDIAN, MekanismChemicals.REFINED_OBSIDIAN);
-        addChemicalsToTag(MekanismAPITags.Chemicals.GOLD, MekanismChemicals.GOLD);
-        addChemicalsToTag(MekanismAPITags.Chemicals.TIN, MekanismChemicals.TIN);
-        addChemicalsToTag(MekanismAPITags.Chemicals.FUNGI, MekanismChemicals.FUNGI);
-        addChemicalsToTag(MekanismAPITags.Chemicals.BIO, MekanismChemicals.BIO);
+        getChemicalBuilder(MekanismAPITags.Chemicals.CARBON).add(MekanismChemicals.CARBON);
+        getChemicalBuilder(MekanismAPITags.Chemicals.REDSTONE).add(MekanismChemicals.REDSTONE);
+        getChemicalBuilder(MekanismAPITags.Chemicals.DIAMOND).add(MekanismChemicals.DIAMOND);
+        getChemicalBuilder(MekanismAPITags.Chemicals.REFINED_OBSIDIAN).add(MekanismChemicals.REFINED_OBSIDIAN);
+        getChemicalBuilder(MekanismAPITags.Chemicals.GOLD).add(MekanismChemicals.GOLD);
+        getChemicalBuilder(MekanismAPITags.Chemicals.TIN).add(MekanismChemicals.TIN);
+        getChemicalBuilder(MekanismAPITags.Chemicals.FUNGI).add(MekanismChemicals.FUNGI);
+        getChemicalBuilder(MekanismAPITags.Chemicals.BIO).add(MekanismChemicals.BIO);
     }
 
     private void addHarvestRequirements() {
@@ -685,20 +711,15 @@ public class MekanismTagProvider extends BaseTagProvider {
         addToHarvestTag(BlockTags.MINEABLE_WITH_PICKAXE,
               MekanismBlocks.PROCESSED_RESOURCE_BLOCKS
         );
-        IntrinsicMekanismTagBuilder<Block> needsStoneToolBuilder = getBlockBuilder(BlockTags.NEEDS_STONE_TOOL);
-        IntrinsicMekanismTagBuilder<Block> tagBuilder = getBlockBuilder(BlockTags.MINEABLE_WITH_PICKAXE);
+        MekanismTagBuilder<Block> needsStoneToolBuilder = getBlockBuilder(BlockTags.NEEDS_STONE_TOOL);
         for (OreBlockType ore : MekanismBlocks.ORES.values()) {
             Holder<Block> stone = ore.stone();
-            tagBuilder.addHolders(stone);
-            hasHarvestData(stone);
-            needsStoneToolBuilder.addHolders(stone);
             Holder<Block> deepslate = ore.deepslate();
-            tagBuilder.addHolders(deepslate);
-            hasHarvestData(deepslate);
-            needsStoneToolBuilder.addHolders(deepslate);
+            addToHarvestTag(BlockTags.MINEABLE_WITH_PICKAXE, stone, deepslate);
+            needsStoneToolBuilder.add(stone, deepslate);
         }
         addToHarvestTag(BlockTags.MINEABLE_WITH_SHOVEL, MekanismBlocks.SALT_BLOCK);
-        addBlocksToTag(BlockTags.NEEDS_STONE_TOOL,
+        getBlockBuilder(BlockTags.NEEDS_STONE_TOOL).add(
               MekanismBlocks.PROCESSED_RESOURCE_BLOCKS.get(PrimaryResource.OSMIUM),
               MekanismBlocks.PROCESSED_RESOURCE_BLOCKS.get(BlockResourceInfo.RAW_OSMIUM),
               MekanismBlocks.PROCESSED_RESOURCE_BLOCKS.get(PrimaryResource.TIN),
@@ -712,6 +733,6 @@ public class MekanismTagProvider extends BaseTagProvider {
               MekanismBlocks.STEEL_BLOCK,
               MekanismBlocks.REFINED_GLOWSTONE_BLOCK
         );
-        addBlocksToTag(BlockTags.NEEDS_DIAMOND_TOOL, MekanismBlocks.REFINED_OBSIDIAN_BLOCK);
+        getBlockBuilder(BlockTags.NEEDS_DIAMOND_TOOL).add(MekanismBlocks.REFINED_OBSIDIAN_BLOCK);
     }
 }

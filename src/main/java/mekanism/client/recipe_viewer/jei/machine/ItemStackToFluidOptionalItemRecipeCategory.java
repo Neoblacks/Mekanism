@@ -79,9 +79,10 @@ public class ItemStackToFluidOptionalItemRecipeCategory extends BaseRecipeCatego
     public ResourceLocation getRegistryName(@NotNull BasicItemStackToFluidOptionalItemRecipe recipe) {
         List<@NotNull ItemStack> representations = recipe.getInput().getRepresentations();
         if (representations.size() == 1) {
-            return BuiltInRegistries.ITEM.getResourceKey(representations.getFirst().getItem())
-                  .map(key -> RecipeViewerUtils.synthetic(key.location(), "liquification", Mekanism.MODID))
-                  .orElse(null);
+            ResourceLocation itemId = BuiltInRegistries.ITEM.getKeyOrNull(representations.getFirst().getItem());
+            if (itemId != null) {
+                return RecipeViewerUtils.synthetic(itemId, "liquification", Mekanism.MODID);
+            }
         }
         return null;
     }

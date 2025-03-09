@@ -178,6 +178,7 @@ import mekanism.common.tile.qio.TileEntityQIOComponent;
 import mekanism.common.tile.transmitter.TileEntityLogisticalTransporter;
 import mekanism.common.util.WorldUtils;
 import net.minecraft.SharedConstants;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -663,7 +664,7 @@ public class ClientRegistration {
             }
         }
         if (!layersToAdd.isEmpty()) {
-            ResourceLocation entityName = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+            String entityName = Util.getRegisteredName(BuiltInRegistries.ENTITY_TYPE, type);
             for (Map.Entry<String, RenderLayer<LIVING, MODEL>> entry : layersToAdd.entrySet()) {
                 renderer.addLayer(entry.getValue());
                 Mekanism.logger.debug("Added Mekanism {} Layer to entity of type: {}", entry.getKey(), entityName);

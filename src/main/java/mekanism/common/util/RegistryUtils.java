@@ -2,6 +2,7 @@ package mekanism.common.util;
 
 import java.util.Optional;
 import mekanism.api.SerializationConstants;
+import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,23 +21,33 @@ public class RegistryUtils {
 
     public static Holder<BlockEntityType<?>> getBEHolder(BlockEntityType<?> type) {
         Holder<BlockEntityType<?>> holder = type.builtInRegistryHolder();
-        //I don't believe this can ever be null, but just in case the nullability annotation is valid... handle it
+        //I don't believe this can ever be null as it is always instantiated, but just in case the nullability annotation is valid... handle it
         if (holder == null) {
             return BuiltInRegistries.BLOCK_ENTITY_TYPE.wrapAsHolder(type);
         }
         return holder;
     }
 
-    public static <R> Optional<Holder<R>> getHolderById(CompoundTag nbt, Registry<R> registry) {
-        return Optional.ofNullable(nbt)
-              .filter(tag -> tag.contains(SerializationConstants.ID, Tag.TAG_STRING))
-              .map(tag -> tag.getString(SerializationConstants.ID))
-              .map(ResourceLocation::tryParse)
-              .flatMap(registry::getHolder);
+    public static <R> Optional<Holder.Reference<R>> getHolderById(CompoundTag nbt, Registry<R> registry) {
+        if (nbt != null && nbt.contains(SerializationConstants.ID, Tag.TAG_STRING)) {
+            ResourceLocation name = ResourceLocation.tryParse(nbt.getString(SerializationConstants.ID));
+            if (name != null) {
+                return registry.getHolder(name);
+            }
+        }
+        return Optional.empty();
     }
 
     public static String getPath(Block element) {
         return BuiltInRegistries.BLOCK.getKey(element).getPath();
+    }
+
+    public static <TYPE> ResourceLocation getName(Holder<TYPE> element, DefaultedRegistry<TYPE> registry) {
+        ResourceKey<?> key = element.getKey();
+        if (key == null) {
+            return registry.getKey(element.value());
+        }
+        return key.location();
     }
 
     @Nullable
@@ -49,13 +60,14 @@ public class RegistryUtils {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static ResourceLocation getNameGeneric(Object element) {
         if (element instanceof Holder<?> holder) {
+            //If we have a holder, just redirect to trying to look up the name with it
+            // As this method is mostly a fallback, we don't care if it fails to find a name if someone has a registry of holders for some reason
             return getName(holder);
         }
         for (Registry<?> registry : BuiltInRegistries.REGISTRY) {
-            //Note: We have to use getResourceKey as getKey for defaulted registries returns the default key
-            Optional<ResourceKey<?>> resourceKey = ((Registry) registry).getResourceKey(element);
-            if (resourceKey.isPresent()) {
-                return resourceKey.get().location();
+            ResourceLocation name = ((Registry) registry).getKeyOrNull(element);
+            if (name != null) {
+                return name;
             }
         }
         return null;

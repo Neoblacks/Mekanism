@@ -3,12 +3,12 @@ package mekanism.client.model;
 import mekanism.common.item.ItemModule;
 import mekanism.common.registration.impl.FluidDeferredRegister;
 import mekanism.common.registration.impl.ItemDeferredRegister;
+import mekanism.common.util.RegistryUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators.TrimModelData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.ArmorItem;
@@ -38,11 +38,7 @@ public abstract class BaseItemModelProvider extends ItemModelProvider {
     }
     
     protected String getPath(Holder<Item> holder) {
-        ResourceKey<Item> key = holder.getKey();
-        if (key == null) {
-            return BuiltInRegistries.ITEM.getKey(holder.value()).getPath();
-        }
-        return key.location().getPath();
+        return RegistryUtils.getName(holder, BuiltInRegistries.ITEM).getPath();
     }
 
     protected ResourceLocation itemTexture(Holder<Item> item) {

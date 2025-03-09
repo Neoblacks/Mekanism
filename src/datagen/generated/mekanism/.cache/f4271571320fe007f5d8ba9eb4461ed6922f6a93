@@ -1,4 +1,4 @@
-// 1.21.1	2025-03-09T10:50:27.1447216	Tags: mekanism
+// 1.21.1	2025-03-09T15:27:52.8164548	Tags: mekanism
 8a89da3b810e00ad44b7ee4d062a88db6298c8fe data/create/tags/fluid/no_infinite_draining.json
 b881c0bb158879ac88758c2b0562b422271e6397 data/c/tags/block/barrels.json
 adb3ecfd3180c123cdc984320eab5ce930bdc5be data/c/tags/block/barrels/personal.json
@@ -67,7 +67,7 @@ f8ee05e8b52f6c89aed431594951332341dce16c data/c/tags/item/buckets/lithium.json
 a835502a6850bc072132465eabedb3f788eb7424 data/c/tags/item/buckets/nutritional_paste.json
 5e0a1a98f9edda15917e0a0c6f827a21ad616275 data/c/tags/item/buckets/oxygen.json
 7b4041ffc866593db2cb803d171cdeaa2e3af5d0 data/c/tags/item/buckets/sodium.json
-b7f42867549430953dcca68329acc982cf764aa9 data/c/tags/item/buckets/steam.json
+27dd32432b3f7c4204f4a877f788cff9574dbd5f data/c/tags/item/buckets/steam.json
 884e710bc7f2759f56763e155a662a2ebeb3f3f2 data/c/tags/item/buckets/sulfuric_acid.json
 da5dfe17f04b3a29b546dd0c1849d305535ae335 data/c/tags/item/buckets/sulfur_dioxide.json
 9d6ad856dbaa7dbcf7ceb88ce62aadae936e9c85 data/c/tags/item/buckets/sulfur_trioxide.json

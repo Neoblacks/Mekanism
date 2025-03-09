@@ -36,9 +36,9 @@ public class GeneratorsTagProvider extends BaseTagProvider {
         addFluids();
         addGases();
         addHarvestRequirements();
-        addBlocksToTag(BlockTags.IMPERMEABLE, GeneratorsBlocks.REACTOR_GLASS);
+        getBlockBuilder(BlockTags.IMPERMEABLE).add(GeneratorsBlocks.REACTOR_GLASS);
 
-        addBlocksToTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON,
+        getBlockBuilder(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON).add(
               GeneratorsBlocks.REACTOR_GLASS,
 
               GeneratorsBlocks.FISSION_REACTOR_CASING,
@@ -61,21 +61,23 @@ public class GeneratorsTagProvider extends BaseTagProvider {
               GeneratorsBlocks.FUSION_REACTOR_LOGIC_ADAPTER,
               GeneratorsBlocks.LASER_FOCUS_MATRIX);
 
-        addBlocksToTag(FRAMEABLE, GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
-        addBlocksToTag(FB_BE_WHITELIST, GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
+        getBlockBuilder(FRAMEABLE).add(GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
+        getBlockBuilder(FB_BE_WHITELIST).add(GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
 
-        getItemBuilder(MekanismAPITags.Items.MEKA_UNITS).add(GeneratorsItems.ITEMS.getEntries().stream().filter(item -> item.get() instanceof IModuleItem).toList());
+        getItemBuilder(MekanismAPITags.Items.MEKA_UNITS).add(GeneratorsItems.ITEMS.getEntries().stream()
+              .filter(item -> item.get() instanceof IModuleItem)
+              .toList());
     }
 
     private void addBoxBlacklist() {
-        addBlocksToTag(Tags.Blocks.RELOCATION_NOT_SUPPORTED,
+        getBlockBuilder(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(
               GeneratorsBlocks.ADVANCED_SOLAR_GENERATOR,
               GeneratorsBlocks.WIND_GENERATOR
         );
     }
 
     private void addEndermanBlacklist() {
-        addBlocksToTag(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST,
+        getBlockBuilder(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST).add(
               GeneratorsBlocks.TURBINE_CASING,
               GeneratorsBlocks.TURBINE_VALVE,
               GeneratorsBlocks.TURBINE_VENT,
@@ -106,11 +108,11 @@ public class GeneratorsTagProvider extends BaseTagProvider {
     }
 
     private void addGases() {
-        addChemicalsToTag(GeneratorTags.Chemicals.DEUTERIUM, GeneratorsChemicals.DEUTERIUM);
-        addChemicalsToTag(GeneratorTags.Chemicals.TRITIUM, GeneratorsChemicals.TRITIUM);
-        addChemicalsToTag(GeneratorTags.Chemicals.FUSION_FUEL, GeneratorsChemicals.FUSION_FUEL);
+        getChemicalBuilder(GeneratorTags.Chemicals.DEUTERIUM).add(GeneratorsChemicals.DEUTERIUM);
+        getChemicalBuilder(GeneratorTags.Chemicals.TRITIUM).add(GeneratorsChemicals.TRITIUM);
+        getChemicalBuilder(GeneratorTags.Chemicals.FUSION_FUEL).add(GeneratorsChemicals.FUSION_FUEL);
 
-        addChemicalsToTag(MekanismAPITags.Chemicals.GASEOUS,
+        getChemicalBuilder(MekanismAPITags.Chemicals.GASEOUS).add(
               GeneratorsChemicals.DEUTERIUM,
               GeneratorsChemicals.TRITIUM,
               GeneratorsChemicals.FUSION_FUEL

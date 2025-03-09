@@ -17,7 +17,6 @@ import mekanism.common.config.IConfigTranslation;
 import mekanism.common.config.IMekanismConfig;
 import mekanism.common.registration.impl.BlockRegistryObject;
 import mekanism.common.registration.impl.FluidRegistryObject;
-import mekanism.common.util.RegistryUtils;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.data.CachedOutput;
@@ -80,7 +79,7 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
     protected void add(IHasTranslationKey key, String value) {
         if (key instanceof BlockRegistryObject<?, ?> blockHolder) {
             if (Attribute.matches(blockHolder, AttributeGui.class, attribute -> !attribute.hasCustomName())) {
-                add(Util.makeDescriptionId("container", RegistryUtils.getName(blockHolder)), value);
+                add(Util.makeDescriptionId("container", blockHolder.getId()), value);
             }
         }
         add(key.getTranslationKey(), value);
@@ -88,7 +87,7 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
 
     protected void add(BlockRegistryObject<?, ?> blockRO, String value, String containerName) {
         if (Attribute.matches(blockRO, AttributeGui.class, attribute -> !attribute.hasCustomName())) {
-            add(Util.makeDescriptionId("container", RegistryUtils.getName(blockRO)), containerName);
+            add(Util.makeDescriptionId("container", blockRO.getId()), containerName);
             add(blockRO.getTranslationKey(), value);
         } else {
             throw new IllegalArgumentException(blockRO + " does not have a container name set.");

@@ -284,8 +284,8 @@ public class NBTUtils {
     }
 
     public static <V> void writeRegistryEntry(CompoundTag nbt, String key, Registry<V> registry, V entry) {
-        ResourceLocation registryName = registry.getKey(entry);
-        if (registryName != null) {//Should not be null but validate it
+        ResourceLocation registryName = registry.getKeyOrNull(entry);
+        if (registryName != null) {//We expect the registry to have the entry, but if it doesn't then don't add it
             nbt.putString(key, registryName.toString());
         }
     }

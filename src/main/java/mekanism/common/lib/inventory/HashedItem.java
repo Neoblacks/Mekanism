@@ -88,17 +88,26 @@ public class HashedItem implements IHashedItem {
         return itemStack.save(provider);
     }
 
+    public boolean isSameItemSameComponents(ItemStack other) {
+        return ItemStack.isSameItemSameComponents(itemStack, other);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
-        return obj instanceof IHashedItem other && ItemStack.isSameItemSameComponents(itemStack, other.getInternalStack());
+        return obj instanceof IHashedItem other && isSameItemSameComponents(other.getInternalStack());
     }
 
     @Override
     public int hashCode() {
         return hashCode;
+    }
+
+    @Override
+    public String toString() {
+        return itemStack.getItem() + " with components: " + itemStack.getComponentsPatch();
     }
 
     //TODO: Eventually see if we can make it so instead of having this overarching HashedItem extension, make it just a record that is a pair?

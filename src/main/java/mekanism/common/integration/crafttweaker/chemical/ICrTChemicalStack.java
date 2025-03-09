@@ -2,7 +2,6 @@ package mekanism.common.integration.crafttweaker.chemical;
 
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.bracket.CommandStringDisplayable;
-import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
@@ -26,7 +25,7 @@ public interface ICrTChemicalStack extends CommandStringDisplayable {
     @ZenCodeType.Method
     @ZenCodeType.Getter("registryName")
     default ResourceLocation getRegistryName() {
-        return MekanismAPI.CHEMICAL_REGISTRY.getKey(getChemical());
+        return CrTChemical.getRegistryName(getChemical());
     }
 
     /**

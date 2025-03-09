@@ -110,9 +110,10 @@ public abstract class MekanismRecipeBuilder<BUILDER extends MekanismRecipeBuilde
      */
     @Deprecated(forRemoval = true, since = "10.7.11")
     protected void build(RecipeOutput recipeOutput, ItemLike output) {
-        ResourceLocation registryName = BuiltInRegistries.ITEM.getResourceKey(output.asItem())
-              .map(ResourceKey::location)
-              .orElseThrow(() -> new IllegalStateException("Could not retrieve registry name for output."));
+        ResourceLocation registryName = BuiltInRegistries.ITEM.getKeyOrNull(output.asItem());
+        if (registryName == null) {
+            throw new IllegalStateException("Could not retrieve registry name for output.");
+        }
         build(recipeOutput, registryName);
     }
 

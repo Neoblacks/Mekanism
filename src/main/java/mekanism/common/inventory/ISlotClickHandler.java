@@ -44,8 +44,7 @@ public interface ISlotClickHandler {
         }
 
         default ResourceLocation getRegistryName() {
-            ResourceLocation name = RegistryUtils.getName(getInternalStack().getItemHolder());
-            return name == null ? BuiltInRegistries.ITEM.getDefaultKey() : name;
+            return RegistryUtils.getName(item().getItemHolder(), BuiltInRegistries.ITEM);
         }
     }
 }
