@@ -22,13 +22,13 @@ import mekanism.client.recipe_viewer.type.IRecipeViewerRecipeType;
 import mekanism.common.Mekanism;
 import mekanism.common.recipe.impl.NutritionalLiquifierIRecipe;
 import mekanism.common.tile.component.config.DataType;
-import mekanism.common.util.RegistryUtils;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.helpers.ICodecHelper;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -79,7 +79,9 @@ public class ItemStackToFluidOptionalItemRecipeCategory extends BaseRecipeCatego
     public ResourceLocation getRegistryName(@NotNull BasicItemStackToFluidOptionalItemRecipe recipe) {
         List<@NotNull ItemStack> representations = recipe.getInput().getRepresentations();
         if (representations.size() == 1) {
-            return RecipeViewerUtils.synthetic(RegistryUtils.getName(representations.getFirst().getItem()), "liquification", Mekanism.MODID);
+            return BuiltInRegistries.ITEM.getResourceKey(representations.getFirst().getItem())
+                  .map(key -> RecipeViewerUtils.synthetic(key.location(), "liquification", Mekanism.MODID))
+                  .orElse(null);
         }
         return null;
     }

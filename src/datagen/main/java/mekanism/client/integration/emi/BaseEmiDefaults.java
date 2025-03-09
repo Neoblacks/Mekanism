@@ -8,24 +8,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import mekanism.api.annotations.NothingNullByDefault;
-import mekanism.api.providers.IChemicalProvider;
 import mekanism.api.tier.BaseTier;
 import mekanism.client.recipe_viewer.RecipeViewerUtils;
 import mekanism.common.DataGenSerializationConstants;
 import mekanism.common.integration.MekanismHooks;
+import mekanism.common.registration.INamedEntry;
 import mekanism.common.util.EnumUtils;
+import mekanism.common.util.RegistryUtils;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.PackOutput.PathProvider;
 import net.minecraft.data.PackOutput.Target;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 @NothingNullByDefault
@@ -75,14 +74,15 @@ public abstract class BaseEmiDefaults implements DataProvider {
         }
     }
 
-    protected void addRecipe(ItemLike output) {
-        ResourceLocation registryName = BuiltInRegistries.ITEM.getResourceKey(output.asItem())
-              .map(ResourceKey::location)
-              .orElseThrow(() -> new IllegalStateException("Could not retrieve registry name for output."));
+    protected void addRecipe(Holder<?> output) {
+        ResourceLocation registryName = RegistryUtils.getName(output);
+        if (registryName == null) {
+            throw new IllegalStateException("Could not retrieve registry name for output.");
+        }
         addRecipe(registryName);
     }
 
-    protected void addRotaryRecipe(IChemicalProvider gas) {
+    protected void addRotaryRecipe(INamedEntry gas) {
         //Allow showing all gas -> fluid rotary recipes by default, in case someone needs a fluid variant that then it consistently gets them to the gas
         // But we don't bother with the decondensentrating ones
         addUncheckedRecipe(RecipeViewerUtils.synthetic(ResourceLocation.fromNamespaceAndPath(modid, "rotary/" + gas.getName()), "condensentrating"));

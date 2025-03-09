@@ -32,6 +32,8 @@ public class CrTChemicalBuilder {
      * @param attribute Attribute to add.
      */
     @ZenCodeType.Method
+    @SuppressWarnings("removal")
+    @Deprecated(forRemoval = true, since = "10.7.11")
     public CrTChemicalBuilder with(ChemicalAttribute attribute) {
         builder.with(attribute);
         return this;
@@ -86,6 +88,8 @@ public class CrTChemicalBuilder {
      * @param oreTagLocation {@link ResourceLocation} of the item tag representing the ore.
      */
     @ZenCodeType.Method
+    @SuppressWarnings("removal")
+    @Deprecated(forRemoval = true, since = "10.7.11")
     public CrTChemicalBuilder ore(ResourceLocation oreTagLocation) {
         builder.ore(oreTagLocation);
         return this;
@@ -100,6 +104,8 @@ public class CrTChemicalBuilder {
      * collection is empty, and the goal of this method is to let the slurry have a {@link net.minecraft.tags.TagKey}
      */
     @ZenCodeType.Method
+    @SuppressWarnings("removal")
+    @Deprecated(forRemoval = true, since = "10.7.11")
     public CrTChemicalBuilder ore(KnownTag<Item> oreTag) {
         builder.ore(oreTag.getTagKey());
         return this;
@@ -109,6 +115,8 @@ public class CrTChemicalBuilder {
      * Set this chemical should render as a gas. Omit to leave as fluid-like.
      */
     @ZenCodeType.Method
+    @SuppressWarnings("removal")
+    @Deprecated(forRemoval = true, since = "10.7.11")
     public CrTChemicalBuilder gaseous() {
         builder.gaseous();
         return this;

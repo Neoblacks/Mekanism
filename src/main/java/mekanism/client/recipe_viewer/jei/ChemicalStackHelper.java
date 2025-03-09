@@ -2,9 +2,9 @@ package mekanism.client.recipe_viewer.jei;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.mojang.datafixers.util.Pair;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import mekanism.api.MekanismAPI;
@@ -15,10 +15,12 @@ import mekanism.api.text.TextComponentUtil;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.common.registries.MekanismBlocks;
 import mekanism.common.util.ChemicalUtil;
+import mekanism.common.util.RegistryUtils;
 import mezz.jei.api.helpers.IColorHelper;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.subtypes.UidContext;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -41,9 +43,10 @@ public class ChemicalStackHelper implements IIngredientHelper<ChemicalStack> {
     }
 
     @Override
-    @Deprecated(forRemoval = true)
+    @SuppressWarnings("removal")
+    @Deprecated(forRemoval = true, since = "JEI version 19.9.0")
     public String getUniqueId(ChemicalStack ingredient, UidContext context) {
-        return "chemical:" + ingredient.getTypeRegistryName();
+        return "chemical:" + ingredient.getChemical();
     }
 
     @Override
@@ -54,12 +57,12 @@ public class ChemicalStackHelper implements IIngredientHelper<ChemicalStack> {
 
     @Override
     public ResourceLocation getResourceLocation(ChemicalStack ingredient) {
-        return ingredient.getTypeRegistryName();
+        return Objects.requireNonNullElse(RegistryUtils.getName(ingredient.getChemicalHolder()), MekanismAPI.CHEMICAL_REGISTRY.getDefaultKey());
     }
 
     @Override
     public ItemStack getCheatItemStack(ChemicalStack ingredient) {
-        return ChemicalUtil.getFilledVariant(MekanismBlocks.CREATIVE_CHEMICAL_TANK, ingredient.getChemical());
+        return ChemicalUtil.getFilledVariant(MekanismBlocks.CREATIVE_CHEMICAL_TANK.getItemHolder(), ingredient.getChemicalHolder());
     }
 
     @Override
@@ -77,8 +80,7 @@ public class ChemicalStackHelper implements IIngredientHelper<ChemicalStack> {
         if (colorHelper == null) {
             return IIngredientHelper.super.getColors(ingredient);
         }
-        Chemical chemical = ingredient.getChemical();
-        return colorHelper.getColors(MekanismRenderer.getChemicalTexture(chemical), chemical.getTint(), 1);
+        return colorHelper.getColors(MekanismRenderer.getChemicalTexture(ingredient.getChemicalHolder()), ingredient.getChemicalTint(), 1);
     }
 
     @Override
@@ -106,8 +108,8 @@ public class ChemicalStackHelper implements IIngredientHelper<ChemicalStack> {
         if (stacks.size() < 2) {
             return Optional.empty();
         }
-        List<Chemical> values = stacks.stream()
-              .map(ChemicalStack::getChemical)
+        List<Holder<Chemical>> values = stacks.stream()
+              .map(ChemicalStack::getChemicalHolder)
               .distinct()
               .toList();
         int expected = values.size();
@@ -115,30 +117,26 @@ public class ChemicalStackHelper implements IIngredientHelper<ChemicalStack> {
             //One of the chemicals is there more than once, definitely not a tag
             return Optional.empty();
         }
-        return MekanismAPI.CHEMICAL_REGISTRY.getTags()
-              .filter(pair -> {
-                  Named<Chemical> tag = pair.getSecond();
-                  if (tag.size() != expected) {
-                      return false;
-                  }
-                  for (int i = 0; i < expected; i++) {
-                      if (tag.get(i).value() != values.get(i)) {
-                          return false;
-                      }
-                  }
-                  return true;
-              }).<TagKey<?>>map(Pair::getFirst)
-              .findFirst();
+        for (TagKey<Chemical> tagKey : values.getFirst().tags().toList()) {
+            Optional<Named<Chemical>> optionalTag = MekanismAPI.CHEMICAL_REGISTRY.getTag(tagKey);
+            if (optionalTag.isPresent()) {
+                Named<Chemical> tag = optionalTag.get();
+                if (tag.size() == expected && values.stream().allMatch(tag::contains)) {
+                    return Optional.of(tagKey);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
-    public String getErrorInfo(ChemicalStack ingredient) {
+    public String getErrorInfo(@Nullable ChemicalStack ingredient) {
         if (ingredient == null) {
             ingredient = ChemicalStack.EMPTY;
         }
         ToStringHelper toStringHelper = MoreObjects.toStringHelper(ChemicalStack.class);
-        Chemical chemical = ingredient.getChemical();
-        toStringHelper.add("Chemical", chemical.isEmptyType() ? "none" : TextComponentUtil.build(chemical).getString());
+        Holder<Chemical> chemical = ingredient.getChemicalHolder();
+        toStringHelper.add("Chemical", chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) ? "none" : TextComponentUtil.build(chemical).getString());
         if (!ingredient.isEmpty()) {
             toStringHelper.add("Amount", ingredient.getAmount());
         }

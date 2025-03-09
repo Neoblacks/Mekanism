@@ -13,8 +13,8 @@ public class IntrinsicMekanismTagBuilder<TYPE> extends MekanismTagBuilder<TYPE, 
 
     private final Function<TYPE, ResourceKey<TYPE>> keyExtractor;
 
-    public IntrinsicMekanismTagBuilder(Function<TYPE, ResourceKey<TYPE>> keyExtractor, TagBuilder builder, String modID) {
-        super(builder, modID);
+    public IntrinsicMekanismTagBuilder(Function<TYPE, ResourceKey<TYPE>> keyExtractor, TagBuilder builder) {
+        super(builder);
         this.keyExtractor = keyExtractor;
     }
 
@@ -22,13 +22,17 @@ public class IntrinsicMekanismTagBuilder<TYPE> extends MekanismTagBuilder<TYPE, 
         return addTyped(Supplier::get, elements);
     }
 
-    @SafeVarargs
-    public final IntrinsicMekanismTagBuilder<TYPE> add(Supplier<TYPE>... elements) {
-        return addTyped(Supplier::get, elements);
-    }
-
     private ResourceLocation getKey(TYPE element) {
         return keyExtractor.apply(element).location();
+    }
+
+    @SafeVarargs
+    public final IntrinsicMekanismTagBuilder<TYPE> addHolders(Holder<TYPE>... elements) {
+        return addTyped(Holder::value, elements);
+    }
+
+    public final IntrinsicMekanismTagBuilder<TYPE> addHolders(Collection<? extends Holder<TYPE>> elements) {
+        return addTyped(Holder::value, elements);
     }
 
     @SafeVarargs

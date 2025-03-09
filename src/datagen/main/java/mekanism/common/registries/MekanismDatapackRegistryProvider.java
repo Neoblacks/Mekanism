@@ -75,8 +75,8 @@ public class MekanismDatapackRegistryProvider extends BaseDatapackRegistryProvid
         List<TargetBlockState> targetStates = ORE_STONE_TARGETS.computeIfAbsent(oreVeinType.type(), oreType -> {
             OreBlockType oreBlockType = MekanismBlocks.ORES.get(oreType);
             return List.of(
-                  OreConfiguration.target(STONE_ORE_REPLACEABLES, oreBlockType.stoneBlock().defaultBlockState()),
-                  OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, oreBlockType.deepslateBlock().defaultBlockState())
+                  OreConfiguration.target(STONE_ORE_REPLACEABLES, oreBlockType.stone().defaultState()),
+                  OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, oreBlockType.deepslate().defaultState())
             );
         });
         return new ConfiguredFeature<>(featureRO.get(), new ResizableOreFeatureConfig(targetStates, oreVeinType, oreVeinConfig.maxVeinSize(),
@@ -95,7 +95,7 @@ public class MekanismDatapackRegistryProvider extends BaseDatapackRegistryProvid
                   }
               }
               context.register(configuredFeature(Mekanism.rl("salt")), new ConfiguredFeature<>(MekanismFeatures.DISK.get(), new ResizableDiskConfig(
-                    RuleBasedBlockStateProvider.simple(MekanismBlocks.SALT_BLOCK.getBlock()),
+                    RuleBasedBlockStateProvider.simple(MekanismBlocks.SALT_BLOCK.value()),
                     BlockPredicate.matchesBlocks(Blocks.DIRT, Blocks.CLAY),
                     ConfigurableUniformInt.SALT
               )));

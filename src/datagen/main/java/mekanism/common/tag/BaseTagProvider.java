@@ -12,13 +12,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.Chemical;
-import mekanism.api.providers.IBlockProvider;
-import mekanism.api.providers.IChemicalProvider;
+import mekanism.common.registration.impl.BlockRegistryObject;
 import mekanism.common.registration.impl.FluidDeferredRegister;
 import mekanism.common.registration.impl.FluidRegistryObject;
-import mekanism.common.registration.impl.TileEntityTypeRegistryObject;
 import mekanism.common.registries.MekanismDamageTypes.MekanismDamageType;
-import mekanism.common.util.RegistryUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -39,10 +36,8 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.Tags;
@@ -80,12 +75,21 @@ public abstract class BaseTagProvider implements DataProvider {
 
     protected abstract void registerTags(HolderLookup.Provider registries);
 
-    protected Collection<? extends Holder<Block>> getAllBlocks() {
+    protected Collection<? extends DeferredHolder<Block, ?>> getAllBlocks() {
         return Collections.emptyList();
     }
 
-    protected void hasHarvestData(Block block) {
-        knownHarvestRequirements.add(block);
+    @SafeVarargs
+    protected final void hasHarvestData(Holder<Block>... blocks) {
+        for (Holder<Block> block : blocks) {
+            knownHarvestRequirements.add(block.value());
+        }
+    }
+
+    protected void hasHarvestData(Collection<? extends Holder<Block>> blocks) {
+        for (Holder<Block> block : blocks) {
+            knownHarvestRequirements.add(block.value());
+        }
     }
 
     @NotNull
@@ -96,10 +100,10 @@ public abstract class BaseTagProvider implements DataProvider {
             registerTags(registries);
             return registries;
         }).thenCompose(registries -> {
-            for (Holder<Block> blockProvider : getAllBlocks()) {
+            for (DeferredHolder<Block, ?> blockProvider : getAllBlocks()) {
                 Block block = blockProvider.value();
                 if (block.defaultBlockState().requiresCorrectToolForDrops() && !knownHarvestRequirements.contains(block)) {
-                    throw new IllegalStateException("Missing harvest tool type for block '" + RegistryUtils.getName(block) + "' that requires the correct tool for drops.");
+                    throw new IllegalStateException("Missing harvest tool type for block '" + blockProvider.getId() + "' that requires the correct tool for drops.");
                 }
             }
             List<CompletableFuture<?>> futures = new ArrayList<>();
@@ -131,15 +135,15 @@ public abstract class BaseTagProvider implements DataProvider {
     }
 
     protected <TYPE> MekanismTagBuilder<TYPE, ?> getBuilder(ResourceKey<? extends Registry<TYPE>> registry, TagKey<TYPE> tag) {
-        return new MekanismTagBuilder<>(getTagBuilder(registry, tag), modid);
+        return new MekanismTagBuilder<>(getTagBuilder(registry, tag));
     }
 
     protected <TYPE> IntrinsicMekanismTagBuilder<TYPE> getBuilder(ResourceKey<? extends Registry<TYPE>> registry, Function<TYPE, ResourceKey<TYPE>> keyExtractor, TagKey<TYPE> tag) {
-        return new IntrinsicMekanismTagBuilder<>(keyExtractor, getTagBuilder(registry, tag), modid);
+        return new IntrinsicMekanismTagBuilder<>(keyExtractor, getTagBuilder(registry, tag));
     }
 
     protected <TYPE> IntrinsicMekanismTagBuilder<TYPE> getBuilder(Registry<TYPE> registry, TagKey<TYPE> tag) {
-        return new IntrinsicMekanismTagBuilder<>(element -> registry.getResourceKey(element).orElseThrow(), getTagBuilder(registry.key(), tag), modid);
+        return new IntrinsicMekanismTagBuilder<>(element -> registry.getResourceKey(element).orElseThrow(), getTagBuilder(registry.key(), tag));
     }
 
     protected IntrinsicMekanismTagBuilder<Item> getItemBuilder(TagKey<Item> tag) {
@@ -156,10 +160,6 @@ public abstract class BaseTagProvider implements DataProvider {
 
     protected IntrinsicMekanismTagBuilder<Fluid> getFluidBuilder(TagKey<Fluid> tag) {
         return getBuilder(BuiltInRegistries.FLUID, tag);
-    }
-
-    protected IntrinsicMekanismTagBuilder<BlockEntityType<?>> getTileEntityTypeBuilder(TagKey<BlockEntityType<?>> tag) {
-        return getBuilder(BuiltInRegistries.BLOCK_ENTITY_TYPE, tag);
     }
 
     protected MekanismTagBuilder<GameEvent, ?> getGameEventBuilder(TagKey<GameEvent> tag) {
@@ -182,52 +182,46 @@ public abstract class BaseTagProvider implements DataProvider {
         return getBuilder(BuiltInRegistries.MOB_EFFECT, tag);
     }
 
-    protected void addToTag(TagKey<Item> tag, ItemLike... itemProviders) {
-        getItemBuilder(tag).addTyped(ItemLike::asItem, itemProviders);
-    }
-
-    protected void addToTag(TagKey<Block> tag, IBlockProvider... blockProviders) {
-        getBlockBuilder(tag).addTyped(IBlockProvider::getBlock, blockProviders);
+    @SafeVarargs
+    protected final void addItemsToTag(TagKey<Item> tag, Holder<Item>... itemProviders) {
+        getItemBuilder(tag).addHolders(itemProviders);
     }
 
     @SafeVarargs
-    protected final void addToTag(TagKey<Block> blockTag, Map<?, ? extends IBlockProvider>... blockProviders) {
+    protected final void addBlocksToTag(TagKey<Block> tag, Holder<Block>... blockProviders) {
+        getBlockBuilder(tag).addHolders(blockProviders);
+    }
+
+    @SafeVarargs
+    protected final void addToTag(TagKey<Block> blockTag, Map<?, ? extends Holder<Block>>... blockProviders) {
         IntrinsicMekanismTagBuilder<Block> tagBuilder = getBlockBuilder(blockTag);
-        for (Map<?, ? extends IBlockProvider> blockProvider : blockProviders) {
-            for (IBlockProvider value : blockProvider.values()) {
-                tagBuilder.add(value.getBlock());
-            }
+        for (Map<?, ? extends Holder<Block>> blockProvider : blockProviders) {
+            tagBuilder.addHolders(blockProvider.values());
         }
     }
 
-    protected void addToHarvestTag(TagKey<Block> tag, IBlockProvider... blockProviders) {
+    @SafeVarargs
+    protected final void addToHarvestTag(TagKey<Block> tag, Holder<Block>... blockProviders) {
         IntrinsicMekanismTagBuilder<Block> tagBuilder = getBlockBuilder(tag);
-        for (IBlockProvider blockProvider : blockProviders) {
-            Block block = blockProvider.getBlock();
-            tagBuilder.add(block);
-            hasHarvestData(block);
-        }
+        tagBuilder.addHolders(blockProviders);
+        hasHarvestData(blockProviders);
     }
 
     @SafeVarargs
-    protected final void addToHarvestTag(TagKey<Block> blockTag, Map<?, ? extends IBlockProvider>... blockProviders) {
+    protected final void addToHarvestTag(TagKey<Block> blockTag, Map<?, ? extends Holder<Block>>... blockProviders) {
         IntrinsicMekanismTagBuilder<Block> tagBuilder = getBlockBuilder(blockTag);
-        for (Map<?, ? extends IBlockProvider> blockProvider : blockProviders) {
-            for (IBlockProvider value : blockProvider.values()) {
-                Block block = value.getBlock();
-                tagBuilder.add(block);
-                hasHarvestData(block);
-            }
+        for (Map<?, ? extends Holder<Block>> blockProvider : blockProviders) {
+            tagBuilder.addHolders(blockProvider.values());
+            hasHarvestData(blockProvider.values());
         }
     }
 
-    protected void addToTags(TagKey<Item> itemTag, TagKey<Block> blockTag, IBlockProvider... blockProviders) {
+    protected void addToTags(TagKey<Item> itemTag, TagKey<Block> blockTag, BlockRegistryObject<?, ?>... blockProviders) {
         IntrinsicMekanismTagBuilder<Item> itemTagBuilder = getItemBuilder(itemTag);
-        IntrinsicMekanismTagBuilder<Block> blockTagBuilder = getBlockBuilder(blockTag);
-        for (IBlockProvider blockProvider : blockProviders) {
-            itemTagBuilder.add(blockProvider.asItem());
-            blockTagBuilder.add(blockProvider.getBlock());
+        for (BlockRegistryObject<?, ?> blockProvider : blockProviders) {
+            itemTagBuilder.addHolders(blockProvider.getItemHolder());
         }
+        getBlockBuilder(blockTag).addHolders(blockProviders);
     }
 
     protected void addToGenericFluidTags(FluidDeferredRegister register) {
@@ -247,23 +241,20 @@ public abstract class BaseTagProvider implements DataProvider {
 
     @SafeVarargs
     protected final void addEntitiesToTag(TagKey<EntityType<?>> tag, Holder<EntityType<?>>... entityTypeProviders) {
-        getEntityTypeBuilder(tag).addTyped(Holder::value, entityTypeProviders);
+        getEntityTypeBuilder(tag).addHolders(entityTypeProviders);
     }
 
     protected void addToTag(TagKey<Fluid> tag, FluidRegistryObject<?, ?, ?, ?, ?>... fluidRegistryObjects) {
         IntrinsicMekanismTagBuilder<Fluid> tagBuilder = getFluidBuilder(tag);
         for (FluidRegistryObject<?, ?, ?, ?, ?> fluidRO : fluidRegistryObjects) {
-            tagBuilder.add(fluidRO.getStillFluid(), fluidRO.getFlowingFluid());
-            addToTag(ItemTags.create(Tags.Items.BUCKETS.location().withSuffix("/" + fluidRO.getName())), fluidRO.getBucket());
+            tagBuilder.addHolders(fluidRO, fluidRO.getFlowingFluid());
+            addItemsToTag(ItemTags.create(Tags.Items.BUCKETS.location().withSuffix("/" + fluidRO.getName())), fluidRO.getBucket());
         }
     }
 
-    protected void addToTag(TagKey<BlockEntityType<?>> tag, TileEntityTypeRegistryObject<?>... tileEntityTypeRegistryObjects) {
-        getTileEntityTypeBuilder(tag).add(tileEntityTypeRegistryObjects);
-    }
-
-    protected void addToTag(TagKey<Chemical> tag, IChemicalProvider... chemicalProviders) {
-        addToTag(getChemicalBuilder(tag), chemicalProviders);
+    @SafeVarargs
+    protected final void addChemicalsToTag(TagKey<Chemical> tag, Holder<Chemical>... chemicalProviders) {
+        getChemicalBuilder(tag).addHolders(chemicalProviders);
     }
 
     @SafeVarargs
@@ -272,9 +263,5 @@ public abstract class BaseTagProvider implements DataProvider {
         for (ResourceKey<TYPE> value : values) {
             builder.addElement(value.location());
         }
-    }
-
-    protected final void addToTag(IntrinsicMekanismTagBuilder<Chemical> tagBuilder, IChemicalProvider... providers) {
-        tagBuilder.addTyped(IChemicalProvider::getChemical, providers);
     }
 }

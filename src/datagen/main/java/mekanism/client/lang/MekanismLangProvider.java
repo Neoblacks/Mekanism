@@ -6,11 +6,10 @@ import mekanism.api.MekanismAPI;
 import mekanism.api.MekanismAPITags;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.gear.config.ModuleConfig;
-import mekanism.api.providers.IChemicalProvider;
-import mekanism.api.providers.IItemProvider;
 import mekanism.api.robit.RobitSkin;
 import mekanism.api.text.APILang;
 import mekanism.api.text.EnumColor;
+import mekanism.api.text.IHasTranslationKey;
 import mekanism.client.recipe_viewer.alias.MekanismAliases;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
@@ -42,6 +41,7 @@ import mekanism.common.integration.lookingat.jade.JadeConstants;
 import mekanism.common.inventory.container.SelectedWindowData.WindowType;
 import mekanism.common.inventory.container.SelectedWindowData.WindowType.ConfigSaveData;
 import mekanism.common.registration.impl.BlockRegistryObject;
+import mekanism.common.registration.impl.DeferredChemical;
 import mekanism.common.registration.impl.ItemRegistryObject;
 import mekanism.common.registration.impl.SlurryRegistryObject;
 import mekanism.common.registries.MekanismBlocks;
@@ -276,6 +276,8 @@ public class MekanismLangProvider extends BaseLanguageProvider {
 
         add(MekanismTags.Chemicals.WATER_VAPOR, "Water Vapor");
         add(MekanismAPITags.Chemicals.WASTE_BARREL_DECAY_BLACKLIST, "Waste Barrel Does Not Decay");
+
+        add(MekanismAPITags.Chemicals.GASEOUS, "Gaseous");
 
         add(MekanismAPITags.Chemicals.CARBON, "Carbon");
         add(MekanismAPITags.Chemicals.REDSTONE, "Redstone");
@@ -589,7 +591,7 @@ public class MekanismLangProvider extends BaseLanguageProvider {
     }
 
     private void addGases() {
-        add(MekanismAPI.EMPTY_CHEMICAL, "Empty");
+        addHolder(MekanismAPI.EMPTY_CHEMICAL_HOLDER, "Empty");
         add(MekanismChemicals.HYDROGEN, "Hydrogen");
         add(MekanismChemicals.OXYGEN, "Oxygen");
         add(MekanismChemicals.STEAM, "Steam");
@@ -628,7 +630,7 @@ public class MekanismLangProvider extends BaseLanguageProvider {
     }
 
     private void addPigments() {
-        for (Map.Entry<EnumColor, IChemicalProvider> entry : MekanismChemicals.PIGMENT_COLOR_LOOKUP.entrySet()) {
+        for (Map.Entry<EnumColor, DeferredChemical<Chemical>> entry : MekanismChemicals.PIGMENT_COLOR_LOOKUP.entrySet()) {
             add(entry.getValue(), entry.getKey().getEnglishName() + " Pigment");
         }
     }
@@ -640,8 +642,8 @@ public class MekanismLangProvider extends BaseLanguageProvider {
     }
 
     private void addSlurry(SlurryRegistryObject<Chemical, Chemical> slurryRO, String name) {
-        add(slurryRO.getDirtySlurry(), "Dirty " + name + " Slurry");
-        add(slurryRO.getCleanSlurry(), "Clean " + name + " Slurry");
+        addHolder(slurryRO, "Dirty " + name + " Slurry");
+        addHolder(slurryRO.getCleanSlurry(), "Clean " + name + " Slurry");
     }
 
     private void addDamageSources() {
@@ -893,6 +895,7 @@ public class MekanismLangProvider extends BaseLanguageProvider {
         add(APILang.CHEMICAL_ATTRIBUTE_RADIATION, " - Radioactivity: %1$s");
         add(APILang.CHEMICAL_ATTRIBUTE_COOLANT_EFFICIENCY, " - Coolant Efficiency: %1$s");
         add(APILang.CHEMICAL_ATTRIBUTE_COOLANT_ENTHALPY, " - Thermal Enthalpy: %1$s");
+        add(APILang.CHEMICAL_ATTRIBUTE_COOLANT_TEMPERATURE, " - Temperature: %1$s");
         add(APILang.CHEMICAL_ATTRIBUTE_FUEL_BURN_TICKS, " - Burn Time: %1$s t");
         add(APILang.CHEMICAL_ATTRIBUTE_FUEL_ENERGY_DENSITY, " - Energy Density: %1$s");
         //Colors
@@ -1111,7 +1114,7 @@ public class MekanismLangProvider extends BaseLanguageProvider {
         add(MekanismLang.PROCESS_RATE, "Process Rate: %1$s");
         add(MekanismLang.PROCESS_RATE_MB, "Process Rate: %1$s mB/t");
         add(MekanismLang.TICKS_REQUIRED, "Ticks Required: %1$s");
-        add(MekanismLang.DECAY_IMMUNE, "Will not decay inside a Radioactive Waste Barrel");
+        add(APILang.DECAY_IMMUNE, "Will not decay inside a Radioactive Waste Barrel");
         //Gui stuff
         add(MekanismLang.WIDTH, "Width");
         add(MekanismLang.HEIGHT, "Height");
@@ -1808,19 +1811,19 @@ public class MekanismLangProvider extends BaseLanguageProvider {
         String name = TextUtils.formatAndCapitalize(type.getResource().getRegistrySuffix());
         OreBlockType oreBlockType = MekanismBlocks.ORES.get(type);
         add(oreBlockType.stone(), name + " Ore");
-        add(oreBlockType.stoneBlock().getDescriptionTranslationKey(), description);
+        add(oreBlockType.stone().value().getDescriptionTranslationKey(), description);
         add(oreBlockType.deepslate(), "Deepslate " + name + " Ore");
         add(MekanismTags.Items.ORES.get(type), name + " Ores");
     }
 
-    private void addTiered(IItemProvider basic, IItemProvider advanced, IItemProvider elite, IItemProvider ultimate, String name) {
+    private void addTiered(IHasTranslationKey basic, IHasTranslationKey advanced, IHasTranslationKey elite, IHasTranslationKey ultimate, String name) {
         add(basic, "Basic " + name);
         add(advanced, "Advanced " + name);
         add(elite, "Elite " + name);
         add(ultimate, "Ultimate " + name);
     }
 
-    private void addTiered(IItemProvider basic, IItemProvider advanced, IItemProvider elite, IItemProvider ultimate, IItemProvider creative, String name) {
+    private void addTiered(IHasTranslationKey basic, IHasTranslationKey advanced, IHasTranslationKey elite, IHasTranslationKey ultimate, IHasTranslationKey creative, String name) {
         addTiered(basic, advanced, elite, ultimate, name);
         add(creative, "Creative " + name);
     }

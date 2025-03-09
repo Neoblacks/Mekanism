@@ -70,10 +70,10 @@ public class SPSMultiblockData extends MultiblockData implements IValveHandler {
 
     public SPSMultiblockData(TileEntitySPSCasing tile) {
         super(tile);
-        chemicalTanks.add(inputTank = VariableCapacityChemicalTank.input(this, this::getMaxInputGas, gas -> gas == MekanismChemicals.POLONIUM.get(),
+        chemicalTanks.add(inputTank = VariableCapacityChemicalTank.input(this, this::getMaxInputGas, chemical -> chemical.is(MekanismChemicals.POLONIUM),
               ChemicalAttributeValidator.ALWAYS_ALLOW, createSaveAndComparator()));
         chemicalTanks.add(outputTank = VariableCapacityChemicalTank.output(this, MekanismConfig.general.spsOutputTankCapacity,
-              gas -> gas == MekanismChemicals.ANTIMATTER.get(), ChemicalAttributeValidator.ALWAYS_ALLOW, this));
+              chemical -> chemical.is(MekanismChemicals.ANTIMATTER), ChemicalAttributeValidator.ALWAYS_ALLOW, this));
     }
 
     @Override
@@ -175,7 +175,7 @@ public class SPSMultiblockData extends MultiblockData implements IValveHandler {
         inputProcessed += MathUtils.clampToInt(processed);
         final int inputPerAntimatter = MekanismConfig.general.spsInputPerAntimatter.get();
         if (inputProcessed >= inputPerAntimatter) {
-            ChemicalStack toAdd = MekanismChemicals.ANTIMATTER.getStack(inputProcessed / inputPerAntimatter);
+            ChemicalStack toAdd = MekanismChemicals.ANTIMATTER.asStack(inputProcessed / inputPerAntimatter);
             outputTank.insert(toAdd, Action.EXECUTE, AutomationType.INTERNAL);
             inputProcessed %= inputPerAntimatter;
         }

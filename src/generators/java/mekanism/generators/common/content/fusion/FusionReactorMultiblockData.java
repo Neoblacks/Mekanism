@@ -145,12 +145,12 @@ public class FusionReactorMultiblockData extends MultiblockData {
         lastCaseTemperature = biomeAmbientTemp;
         plasmaTemperature = biomeAmbientTemp;
         chemicalTanks.add(deuteriumTank = VariableCapacityChemicalTank.input(this, MekanismGeneratorsConfig.generators.fusionFuelCapacity,
-              gas -> gas.is(GeneratorTags.Chemicals.DEUTERIUM), this));
+              chemical -> chemical.is(GeneratorTags.Chemicals.DEUTERIUM), this));
         chemicalTanks.add(tritiumTank = VariableCapacityChemicalTank.input(this, MekanismGeneratorsConfig.generators.fusionFuelCapacity,
-              gas -> gas.is(GeneratorTags.Chemicals.TRITIUM), this));
+              chemical -> chemical.is(GeneratorTags.Chemicals.TRITIUM), this));
         chemicalTanks.add(fuelTank = VariableCapacityChemicalTank.input(this, MekanismGeneratorsConfig.generators.fusionFuelCapacity,
-              gas -> gas.is(GeneratorTags.Chemicals.FUSION_FUEL), createSaveAndComparator()));
-        chemicalTanks.add(steamTank = VariableCapacityChemicalTank.output(this, this::getMaxSteam, gas -> gas == MekanismChemicals.STEAM.getChemical(), this));
+              chemical -> chemical.is(GeneratorTags.Chemicals.FUSION_FUEL), createSaveAndComparator()));
+        chemicalTanks.add(steamTank = VariableCapacityChemicalTank.output(this, this::getMaxSteam, chemical -> chemical.is(MekanismChemicals.STEAM), this));
         fluidTanks.add(waterTank = VariableCapacityFluidTank.input(this, this::getMaxWater, fluid -> fluid.is(FluidTags.WATER), this));
         energyContainers.add(energyContainer = VariableCapacityEnergyContainer.output(MekanismGeneratorsConfig.generators.fusionEnergyCapacity, this));
         heatCapacitors.add(heatCapacitor = VariableHeatCapacitor.create(caseHeatCapacity, FusionReactorMultiblockData::getInverseConductionCoefficient,
@@ -312,7 +312,7 @@ public class FusionReactorMultiblockData extends MultiblockData {
         long injectingAmount = amountToInject / 2;
         MekanismUtils.logMismatchedStackSize(deuteriumTank.shrinkStack(injectingAmount, Action.EXECUTE), injectingAmount);
         MekanismUtils.logMismatchedStackSize(tritiumTank.shrinkStack(injectingAmount, Action.EXECUTE), injectingAmount);
-        fuelTank.insert(GeneratorsChemicals.FUSION_FUEL.getStack(amountToInject), Action.EXECUTE, AutomationType.INTERNAL);
+        fuelTank.insert(GeneratorsChemicals.FUSION_FUEL.asStack(amountToInject), Action.EXECUTE, AutomationType.INTERNAL);
     }
 
     private long burnFuel() {
@@ -337,7 +337,7 @@ public class FusionReactorMultiblockData extends MultiblockData {
             waterToVaporize = Math.min(waterToVaporize, Math.min(waterTank.getFluidAmount(), MathUtils.clampToInt(steamTank.getNeeded())));
             if (waterToVaporize > 0) {
                 MekanismUtils.logMismatchedStackSize(waterTank.shrinkStack(waterToVaporize, Action.EXECUTE), waterToVaporize);
-                steamTank.insert(MekanismChemicals.STEAM.getStack(waterToVaporize), Action.EXECUTE, AutomationType.INTERNAL);
+                steamTank.insert(MekanismChemicals.STEAM.asStack(waterToVaporize), Action.EXECUTE, AutomationType.INTERNAL);
                 caseWaterHeat = waterToVaporize * HeatUtils.getWaterThermalEnthalpy() / HeatUtils.getSteamEnergyEfficiency();
                 heatCapacitor.handleHeat(-caseWaterHeat);
             }
