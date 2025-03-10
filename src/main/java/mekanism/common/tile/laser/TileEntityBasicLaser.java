@@ -214,7 +214,7 @@ public abstract class TileEntityBasicLaser extends TileEntityMekanism {
                         //If the damage is more than zero, which should be all cases except for when we are refracting all the energy past the entity
                         // set the entity on fire if it is not damage immune and try to damage it
                         if (!entity.fireImmune()) {
-                            entity.setRemainingFireTicks(MathUtils.clampToInt(value));
+                            entity.igniteForTicks(MathUtils.clampToInt(value));
                         }
                         int totemTimesUsed = -1;
                         if (entity instanceof ServerPlayer player) {

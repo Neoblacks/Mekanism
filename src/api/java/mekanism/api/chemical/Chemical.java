@@ -211,10 +211,6 @@ public class Chemical implements IChemicalProvider, IChemicalAttributeContainer<
     @Override
     public String getTranslationKey() {
         if (translationKey == null) {
-            //Note: Because chemical registry has a default key, we have to query the name via the resource key so that we can pass null
-            // to makeDescriptionId in cases when our chemical is unregistered
-            //TODO - 1.21: Replace this with a backport version of https://github.com/neoforged/NeoForge/pull/2013
-            // We also will need to review our uses of getKey and getResourceKey to see what should be moved to using the helper
             translationKey = Util.makeDescriptionId("chemical", MekanismAPI.CHEMICAL_REGISTRY.getKeyOrNull(this));
         }
         return translationKey;

@@ -649,6 +649,7 @@ public class MekanismLangProvider extends BaseLanguageProvider {
     private void addDamageSources() {
         add(MekanismDamageTypes.LASER, "%1$s was incinerated.", "%1$s was incinerated whilst trying to escape %2$s.");
         add(MekanismDamageTypes.RADIATION, "%1$s was killed by radiation poisoning.", "%1$s was killed by radiation poisoning whilst trying to escape %2$s.");
+        add(MekanismDamageTypes.FLAMETHROWER, "%1$s was incinerated.", "%1$s was ruthlessly incinerated by %2$s.");
     }
 
     private void add(MekanismDamageType damageType, String value, String valueEscaping) {

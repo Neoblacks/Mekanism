@@ -2056,6 +2056,8 @@
   "conversion.mekanism.energy": "ʎᵷɹǝuƎ oʇ ɯǝʇI",
   "crafting_formula.mekanism.encoded": "(pǝpoɔuƎ)",
   "crafting_formula.mekanism.ingredients": ":sʇuǝᴉpǝɹᵷuI",
+  "death.attack.mekanism.flamethrower": "˙pǝʇɐɹǝuᴉɔuᴉ sɐʍ %s",
+  "death.attack.mekanism.flamethrower.player": "˙%2$s ʎq pǝʇɐɹǝuᴉɔuᴉ ʎꞁssǝꞁɥʇnɹ sɐʍ %1$s",
   "death.attack.mekanism.laser": "˙pǝʇɐɹǝuᴉɔuᴉ sɐʍ %s",
   "death.attack.mekanism.laser.player": "˙%2$s ǝdɐɔsǝ oʇ ᵷuᴉʎɹʇ ʇsꞁᴉɥʍ pǝʇɐɹǝuᴉɔuᴉ sɐʍ %1$s",
   "death.attack.mekanism.radiation": "˙ᵷuᴉuosᴉod uoᴉʇɐᴉpɐɹ ʎq pǝꞁꞁᴉʞ sɐʍ %s",

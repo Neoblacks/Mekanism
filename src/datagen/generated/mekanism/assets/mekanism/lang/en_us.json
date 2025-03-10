@@ -2057,6 +2057,8 @@
   "conversion.mekanism.energy": "Item to Energy",
   "crafting_formula.mekanism.encoded": "(Encoded)",
   "crafting_formula.mekanism.ingredients": "Ingredients:",
+  "death.attack.mekanism.flamethrower": "%1$s was incinerated.",
+  "death.attack.mekanism.flamethrower.player": "%1$s was ruthlessly incinerated by %2$s.",
   "death.attack.mekanism.laser": "%1$s was incinerated.",
   "death.attack.mekanism.laser.player": "%1$s was incinerated whilst trying to escape %2$s.",
   "death.attack.mekanism.radiation": "%1$s was killed by radiation poisoning.",

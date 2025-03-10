@@ -189,6 +189,7 @@ public class SPSMultiblockData extends MultiblockData implements IValveHandler {
         if (lastReceivedEnergy > 0L && couldOperate && world.getRandom().nextInt() % SharedConstants.TICKS_PER_SECOND == 0) {
             List<Entity> entitiesToDie = getLevel().getEntitiesOfClass(Entity.class, deathZone);
             for (Entity entity : entitiesToDie) {
+                //TODO: Decide if we want this and the fusion reactor to have their own damage type, or maybe use one of the other vanilla types
                 entity.hurt(entity.damageSources().magic(), lastReceivedEnergy / 1_000F);
             }
         }

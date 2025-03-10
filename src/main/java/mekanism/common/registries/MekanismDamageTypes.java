@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 import mekanism.api.text.IHasTranslationKey;
 import mekanism.common.Mekanism;
 import net.minecraft.core.Holder;
@@ -13,8 +14,10 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageEffects;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -32,10 +35,11 @@ public class MekanismDamageTypes {
         return damageType == null ? DataResult.error(() -> "Expected " + rl + " to represent a Mekanism damage type") : DataResult.success(damageType);
     }, damageType -> DataResult.success(damageType.registryName()));
 
+    public static final MekanismDamageType FLAMETHROWER = new MekanismDamageType("flamethrower", 0.1F, DamageEffects.BURNING);
     public static final MekanismDamageType LASER = new MekanismDamageType("laser", 0.1F);
     public static final MekanismDamageType RADIATION = new MekanismDamageType("radiation");
 
-    public record MekanismDamageType(ResourceKey<DamageType> key, float exhaustion) implements IHasTranslationKey {
+    public record MekanismDamageType(ResourceKey<DamageType> key, float exhaustion, DamageEffects effects) implements IHasTranslationKey {
 
         public MekanismDamageType {
             INTERNAL_DAMAGE_TYPES.put(key.location(), this);
@@ -46,7 +50,11 @@ public class MekanismDamageTypes {
         }
 
         private MekanismDamageType(String name, float exhaustion) {
-            this(ResourceKey.create(Registries.DAMAGE_TYPE, Mekanism.rl(name)), exhaustion);
+            this(name, exhaustion, DamageEffects.HURT);
+        }
+
+        private MekanismDamageType(String name, float exhaustion, DamageEffects effects) {
+            this(ResourceKey.create(Registries.DAMAGE_TYPE, Mekanism.rl(name)), exhaustion, effects);
         }
 
         public String getMsgId() {
@@ -63,6 +71,10 @@ public class MekanismDamageTypes {
             return "death.attack." + getMsgId();
         }
 
+        public boolean is(DamageSource source) {
+            return source.is(key);
+        }
+
         public DamageSource source(Level level) {
             return source(level.registryAccess());
         }
@@ -77,6 +89,10 @@ public class MekanismDamageTypes {
 
         public DamageSource source(RegistryAccess registryAccess, Vec3 position) {
             return new DamageSource(holder(registryAccess), position);
+        }
+
+        public DamageSource source(RegistryAccess registryAccess, @Nullable Entity directEntity, @Nullable Entity causingEntity) {
+            return new DamageSource(holder(registryAccess), directEntity, causingEntity);
         }
 
         private Holder<DamageType> holder(RegistryAccess registryAccess) {
