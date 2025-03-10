@@ -73,12 +73,17 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
  */
 public class ClientTickHandler {
 
-    public static final Minecraft minecraft = Minecraft.getInstance();
-    public static final RandomSource rand = RandomSource.create();
-    public static final Map<Player, TeleportData> portableTeleports = new Object2ObjectArrayMap<>(1);
+    private static final Minecraft minecraft = Minecraft.getInstance();
+    private static final RandomSource rand = RandomSource.create();
+    private static final Map<Player, TeleportData> portableTeleports = new Object2ObjectArrayMap<>(1);
     private static final ScrollIncrementer scrollIncrementer = new ScrollIncrementer(true);
 
-    public static boolean visionEnhancement = false;
+    private static boolean visionEnhancement = false;
+
+    public static void reset() {
+        portableTeleports.clear();
+        visionEnhancement = false;
+    }
 
     private boolean isConnected;
 
