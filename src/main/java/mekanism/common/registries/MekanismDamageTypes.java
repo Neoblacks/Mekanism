@@ -38,6 +38,7 @@ public class MekanismDamageTypes {
     public static final MekanismDamageType FLAMETHROWER = new MekanismDamageType("flamethrower", 0.1F, DamageEffects.BURNING);
     public static final MekanismDamageType LASER = new MekanismDamageType("laser", 0.1F);
     public static final MekanismDamageType RADIATION = new MekanismDamageType("radiation");
+    public static final MekanismDamageType SPS = new MekanismDamageType("sps");
 
     public record MekanismDamageType(ResourceKey<DamageType> key, float exhaustion, DamageEffects effects) implements IHasTranslationKey {
 

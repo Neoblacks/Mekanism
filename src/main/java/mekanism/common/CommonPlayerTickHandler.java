@@ -32,7 +32,6 @@ import mekanism.common.registries.MekanismModules;
 import mekanism.common.util.ChemicalUtil;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.StorageUtils;
-import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -153,7 +152,7 @@ public class CommonPlayerTickHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onLivingDeath(LivingDeathEvent event) {
-        if (!event.getEntity().isOnFire() && MekanismDamageTypes.FLAMETHROWER.is(event.getSource())) {
+        if (!event.getEntity().isOnFire() && !event.getEntity().fireImmune() && MekanismDamageTypes.FLAMETHROWER.is(event.getSource())) {
             //If they took damage from a flamethrower, set that they are on fire so that they drop cooked food
             event.getEntity().igniteForSeconds(1);
         }

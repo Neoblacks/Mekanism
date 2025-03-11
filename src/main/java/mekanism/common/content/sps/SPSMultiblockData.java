@@ -22,6 +22,7 @@ import mekanism.common.inventory.container.sync.dynamic.ContainerSync;
 import mekanism.common.lib.multiblock.IValveHandler;
 import mekanism.common.lib.multiblock.MultiblockData;
 import mekanism.common.registries.MekanismChemicals;
+import mekanism.common.registries.MekanismDamageTypes;
 import mekanism.common.tile.multiblock.TileEntitySPSCasing;
 import mekanism.common.tile.multiblock.TileEntitySPSPort;
 import mekanism.common.util.ChemicalUtil;
@@ -36,6 +37,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -187,10 +189,12 @@ public class SPSMultiblockData extends MultiblockData implements IValveHandler {
 
     private void kill(Level world) {
         if (lastReceivedEnergy > 0L && couldOperate && world.getRandom().nextInt() % SharedConstants.TICKS_PER_SECOND == 0) {
-            List<Entity> entitiesToDie = getLevel().getEntitiesOfClass(Entity.class, deathZone);
-            for (Entity entity : entitiesToDie) {
-                //TODO: Decide if we want this and the fusion reactor to have their own damage type, or maybe use one of the other vanilla types
-                entity.hurt(entity.damageSources().magic(), lastReceivedEnergy / 1_000F);
+            List<Entity> entitiesToDie = world.getEntitiesOfClass(Entity.class, deathZone);
+            if (!entitiesToDie.isEmpty()) {
+                DamageSource damageSource = MekanismDamageTypes.SPS.source(world, deathZone.getCenter());
+                for (Entity entity : entitiesToDie) {
+                    entity.hurt(damageSource, lastReceivedEnergy / 1_000F);
+                }
             }
         }
     }

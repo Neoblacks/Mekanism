@@ -1,7 +1,7 @@
 {
   "values": [
-    "mekanism:flamethrower",
     "mekanism:laser",
+    "mekanism:radiation",
     "mekanism:sps"
   ]
 }

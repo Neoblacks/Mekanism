@@ -286,10 +286,12 @@ public class FusionReactorMultiblockData extends MultiblockData {
         if (world.getRandom().nextInt() % SharedConstants.TICKS_PER_SECOND != 0) {
             return;
         }
-        List<Entity> entitiesToDie = getLevel().getEntitiesOfClass(Entity.class, deathZone);
-
-        for (Entity entity : entitiesToDie) {
-            entity.hurt(entity.damageSources().magic(), 50_000F);
+        List<Entity> entitiesToDie = world.getEntitiesOfClass(Entity.class, deathZone);
+        if (!entitiesToDie.isEmpty()) {
+            //TODO - 1.21: Custom damage source
+            for (Entity entity : entitiesToDie) {
+                entity.hurt(entity.damageSources().magic(), 50_000F);
+            }
         }
     }
 

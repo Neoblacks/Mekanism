@@ -556,19 +556,24 @@ public class MekanismTagProvider extends BaseTagProvider {
         ResourceKey<DamageType> flamethrower = MekanismDamageTypes.FLAMETHROWER.key();
         ResourceKey<DamageType> laser = MekanismDamageTypes.LASER.key();
         ResourceKey<DamageType> radiation = MekanismDamageTypes.RADIATION.key();
+        ResourceKey<DamageType> sps = MekanismDamageTypes.SPS.key();
+        getDamageTypeBuilder(DamageTypeTags.ALWAYS_HURTS_ENDER_DRAGONS).add(laser, radiation, sps);
+        getDamageTypeBuilder(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS).add(flamethrower, laser, sps);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ARMOR).add(radiation, sps);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_COOLDOWN).add(laser, sps);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_EFFECTS).add(radiation, sps);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(radiation, sps);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_RESISTANCE).add(radiation, sps);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_SHIELD).add(radiation, sps);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_WOLF_ARMOR).add(radiation, sps);
         getDamageTypeBuilder(Tags.DamageTypes.IS_ENVIRONMENT).add(radiation);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ARMOR).add(radiation);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_RESISTANCE).add(radiation);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_SHIELD).add(radiation);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_WOLF_ARMOR).add(radiation);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_COOLDOWN).add(laser);
-        getDamageTypeBuilder(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS).add(flamethrower, laser);
-        getDamageTypeBuilder(DamageTypeTags.PANIC_CAUSES).add(flamethrower, laser);
-        getDamageTypeBuilder(DamageTypeTags.NO_KNOCKBACK).add(flamethrower, laser, radiation);
-        getDamageTypeBuilder(DamageTypeTags.PANIC_ENVIRONMENTAL_CAUSES).add(radiation);
+        getDamageTypeBuilder(DamageTypeTags.IS_FIRE).add(flamethrower);
+        getDamageTypeBuilder(DamageTypeTags.IS_LIGHTNING).add(sps);
         getDamageTypeBuilder(MekanismAPITags.DamageTypes.IS_PREVENTABLE_MAGIC).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC);
         getDamageTypeBuilder(DamageTypeTags.IS_PROJECTILE).add(flamethrower);
-        getDamageTypeBuilder(DamageTypeTags.IS_FIRE).add(flamethrower);
+        getDamageTypeBuilder(DamageTypeTags.NO_KNOCKBACK).add(flamethrower, laser, radiation, sps);
+        getDamageTypeBuilder(DamageTypeTags.PANIC_CAUSES).add(flamethrower, laser);
+        getDamageTypeBuilder(DamageTypeTags.PANIC_ENVIRONMENTAL_CAUSES).add(radiation, sps);
 
         getDamageTypeBuilder(MekanismAPITags.DamageTypes.MEKASUIT_ALWAYS_SUPPORTED).add(DamageTypes.FALLING_ANVIL, DamageTypes.CACTUS, DamageTypes.CRAMMING,
               DamageTypes.DRAGON_BREATH, DamageTypes.DRY_OUT, DamageTypes.FALL, DamageTypes.FALLING_BLOCK, DamageTypes.FLY_INTO_WALL, DamageTypes.GENERIC,
