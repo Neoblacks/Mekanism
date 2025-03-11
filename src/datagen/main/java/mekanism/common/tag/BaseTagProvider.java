@@ -3,14 +3,13 @@ package mekanism.common.tag;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import mekanism.api.MekanismAPI;
-import mekanism.api.chemical.Chemical;
 import mekanism.common.Mekanism;
 import mekanism.common.registration.impl.BlockRegistryObject;
 import mekanism.common.registration.impl.FluidDeferredRegister;
@@ -30,13 +29,9 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -104,6 +99,7 @@ public abstract class BaseTagProvider implements DataProvider {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private <TYPE> TagsProvider<TYPE> createDummyTagsProvider(ResourceKey<?> registry, Map<TagKey<?>, TagBuilder> tagTypeMap) {
         return new TagsProvider<>(output, (ResourceKey<? extends Registry<TYPE>>) registry, lookupProvider, modid, existingFileHelper) {
             @Override
@@ -116,51 +112,14 @@ public abstract class BaseTagProvider implements DataProvider {
         };
     }
 
-    private <TYPE> MekanismTagBuilder<TYPE> getBuilder(ResourceKey<? extends Registry<TYPE>> registry, TagKey<TYPE> tag) {
-        Map<TagKey<?>, TagBuilder> tagTypeMap = supportedTagTypes.computeIfAbsent(registry, type -> new Object2ObjectLinkedOpenHashMap<>());
+    protected <TYPE> MekanismTagBuilder<TYPE> getBuilder(TagKey<TYPE> tag) {
+        Map<TagKey<?>, TagBuilder> tagTypeMap = supportedTagTypes.computeIfAbsent(tag.registry(), type -> new Object2ObjectLinkedOpenHashMap<>());
         return new MekanismTagBuilder<>(tagTypeMap.computeIfAbsent(tag, ignored -> TagBuilder.create()));
-    }
-
-    protected MekanismTagBuilder<Item> getItemBuilder(TagKey<Item> tag) {
-        return getBuilder(Registries.ITEM, tag);
-    }
-
-    protected MekanismTagBuilder<Block> getBlockBuilder(TagKey<Block> tag) {
-        return getBuilder(Registries.BLOCK, tag);
-    }
-
-    protected MekanismTagBuilder<EntityType<?>> getEntityTypeBuilder(TagKey<EntityType<?>> tag) {
-        return getBuilder(Registries.ENTITY_TYPE, tag);
-    }
-
-    protected MekanismTagBuilder<Fluid> getFluidBuilder(TagKey<Fluid> tag) {
-        return getBuilder(Registries.FLUID, tag);
-    }
-
-    protected MekanismTagBuilder<GameEvent> getGameEventBuilder(TagKey<GameEvent> tag) {
-        return getBuilder(Registries.GAME_EVENT, tag);
-    }
-
-    protected MekanismTagBuilder<DamageType> getDamageTypeBuilder(TagKey<DamageType> tag) {
-        return getBuilder(Registries.DAMAGE_TYPE, tag);
-    }
-
-    protected MekanismTagBuilder<Biome> getBiomeBuilder(TagKey<Biome> tag) {
-        return getBuilder(Registries.BIOME, tag);
-    }
-
-    protected MekanismTagBuilder<Chemical> getChemicalBuilder(TagKey<Chemical> tag) {
-        return getBuilder(MekanismAPI.CHEMICAL_REGISTRY_NAME, tag);
-    }
-
-    protected MekanismTagBuilder<MobEffect> getMobEffectBuilder(TagKey<MobEffect> tag) {
-        return getBuilder(Registries.MOB_EFFECT, tag);
     }
 
     @SafeVarargs
     protected final void addToHarvestTag(TagKey<Block> tag, Holder<Block>... blockProviders) {
-        MekanismTagBuilder<Block> tagBuilder = getBlockBuilder(tag);
-        tagBuilder.add(blockProviders);
+        getBuilder(tag).add(blockProviders);
         for (Holder<Block> block : blockProviders) {
             knownHarvestRequirements.add(block.value());
         }
@@ -168,7 +127,7 @@ public abstract class BaseTagProvider implements DataProvider {
 
     @SafeVarargs
     protected final void addToHarvestTag(TagKey<Block> blockTag, Map<?, ? extends Holder<Block>>... blockProviders) {
-        MekanismTagBuilder<Block> tagBuilder = getBlockBuilder(blockTag);
+        MekanismTagBuilder<Block> tagBuilder = getBuilder(blockTag);
         for (Map<?, ? extends Holder<Block>> blockProvider : blockProviders) {
             tagBuilder.add(blockProvider.values());
             for (Holder<Block> block : blockProvider.values()) {
@@ -178,33 +137,27 @@ public abstract class BaseTagProvider implements DataProvider {
     }
 
     protected void addToTags(TagKey<Item> itemTag, TagKey<Block> blockTag, BlockRegistryObject<?, ?>... blockProviders) {
-        MekanismTagBuilder<Item> itemTagBuilder = getItemBuilder(itemTag);
-        for (BlockRegistryObject<?, ?> blockProvider : blockProviders) {
-            itemTagBuilder.add(blockProvider.getItemHolder());
-        }
-        getBlockBuilder(blockTag).add(blockProviders);
+        getBuilder(itemTag).add(Arrays.stream(blockProviders).map(BlockRegistryObject::getItemHolder));
+        getBuilder(blockTag).add(blockProviders);
     }
 
     protected void addToTags(TagKey<Item> itemTag, TagKey<Block> blockTag, Collection<? extends BlockRegistryObject<?, ?>> blockProviders) {
-        MekanismTagBuilder<Item> itemTagBuilder = getItemBuilder(itemTag);
-        for (BlockRegistryObject<?, ?> blockProvider : blockProviders) {
-            itemTagBuilder.add(blockProvider.getItemHolder());
-        }
-        getBlockBuilder(blockTag).add(blockProviders);
+        getBuilder(itemTag).add(blockProviders.stream().map(BlockRegistryObject::getItemHolder));
+        getBuilder(blockTag).add(blockProviders);
     }
 
     protected void addToGenericFluidTags(FluidDeferredRegister register) {
-        getBlockBuilder(BlockTags.REPLACEABLE).add(register.getBlockEntries());
+        getBuilder(BlockTags.REPLACEABLE).add(register.getBlockEntries());
         //Prevent all our fluids from being duped by create
-        getFluidBuilder(CREATE_NO_INFINITE_FLUID).add(register.getFluidEntries());
+        getBuilder(CREATE_NO_INFINITE_FLUID).add(register.getFluidEntries());
         //Add bucket tags
         for (DeferredHolder<Item, ?> bucket : register.getBucketEntries()) {
             ResourceLocation bucketTag = Tags.Items.BUCKETS.location().withSuffix("/" + bucket.getId().getPath().replaceAll("_bucket", ""));
-            getItemBuilder(ItemTags.create(bucketTag)).add(bucket);
+            getBuilder(ItemTags.create(bucketTag)).add(bucket);
         }
     }
 
     protected void addToTag(TagKey<Fluid> tag, FluidRegistryObject<?, ?, ?, ?, ?> fluidRO) {
-        getFluidBuilder(tag).add(fluidRO, fluidRO.getFlowingFluid());
+        getBuilder(tag).add(fluidRO, fluidRO.getFlowingFluid());
     }
 }

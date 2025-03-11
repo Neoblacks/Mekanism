@@ -41,9 +41,9 @@ public class GeneratorsTagProvider extends BaseTagProvider {
         addGases();
         addDamageTypes();
         addHarvestRequirements();
-        getBlockBuilder(BlockTags.IMPERMEABLE).add(GeneratorsBlocks.REACTOR_GLASS);
+        getBuilder(BlockTags.IMPERMEABLE).add(GeneratorsBlocks.REACTOR_GLASS);
 
-        getBlockBuilder(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON).add(
+        getBuilder(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON).add(
               GeneratorsBlocks.REACTOR_GLASS,
 
               GeneratorsBlocks.FISSION_REACTOR_CASING,
@@ -66,23 +66,23 @@ public class GeneratorsTagProvider extends BaseTagProvider {
               GeneratorsBlocks.FUSION_REACTOR_LOGIC_ADAPTER,
               GeneratorsBlocks.LASER_FOCUS_MATRIX);
 
-        getBlockBuilder(FRAMEABLE).add(GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
-        getBlockBuilder(FB_BE_WHITELIST).add(GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
+        getBuilder(FRAMEABLE).add(GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
+        getBuilder(FB_BE_WHITELIST).add(GeneratorsBlocks.REACTOR_GLASS, GeneratorsBlocks.LASER_FOCUS_MATRIX);
 
-        getItemBuilder(MekanismAPITags.Items.MEKA_UNITS).add(GeneratorsItems.ITEMS.getEntries().stream()
+        getBuilder(MekanismAPITags.Items.MEKA_UNITS).add(GeneratorsItems.ITEMS.getEntries().stream()
               .filter(item -> item.get() instanceof IModuleItem)
               .toList());
     }
 
     private void addBoxBlacklist() {
-        getBlockBuilder(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(
+        getBuilder(Tags.Blocks.RELOCATION_NOT_SUPPORTED).add(
               GeneratorsBlocks.ADVANCED_SOLAR_GENERATOR,
               GeneratorsBlocks.WIND_GENERATOR
         );
     }
 
     private void addEndermanBlacklist() {
-        getBlockBuilder(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST).add(
+        getBuilder(Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST).add(
               GeneratorsBlocks.TURBINE_CASING,
               GeneratorsBlocks.TURBINE_VALVE,
               GeneratorsBlocks.TURBINE_VENT,
@@ -113,11 +113,11 @@ public class GeneratorsTagProvider extends BaseTagProvider {
     }
 
     private void addGases() {
-        getChemicalBuilder(GeneratorTags.Chemicals.DEUTERIUM).add(GeneratorsChemicals.DEUTERIUM);
-        getChemicalBuilder(GeneratorTags.Chemicals.TRITIUM).add(GeneratorsChemicals.TRITIUM);
-        getChemicalBuilder(GeneratorTags.Chemicals.FUSION_FUEL).add(GeneratorsChemicals.FUSION_FUEL);
+        getBuilder(GeneratorTags.Chemicals.DEUTERIUM).add(GeneratorsChemicals.DEUTERIUM);
+        getBuilder(GeneratorTags.Chemicals.TRITIUM).add(GeneratorsChemicals.TRITIUM);
+        getBuilder(GeneratorTags.Chemicals.FUSION_FUEL).add(GeneratorsChemicals.FUSION_FUEL);
 
-        getChemicalBuilder(MekanismAPITags.Chemicals.GASEOUS).add(
+        getBuilder(MekanismAPITags.Chemicals.GASEOUS).add(
               GeneratorsChemicals.DEUTERIUM,
               GeneratorsChemicals.TRITIUM,
               GeneratorsChemicals.FUSION_FUEL
@@ -126,17 +126,17 @@ public class GeneratorsTagProvider extends BaseTagProvider {
 
     private void addDamageTypes() {
         ResourceKey<DamageType> fusion = GeneratorsDamageTypes.FUSION.key();
-        getDamageTypeBuilder(DamageTypeTags.ALWAYS_HURTS_ENDER_DRAGONS).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ARMOR).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_COOLDOWN).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_EFFECTS).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_RESISTANCE).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_SHIELD).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.BYPASSES_WOLF_ARMOR).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.NO_KNOCKBACK).add(fusion);
-        getDamageTypeBuilder(DamageTypeTags.PANIC_ENVIRONMENTAL_CAUSES).add(fusion);
+        getBuilder(DamageTypeTags.ALWAYS_HURTS_ENDER_DRAGONS).add(fusion);
+        getBuilder(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS).add(fusion);
+        getBuilder(DamageTypeTags.BYPASSES_ARMOR).add(fusion);
+        getBuilder(DamageTypeTags.BYPASSES_COOLDOWN).add(fusion);
+        getBuilder(DamageTypeTags.BYPASSES_EFFECTS).add(fusion);
+        getBuilder(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(fusion);
+        getBuilder(DamageTypeTags.BYPASSES_RESISTANCE).add(fusion);
+        getBuilder(DamageTypeTags.BYPASSES_SHIELD).add(fusion);
+        getBuilder(DamageTypeTags.BYPASSES_WOLF_ARMOR).add(fusion);
+        getBuilder(DamageTypeTags.NO_KNOCKBACK).add(fusion);
+        getBuilder(DamageTypeTags.PANIC_ENVIRONMENTAL_CAUSES).add(fusion);
     }
 
     private void addHarvestRequirements() {

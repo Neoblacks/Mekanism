@@ -51,33 +51,33 @@ public class AdditionsTagProvider extends BaseTagProvider {
         addGlowPanels();
         addPlasticBlocks();
         addHarvestRequirements();
-        getBlockBuilder(BlockTags.IMPERMEABLE).add(AdditionsBlocks.TRANSPARENT_PLASTIC_BLOCKS.values());
+        getBuilder(BlockTags.IMPERMEABLE).add(AdditionsBlocks.TRANSPARENT_PLASTIC_BLOCKS.values());
     }
 
     private void addEntities() {
-        getEntityTypeBuilder(EntityTypeTags.FALL_DAMAGE_IMMUNE).add(AdditionsEntityTypes.BALLOON);
-        getEntityTypeBuilder(EntityTypeTags.SKELETONS).add(
+        getBuilder(EntityTypeTags.FALL_DAMAGE_IMMUNE).add(AdditionsEntityTypes.BALLOON);
+        getBuilder(EntityTypeTags.SKELETONS).add(
               AdditionsEntityTypes.BABY_BOGGED,
               AdditionsEntityTypes.BABY_SKELETON,
               AdditionsEntityTypes.BABY_STRAY,
               AdditionsEntityTypes.BABY_WITHER_SKELETON
         );
-        getEntityTypeBuilder(EntityTypeTags.NO_ANGER_FROM_WIND_CHARGE).add(
+        getBuilder(EntityTypeTags.NO_ANGER_FROM_WIND_CHARGE).add(
               AdditionsEntityTypes.BABY_BOGGED,
               AdditionsEntityTypes.BABY_SKELETON,
               AdditionsEntityTypes.BABY_STRAY
         );
-        getEntityTypeBuilder(AdditionsTags.Entities.BOGGED)
+        getBuilder(AdditionsTags.Entities.BOGGED)
               .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.BOGGED)
               .add(AdditionsEntityTypes.BABY_BOGGED);
-        getEntityTypeBuilder(AdditionsTags.Entities.CREEPERS)
+        getBuilder(AdditionsTags.Entities.CREEPERS)
               .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.CREEPER)
               .add(AdditionsEntityTypes.BABY_CREEPER);
-        getEntityTypeBuilder(AdditionsTags.Entities.ENDERMEN)
+        getBuilder(AdditionsTags.Entities.ENDERMEN)
               .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.ENDERMAN)
               .add(AdditionsEntityTypes.BABY_ENDERMAN);
-        getEntityTypeBuilder(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(AdditionsEntityTypes.BABY_STRAY);
-        getEntityTypeBuilder(PVI_COMPAT).add(
+        getBuilder(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES).add(AdditionsEntityTypes.BABY_STRAY);
+        getBuilder(PVI_COMPAT).add(
               AdditionsEntityTypes.BABY_CREEPER,
               AdditionsEntityTypes.BABY_ENDERMAN,
               AdditionsEntityTypes.BABY_SKELETON,
@@ -87,7 +87,7 @@ public class AdditionsTagProvider extends BaseTagProvider {
     }
 
     private void addDamageTypes() {
-        getDamageTypeBuilder(AdditionsTags.DamageTypes.BALLOON_INVULNERABLE).add(
+        getBuilder(AdditionsTags.DamageTypes.BALLOON_INVULNERABLE).add(
               DamageTypeTags.IS_FALL,
               Tags.DamageTypes.IS_MAGIC
         ).add(
@@ -104,40 +104,40 @@ public class AdditionsTagProvider extends BaseTagProvider {
         addToTags(AdditionsTags.Items.SLABS_PLASTIC_NORMAL, AdditionsTags.Blocks.SLABS_PLASTIC, AdditionsBlocks.PLASTIC_SLABS);
         addToTags(AdditionsTags.Items.SLABS_PLASTIC_GLOW, AdditionsTags.Blocks.SLABS_PLASTIC_GLOW, AdditionsBlocks.PLASTIC_GLOW_SLABS);
         addToTags(AdditionsTags.Items.SLABS_PLASTIC_TRANSPARENT, AdditionsTags.Blocks.SLABS_PLASTIC_TRANSPARENT, AdditionsBlocks.TRANSPARENT_PLASTIC_SLABS);
-        getItemBuilder(AdditionsTags.Items.SLABS_PLASTIC).add(AdditionsTags.Items.SLABS_PLASTIC_NORMAL, AdditionsTags.Items.SLABS_PLASTIC_GLOW, AdditionsTags.Items.SLABS_PLASTIC_TRANSPARENT);
-        getItemBuilder(AdditionsTags.Items.COMMON_SLABS_PLASTIC).add(AdditionsTags.Items.SLABS_PLASTIC);
-        getItemBuilder(ItemTags.SLABS).add(AdditionsTags.Items.COMMON_SLABS_PLASTIC);
-        getBlockBuilder(BlockTags.SLABS).add(AdditionsTags.Blocks.SLABS_PLASTIC, AdditionsTags.Blocks.SLABS_PLASTIC_GLOW, AdditionsTags.Blocks.SLABS_PLASTIC_TRANSPARENT);
+        getBuilder(AdditionsTags.Items.SLABS_PLASTIC).add(AdditionsTags.Items.SLABS_PLASTIC_NORMAL, AdditionsTags.Items.SLABS_PLASTIC_GLOW, AdditionsTags.Items.SLABS_PLASTIC_TRANSPARENT);
+        getBuilder(AdditionsTags.Items.COMMON_SLABS_PLASTIC).add(AdditionsTags.Items.SLABS_PLASTIC);
+        getBuilder(ItemTags.SLABS).add(AdditionsTags.Items.COMMON_SLABS_PLASTIC);
+        getBuilder(BlockTags.SLABS).add(AdditionsTags.Blocks.SLABS_PLASTIC, AdditionsTags.Blocks.SLABS_PLASTIC_GLOW, AdditionsTags.Blocks.SLABS_PLASTIC_TRANSPARENT);
     }
 
     private void addStairs() {
         addToTags(AdditionsTags.Items.STAIRS_PLASTIC_NORMAL, AdditionsTags.Blocks.STAIRS_PLASTIC, AdditionsBlocks.PLASTIC_STAIRS);
         addToTags(AdditionsTags.Items.STAIRS_PLASTIC_GLOW, AdditionsTags.Blocks.STAIRS_PLASTIC_GLOW, AdditionsBlocks.PLASTIC_GLOW_STAIRS);
         addToTags(AdditionsTags.Items.STAIRS_PLASTIC_TRANSPARENT, AdditionsTags.Blocks.STAIRS_PLASTIC_TRANSPARENT, AdditionsBlocks.TRANSPARENT_PLASTIC_STAIRS);
-        getItemBuilder(AdditionsTags.Items.STAIRS_PLASTIC).add(AdditionsTags.Items.STAIRS_PLASTIC_NORMAL, AdditionsTags.Items.STAIRS_PLASTIC_GLOW, AdditionsTags.Items.STAIRS_PLASTIC_TRANSPARENT);
-        getItemBuilder(AdditionsTags.Items.COMMON_STAIRS_PLASTIC).add(AdditionsTags.Items.STAIRS_PLASTIC);
-        getItemBuilder(ItemTags.STAIRS).add(AdditionsTags.Items.COMMON_STAIRS_PLASTIC);
-        getBlockBuilder(BlockTags.STAIRS).add(AdditionsTags.Blocks.STAIRS_PLASTIC, AdditionsTags.Blocks.STAIRS_PLASTIC_GLOW, AdditionsTags.Blocks.STAIRS_PLASTIC_TRANSPARENT);
+        getBuilder(AdditionsTags.Items.STAIRS_PLASTIC).add(AdditionsTags.Items.STAIRS_PLASTIC_NORMAL, AdditionsTags.Items.STAIRS_PLASTIC_GLOW, AdditionsTags.Items.STAIRS_PLASTIC_TRANSPARENT);
+        getBuilder(AdditionsTags.Items.COMMON_STAIRS_PLASTIC).add(AdditionsTags.Items.STAIRS_PLASTIC);
+        getBuilder(ItemTags.STAIRS).add(AdditionsTags.Items.COMMON_STAIRS_PLASTIC);
+        getBuilder(BlockTags.STAIRS).add(AdditionsTags.Blocks.STAIRS_PLASTIC, AdditionsTags.Blocks.STAIRS_PLASTIC_GLOW, AdditionsTags.Blocks.STAIRS_PLASTIC_TRANSPARENT);
     }
 
     private void addFences() {
         addToTags(AdditionsTags.Items.FENCES_PLASTIC_NORMAL, AdditionsTags.Blocks.FENCES_PLASTIC, AdditionsBlocks.PLASTIC_FENCES);
-        getItemBuilder(AdditionsTags.Items.FENCES_PLASTIC).add(AdditionsTags.Items.FENCES_PLASTIC_NORMAL);
-        getItemBuilder(AdditionsTags.Items.COMMON_FENCES_PLASTIC).add(AdditionsTags.Items.FENCES_PLASTIC);
-        getItemBuilder(Tags.Items.FENCES).add(AdditionsTags.Items.COMMON_FENCES_PLASTIC);
-        getBlockBuilder(Tags.Blocks.FENCES).add(AdditionsTags.Blocks.FENCES_PLASTIC);
-        getItemBuilder(ItemTags.FENCES).add(AdditionsTags.Items.COMMON_FENCES_PLASTIC);
-        getBlockBuilder(BlockTags.FENCES).add(AdditionsTags.Blocks.FENCES_PLASTIC);
+        getBuilder(AdditionsTags.Items.FENCES_PLASTIC).add(AdditionsTags.Items.FENCES_PLASTIC_NORMAL);
+        getBuilder(AdditionsTags.Items.COMMON_FENCES_PLASTIC).add(AdditionsTags.Items.FENCES_PLASTIC);
+        getBuilder(Tags.Items.FENCES).add(AdditionsTags.Items.COMMON_FENCES_PLASTIC);
+        getBuilder(Tags.Blocks.FENCES).add(AdditionsTags.Blocks.FENCES_PLASTIC);
+        getBuilder(ItemTags.FENCES).add(AdditionsTags.Items.COMMON_FENCES_PLASTIC);
+        getBuilder(BlockTags.FENCES).add(AdditionsTags.Blocks.FENCES_PLASTIC);
     }
 
     private void addFenceGates() {
         addToTags(AdditionsTags.Items.FENCE_GATES_PLASTIC_NORMAL, AdditionsTags.Blocks.FENCE_GATES_PLASTIC, AdditionsBlocks.PLASTIC_FENCE_GATES);
-        getItemBuilder(AdditionsTags.Items.FENCE_GATES_PLASTIC).add(AdditionsTags.Items.FENCE_GATES_PLASTIC_NORMAL);
-        getItemBuilder(AdditionsTags.Items.COMMON_FENCE_GATES_PLASTIC).add(AdditionsTags.Items.FENCE_GATES_PLASTIC);
-        getItemBuilder(Tags.Items.FENCE_GATES).add(AdditionsTags.Items.COMMON_FENCE_GATES_PLASTIC);
-        getBlockBuilder(Tags.Blocks.FENCE_GATES).add(AdditionsTags.Blocks.FENCE_GATES_PLASTIC);
-        getItemBuilder(ItemTags.FENCE_GATES).add(AdditionsTags.Items.COMMON_FENCE_GATES_PLASTIC);
-        getBlockBuilder(BlockTags.FENCE_GATES).add(AdditionsTags.Blocks.FENCE_GATES_PLASTIC);
+        getBuilder(AdditionsTags.Items.FENCE_GATES_PLASTIC).add(AdditionsTags.Items.FENCE_GATES_PLASTIC_NORMAL);
+        getBuilder(AdditionsTags.Items.COMMON_FENCE_GATES_PLASTIC).add(AdditionsTags.Items.FENCE_GATES_PLASTIC);
+        getBuilder(Tags.Items.FENCE_GATES).add(AdditionsTags.Items.COMMON_FENCE_GATES_PLASTIC);
+        getBuilder(Tags.Blocks.FENCE_GATES).add(AdditionsTags.Blocks.FENCE_GATES_PLASTIC);
+        getBuilder(ItemTags.FENCE_GATES).add(AdditionsTags.Items.COMMON_FENCE_GATES_PLASTIC);
+        getBuilder(BlockTags.FENCE_GATES).add(AdditionsTags.Blocks.FENCE_GATES_PLASTIC);
     }
 
     private void addGlowPanels() {
@@ -151,14 +151,14 @@ public class AdditionsTagProvider extends BaseTagProvider {
         addToTags(AdditionsTags.Items.PLASTIC_BLOCKS_ROAD, AdditionsTags.Blocks.PLASTIC_BLOCKS_ROAD, AdditionsBlocks.PLASTIC_ROADS);
         addToTags(AdditionsTags.Items.PLASTIC_BLOCKS_REINFORCED, AdditionsTags.Blocks.PLASTIC_BLOCKS_REINFORCED, AdditionsBlocks.REINFORCED_PLASTIC_BLOCKS);
         addToTags(AdditionsTags.Items.PLASTIC_BLOCKS_TRANSPARENT, AdditionsTags.Blocks.PLASTIC_BLOCKS_TRANSPARENT, AdditionsBlocks.TRANSPARENT_PLASTIC_BLOCKS);
-        getItemBuilder(AdditionsTags.Items.PLASTIC_BLOCKS).add(AdditionsTags.Items.PLASTIC_BLOCKS_GLOW, AdditionsTags.Items.PLASTIC_BLOCKS_PLASTIC,
+        getBuilder(AdditionsTags.Items.PLASTIC_BLOCKS).add(AdditionsTags.Items.PLASTIC_BLOCKS_GLOW, AdditionsTags.Items.PLASTIC_BLOCKS_PLASTIC,
               AdditionsTags.Items.PLASTIC_BLOCKS_REINFORCED, AdditionsTags.Items.PLASTIC_BLOCKS_ROAD, AdditionsTags.Items.PLASTIC_BLOCKS_SLICK,
               AdditionsTags.Items.PLASTIC_BLOCKS_TRANSPARENT);
-        getBlockBuilder(AdditionsTags.Blocks.PLASTIC_BLOCKS).add(AdditionsTags.Blocks.PLASTIC_BLOCKS_GLOW, AdditionsTags.Blocks.PLASTIC_BLOCKS_PLASTIC,
+        getBuilder(AdditionsTags.Blocks.PLASTIC_BLOCKS).add(AdditionsTags.Blocks.PLASTIC_BLOCKS_GLOW, AdditionsTags.Blocks.PLASTIC_BLOCKS_PLASTIC,
               AdditionsTags.Blocks.PLASTIC_BLOCKS_REINFORCED, AdditionsTags.Blocks.PLASTIC_BLOCKS_ROAD, AdditionsTags.Blocks.PLASTIC_BLOCKS_SLICK,
               AdditionsTags.Blocks.PLASTIC_BLOCKS_TRANSPARENT);
 
-        getBlockBuilder(FRAMEABLE).add(AdditionsBlocks.TRANSPARENT_PLASTIC_BLOCKS.values());
+        getBuilder(FRAMEABLE).add(AdditionsBlocks.TRANSPARENT_PLASTIC_BLOCKS.values());
     }
 
     private void addHarvestRequirements() {
@@ -180,12 +180,12 @@ public class AdditionsTagProvider extends BaseTagProvider {
     }
 
     private void addToTag(TagKey<Item> itemTag, Map<EnumColor, ? extends Holder<Item>> itemProviders) {
-        getItemBuilder(itemTag).add(itemProviders.values());
+        getBuilder(itemTag).add(itemProviders.values());
         for (Map.Entry<EnumColor, ? extends Holder<Item>> entry : itemProviders.entrySet()) {
             DyeColor dyeColor = entry.getKey().getDyeColor();
             if (dyeColor != null) {
-                getItemBuilder(Tags.Items.DYED).add(entry.getValue());
-                getItemBuilder(dyeColor.getDyedTag()).add(entry.getValue());
+                getBuilder(Tags.Items.DYED).add(entry.getValue());
+                getBuilder(dyeColor.getDyedTag()).add(entry.getValue());
             }
         }
     }

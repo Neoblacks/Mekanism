@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -51,6 +52,10 @@ public class MekanismTagBuilder<TYPE> {
     @SafeVarargs
     public final MekanismTagBuilder<TYPE> add(Holder<TYPE>... elements) {
         return apply(elementAdder, holderToName, elements);
+    }
+
+    public final MekanismTagBuilder<TYPE> add(Stream<? extends Holder<TYPE>> elements) {
+        return add(elements.toList());
     }
 
     public MekanismTagBuilder<TYPE> add(Collection<? extends Holder<TYPE>> elements) {
