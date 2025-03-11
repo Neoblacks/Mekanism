@@ -853,7 +853,7 @@ public class MekanismLangProvider extends BaseLanguageProvider {
     }
 
     private void addJadeConfigTooltip(ResourceLocation location, String value) {
-        add("config.jade.plugin_" + location.getNamespace() + "." + location.getPath(), value);
+        add("config.jade.plugin_" + location.toLanguageKey(), value);
     }
 
     private void addMisc() {

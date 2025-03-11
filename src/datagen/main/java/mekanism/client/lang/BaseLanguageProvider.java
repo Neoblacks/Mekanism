@@ -70,7 +70,7 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
     }
 
     protected void addModuleConfig(ResourceLocation configKey, String value) {
-        add("module." + configKey.getNamespace() + "." + configKey.getPath(), value);
+        add(configKey.toLanguageKey("module"), value);
     }
 
     protected void addHolder(Holder<? extends IHasTranslationKey> key, String value) {
