@@ -186,6 +186,8 @@
   "container.mekanismgenerators.heat_generator": "Heat Generator",
   "container.mekanismgenerators.solar_generator": "Solar Generator",
   "container.mekanismgenerators.wind_generator": "Wind Generator",
+  "death.attack.mekanismgenerators.fusion": "%1$s was fused into oblivion.",
+  "death.attack.mekanismgenerators.fusion.player": "%1$s was fused into oblivion whilst trying to escape %2$s.",
   "description.mekanismgenerators.advanced_solar_generator": "An advanced generator that directly absorbs the sun's rays with little loss to produce energy.",
   "description.mekanismgenerators.bio_generator": "A generator that burns organic materials of the world to produce energy.",
   "description.mekanismgenerators.control_rod_assembly": "A collection of control rods used to halt a fission chain reaction. Placed on top of a tower of Fission Fuel Assemblies.",

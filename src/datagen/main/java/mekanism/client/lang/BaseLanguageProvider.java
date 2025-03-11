@@ -17,6 +17,7 @@ import mekanism.common.config.IConfigTranslation;
 import mekanism.common.config.IMekanismConfig;
 import mekanism.common.registration.impl.BlockRegistryObject;
 import mekanism.common.registration.impl.FluidRegistryObject;
+import mekanism.common.registration.impl.MekanismDamageType;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.data.CachedOutput;
@@ -109,6 +110,11 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
     protected void add(MekanismAdvancement advancement, String title, String description) {
         add(advancement.title(), title);
         add(advancement.description(), description);
+    }
+
+    protected void add(MekanismDamageType damageType, String value, String valueEscaping) {
+        add(damageType, value);
+        add(damageType.getTranslationKey() + ".player", valueEscaping);
     }
 
     private String getConfigSectionTranslationPath(IMekanismConfig config) {

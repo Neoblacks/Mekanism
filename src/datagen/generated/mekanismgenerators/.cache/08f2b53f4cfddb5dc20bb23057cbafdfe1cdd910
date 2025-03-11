@@ -1,4 +1,4 @@
-// 1.21.1	2025-03-01T13:11:15.3960401	Tags: mekanismgenerators
+// 1.21.1	2025-03-11T17:52:26.069483	Tags: mekanismgenerators
 51c625436874fdd2506b20267e03dabf44c090b0 data/create/tags/fluid/no_infinite_draining.json
 f30d0458accef4b51831b90f9039c05d00276e48 data/c/tags/block/relocation_not_supported.json
 bcd21ce2046a3b918a45281848276b4479c761dd data/c/tags/fluid/bioethanol.json
@@ -20,4 +20,15 @@ e7f3de2230470165a4e2f84ad01e7a005ad81e2f data/mekanism/tags/mekanism/chemical/tr
 0e8259a96fd81c042f2427e5b5a9b4ff39138b10 data/minecraft/tags/block/mineable/pickaxe.json
 c8217fe7b5f69c23b0511f1a203c7d525a9f9f22 data/minecraft/tags/block/replaceable.json
 ccd9605ecef9c81a43859b05258ee25950d77670 data/minecraft/tags/block/snow_layer_cannot_survive_on.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/always_hurts_ender_dragons.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/always_kills_armor_stands.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/bypasses_armor.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/bypasses_cooldown.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/bypasses_effects.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/bypasses_enchantments.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/bypasses_resistance.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/bypasses_shield.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/bypasses_wolf_armor.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/no_knockback.json
+25006aaef0a0d760eb9738cf51a7845ea66f9467 data/minecraft/tags/damage_type/panic_environmental_causes.json
 1fcda8d5db3dac92eb2d3bd6339ec5b91b0c888e data/neoforge/tags/block/enderman_place_on_blacklist.json

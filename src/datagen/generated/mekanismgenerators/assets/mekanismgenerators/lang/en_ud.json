@@ -186,6 +186,8 @@
   "container.mekanismgenerators.heat_generator": "ɹoʇɐɹǝuǝ⅁ ʇɐǝH",
   "container.mekanismgenerators.solar_generator": "ɹoʇɐɹǝuǝ⅁ ɹɐꞁoS",
   "container.mekanismgenerators.wind_generator": "ɹoʇɐɹǝuǝ⅁ puᴉM",
+  "death.attack.mekanismgenerators.fusion": "˙uoᴉʌᴉꞁqo oʇuᴉ pǝsnɟ sɐʍ %s",
+  "death.attack.mekanismgenerators.fusion.player": "˙%2$s ǝdɐɔsǝ oʇ ᵷuᴉʎɹʇ ʇsꞁᴉɥʍ uoᴉʌᴉꞁqo oʇuᴉ pǝsnɟ sɐʍ %1$s",
   "description.mekanismgenerators.advanced_solar_generator": "˙ʎᵷɹǝuǝ ǝɔnpoɹd oʇ ssoꞁ ǝꞁʇʇᴉꞁ ɥʇᴉʍ sʎɐɹ s,uns ǝɥʇ sqɹosqɐ ʎꞁʇɔǝɹᴉp ʇɐɥʇ ɹoʇɐɹǝuǝᵷ pǝɔuɐʌpɐ uⱯ",
   "description.mekanismgenerators.bio_generator": "˙ʎᵷɹǝuǝ ǝɔnpoɹd oʇ pꞁɹoʍ ǝɥʇ ɟo sꞁɐᴉɹǝʇɐɯ ɔᴉuɐᵷɹo suɹnq ʇɐɥʇ ɹoʇɐɹǝuǝᵷ Ɐ",
   "description.mekanismgenerators.control_rod_assembly": "˙sǝᴉꞁqɯǝssⱯ ꞁǝnℲ uoᴉssᴉℲ ɟo ɹǝʍoʇ ɐ ɟo doʇ uo pǝɔɐꞁԀ ˙uoᴉʇɔɐǝɹ uᴉɐɥɔ uoᴉssᴉɟ ɐ ʇꞁɐɥ oʇ pǝsn spoɹ ꞁoɹʇuoɔ ɟo uoᴉʇɔǝꞁꞁoɔ Ɐ",

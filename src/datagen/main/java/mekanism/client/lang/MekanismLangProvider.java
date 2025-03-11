@@ -47,7 +47,6 @@ import mekanism.common.registration.impl.SlurryRegistryObject;
 import mekanism.common.registries.MekanismBlocks;
 import mekanism.common.registries.MekanismChemicals;
 import mekanism.common.registries.MekanismDamageTypes;
-import mekanism.common.registries.MekanismDamageTypes.MekanismDamageType;
 import mekanism.common.registries.MekanismEntityTypes;
 import mekanism.common.registries.MekanismFluids;
 import mekanism.common.registries.MekanismItems;
@@ -652,11 +651,6 @@ public class MekanismLangProvider extends BaseLanguageProvider {
         add(MekanismDamageTypes.RADIATION, "%1$s was killed by radiation poisoning.", "%1$s was killed by radiation poisoning whilst trying to escape %2$s.");
         add(MekanismDamageTypes.SPS, "%1$s was supercritically phase shifted into the next life.",
               "%1$s was supercritically phase shifted into the next life whilst trying to escape %2$s. Guess they succeeded in escaping.");
-    }
-
-    private void add(MekanismDamageType damageType, String value, String valueEscaping) {
-        add(damageType, value);
-        add(damageType.getTranslationKey() + ".player", valueEscaping);
     }
 
     private void addRobitSkins() {

@@ -7,11 +7,15 @@ import mekanism.common.content.gear.IModuleItem;
 import mekanism.common.tag.BaseTagProvider;
 import mekanism.generators.common.registries.GeneratorsBlocks;
 import mekanism.generators.common.registries.GeneratorsChemicals;
+import mekanism.generators.common.registries.GeneratorsDamageTypes;
 import mekanism.generators.common.registries.GeneratorsFluids;
 import mekanism.generators.common.registries.GeneratorsItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -35,6 +39,7 @@ public class GeneratorsTagProvider extends BaseTagProvider {
         addEndermanBlacklist();
         addFluids();
         addGases();
+        addDamageTypes();
         addHarvestRequirements();
         getBlockBuilder(BlockTags.IMPERMEABLE).add(GeneratorsBlocks.REACTOR_GLASS);
 
@@ -117,6 +122,21 @@ public class GeneratorsTagProvider extends BaseTagProvider {
               GeneratorsChemicals.TRITIUM,
               GeneratorsChemicals.FUSION_FUEL
         );
+    }
+
+    private void addDamageTypes() {
+        ResourceKey<DamageType> fusion = GeneratorsDamageTypes.FUSION.key();
+        getDamageTypeBuilder(DamageTypeTags.ALWAYS_HURTS_ENDER_DRAGONS).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.ALWAYS_KILLS_ARMOR_STANDS).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ARMOR).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_COOLDOWN).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_EFFECTS).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_ENCHANTMENTS).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_RESISTANCE).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_SHIELD).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.BYPASSES_WOLF_ARMOR).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.NO_KNOCKBACK).add(fusion);
+        getDamageTypeBuilder(DamageTypeTags.PANIC_ENVIRONMENTAL_CAUSES).add(fusion);
     }
 
     private void addHarvestRequirements() {

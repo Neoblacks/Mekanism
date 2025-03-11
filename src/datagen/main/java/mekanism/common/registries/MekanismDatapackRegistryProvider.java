@@ -14,7 +14,7 @@ import mekanism.common.Mekanism;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.config.WorldConfig.OreVeinConfig;
 import mekanism.common.entity.RobitPrideSkinData;
-import mekanism.common.registries.MekanismDamageTypes.MekanismDamageType;
+import mekanism.common.registration.impl.MekanismDamageType;
 import mekanism.common.resource.ore.OreBlockType;
 import mekanism.common.resource.ore.OreType;
 import mekanism.common.resource.ore.OreType.OreVeinType;
@@ -38,7 +38,6 @@ import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -144,8 +143,8 @@ public class MekanismDatapackRegistryProvider extends BaseDatapackRegistryProvid
                     GenerationStep.Decoration.UNDERGROUND_ORES));
           })
           .add(Registries.DAMAGE_TYPE, context -> {
-              for (MekanismDamageType damageType : MekanismDamageTypes.damageTypes()) {
-                  context.register(damageType.key(), new DamageType(damageType.getMsgId(), damageType.exhaustion(), damageType.effects()));
+              for (MekanismDamageType damageType : MekanismDamageTypes.DAMAGE_TYPES.damageTypes()) {
+                  context.register(damageType.key(), damageType.toVanilla());
               }
           })
           .add(MekanismAPI.ROBIT_SKIN_REGISTRY_NAME, context -> {

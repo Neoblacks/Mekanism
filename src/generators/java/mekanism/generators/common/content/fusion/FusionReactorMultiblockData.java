@@ -43,6 +43,7 @@ import mekanism.generators.common.GeneratorTags;
 import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import mekanism.generators.common.item.ItemHohlraum;
 import mekanism.generators.common.registries.GeneratorsChemicals;
+import mekanism.generators.common.registries.GeneratorsDamageTypes;
 import mekanism.generators.common.slot.ReactorInventorySlot;
 import mekanism.generators.common.tile.fusion.TileEntityFusionReactorBlock;
 import mekanism.generators.common.tile.fusion.TileEntityFusionReactorPort;
@@ -51,6 +52,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -288,9 +290,9 @@ public class FusionReactorMultiblockData extends MultiblockData {
         }
         List<Entity> entitiesToDie = world.getEntitiesOfClass(Entity.class, deathZone);
         if (!entitiesToDie.isEmpty()) {
-            //TODO - 1.21: Custom damage source
+            DamageSource damageSource = GeneratorsDamageTypes.FUSION.source(world, deathZone.getCenter());
             for (Entity entity : entitiesToDie) {
-                entity.hurt(entity.damageSources().magic(), 50_000F);
+                entity.hurt(damageSource, 50_000F);
             }
         }
     }
