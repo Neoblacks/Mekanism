@@ -13,6 +13,7 @@ import mekanism.api.chemical.IChemicalHandler;
 import mekanism.api.chemical.IChemicalTank;
 import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
 import mekanism.api.math.MathUtils;
+import mekanism.common.advancements.MekanismCriteriaTriggers;
 import mekanism.common.capabilities.chemical.VariableCapacityChemicalTank;
 import mekanism.common.config.MekanismConfig;
 import mekanism.common.integration.computer.SpecialComputerMethodWrapper.ComputerChemicalTankWrapper;
@@ -23,6 +24,7 @@ import mekanism.common.lib.multiblock.IValveHandler;
 import mekanism.common.lib.multiblock.MultiblockData;
 import mekanism.common.registries.MekanismChemicals;
 import mekanism.common.registries.MekanismDamageTypes;
+import mekanism.common.tags.MekanismTags;
 import mekanism.common.tile.multiblock.TileEntitySPSCasing;
 import mekanism.common.tile.multiblock.TileEntitySPSPort;
 import mekanism.common.util.ChemicalUtil;
@@ -37,10 +39,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class SPSMultiblockData extends MultiblockData implements IValveHandler {
 
@@ -68,7 +75,7 @@ public class SPSMultiblockData extends MultiblockData implements IValveHandler {
     public double lastProcessed;
 
     public boolean couldOperate;
-    private AABB deathZone;
+    private AABB deathZone, advancementArea;
 
     public SPSMultiblockData(TileEntitySPSCasing tile) {
         super(tile);
@@ -82,6 +89,7 @@ public class SPSMultiblockData extends MultiblockData implements IValveHandler {
     public void onCreated(Level world) {
         super.onCreated(world);
         deathZone = AABB.encapsulatingFullBlocks(getMinPos().offset(1, 1, 1), getMaxPos().offset(-1, -1, -1));
+        advancementArea = deathZone.inflate(15);
     }
 
     private long getMaxInputGas() {
@@ -192,8 +200,39 @@ public class SPSMultiblockData extends MultiblockData implements IValveHandler {
             List<Entity> entitiesToDie = world.getEntitiesOfClass(Entity.class, deathZone);
             if (!entitiesToDie.isEmpty()) {
                 DamageSource damageSource = MekanismDamageTypes.SPS.source(world, deathZone.getCenter());
+                LightningBolt lightningBolt = null;
+                List<ServerPlayer> nearbyPlayers = null;
                 for (Entity entity : entitiesToDie) {
-                    entity.hurt(damageSource, lastReceivedEnergy / 1_000F);
+                    if (entity.hurt(damageSource, lastReceivedEnergy / 1_000F) && entity.isAlive()) {
+                        //If the entity is still alive, see if there is any special handling we want to do
+                        EntityType<?> type = entity.getType();
+                        if (type.is(MekanismTags.Entities.VALID_SPS_EXPERIMENT)) {
+                            if (lightningBolt == null) {
+                                lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, world);
+                                //Set the damage to zero so when we call thunderHit we don't actually hurt the entity
+                                lightningBolt.setDamage(0);
+                                lightningBolt.setVisualOnly(true);
+                            }
+                            if (!EventHooks.onEntityStruckByLightning(entity, lightningBolt) && world instanceof ServerLevel serverLevel) {//This should always be a server level
+                                //Keep track of the remaining fire ticks so that we can skip lighting it on fire as we are not actual lightning
+                                int remainingFireTicks = entity.getRemainingFireTicks();
+                                entity.thunderHit(serverLevel, lightningBolt);
+                                entity.setRemainingFireTicks(remainingFireTicks);
+                                //Trigger advancements for nearby players
+                                if (nearbyPlayers == null) {
+                                    nearbyPlayers = new ArrayList<>();
+                                    for (ServerPlayer player : serverLevel.players()) {
+                                        if (advancementArea.contains(player.position())) {
+                                            nearbyPlayers.add(player);
+                                        }
+                                    }
+                                }
+                                for (ServerPlayer player : nearbyPlayers) {
+                                    MekanismCriteriaTriggers.SPS_EXPERIMENT.value().trigger(player, type);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

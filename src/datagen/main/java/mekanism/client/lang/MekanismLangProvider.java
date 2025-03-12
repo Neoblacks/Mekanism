@@ -773,6 +773,11 @@ public class MekanismLangProvider extends BaseLanguageProvider {
         add(MekanismAdvancements.ANTIMATTER, "Impossible Material", "Create matter that shouldn't be able to exist here");
         add(MekanismAdvancements.NUCLEOSYNTHESIZER, "Alchemy, But Make It Sciencey", "Craft an Antiprotonic Nucleosynthesizer and don't worry if you can't pronounce the name");
 
+        add(MekanismAdvancements.SPS_EXPERIMENT_CREEPER, "Experimenting on Creepers", "Phase shift a creeper to make it supercritically charged");
+        add(MekanismAdvancements.SPS_EXPERIMENT_MOOSHROOM, "Mooshroom Recoloring", "Shift a Mooshroom's color gene to a different state");
+        add(MekanismAdvancements.SPS_EXPERIMENT_PIG, "Attempt at Pig Intelligence", "Try (and fail) to make a pig more intelligent");
+        add(MekanismAdvancements.SPS_EXPERIMENT_VILLAGER, "Villager Electroshock Therapy?", "Be the origin story for a villager's villain arc");
+
         add(MekanismAdvancements.POLONIUM, "Polonium, Not Plutonium", "Refine your Nuclear Waste into Polonium");
 
         add(MekanismAdvancements.QIO_DRIVE_ARRAY, "Wait, Where Are All The Cables?!", "Create a Quantum Item Orchestration Drive Array to store things on another plane of existence");

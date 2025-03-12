@@ -9,6 +9,7 @@ import mekanism.additions.common.registries.AdditionsItems;
 import mekanism.api.text.EnumColor;
 import mekanism.common.registration.impl.BlockRegistryObject;
 import mekanism.common.tag.BaseTagProvider;
+import mekanism.common.tags.MekanismTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -70,8 +71,7 @@ public class AdditionsTagProvider extends BaseTagProvider {
         getBuilder(AdditionsTags.Entities.BOGGED)
               .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.BOGGED)
               .add(AdditionsEntityTypes.BABY_BOGGED);
-        getBuilder(AdditionsTags.Entities.CREEPERS)
-              .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.CREEPER)
+        getBuilder(MekanismTags.Entities.CREEPERS)
               .add(AdditionsEntityTypes.BABY_CREEPER);
         getBuilder(AdditionsTags.Entities.ENDERMEN)
               .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.ENDERMAN)

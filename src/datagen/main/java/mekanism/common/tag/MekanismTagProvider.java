@@ -185,6 +185,9 @@ public class MekanismTagProvider extends BaseTagProvider {
         getBuilder(EntityTypeTags.IMPACT_PROJECTILES).add(MekanismEntityTypes.FLAME);
         getBuilder(PVI_COMPAT).add(MekanismEntityTypes.ROBIT);
 
+        getBuilder(MekanismTags.Entities.CREEPERS)
+              .addIntrinsic(BuiltInRegistries.ENTITY_TYPE, EntityType.CREEPER);
+
         getBuilder(MekanismAPITags.Entities.RADIATION_IMMUNE).add(MekanismEntityTypes.ROBIT);
         getBuilder(MekanismAPITags.Entities.MEK_RADIATION_IMMUNE).add(MekanismAPITags.Entities.RADIATION_IMMUNE).addIntrinsic(BuiltInRegistries.ENTITY_TYPE,
               EntityType.IRON_GOLEM,
@@ -204,6 +207,14 @@ public class MekanismTagProvider extends BaseTagProvider {
         getBuilder(EntityTypeTags.NOT_SCARY_FOR_PUFFERFISH).add(MekanismEntityTypes.ROBIT);
         getBuilder(EntityTypeTags.ILLAGER_FRIENDS).add(MekanismEntityTypes.ROBIT);
         getBuilder(EntityTypeTags.WITHER_FRIENDS).add(MekanismEntityTypes.ROBIT);
+
+        getBuilder(MekanismTags.Entities.VALID_SPS_EXPERIMENT).addIntrinsic(BuiltInRegistries.ENTITY_TYPE,
+              EntityType.MOOSHROOM,//Changes color
+              EntityType.PIG,//Turns into a zombified piglin
+              EntityType.VILLAGER//Turns into witch
+        ).add(
+              MekanismTags.Entities.CREEPERS//Becomes charged
+        );
     }
 
     private void addProcessedResources() {
