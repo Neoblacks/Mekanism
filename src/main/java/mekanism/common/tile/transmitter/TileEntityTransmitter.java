@@ -6,8 +6,8 @@ import java.util.function.Predicate;
 import mekanism.api.IAlloyInteraction;
 import mekanism.api.IConfigurable;
 import mekanism.api.text.EnumColor;
-import mekanism.api.tier.AlloyTier;
 import mekanism.api.tier.BaseTier;
+import mekanism.api.tier.IAlloyTier;
 import mekanism.client.model.data.TransmitterModelData;
 import mekanism.common.Mekanism;
 import mekanism.common.MekanismLang;
@@ -319,7 +319,7 @@ public abstract class TileEntityTransmitter extends CapabilityTileEntity impleme
     }
 
     @Override
-    public void onAlloyInteraction(Player player, ItemStack stack, @NotNull AlloyTier tier) {
+    public void onAlloyInteraction(Player player, ItemStack stack, @NotNull IAlloyTier tier) {
         if (getLevel() != null && getTransmitter().hasTransmitterNetwork()) {
             DynamicNetwork<?, ?, ?> transmitterNetwork = getTransmitter().getTransmitterNetwork();
             List<Transmitter<?, ?, ?>> list = new ArrayList<>(transmitterNetwork.getTransmitters());
@@ -335,7 +335,7 @@ public abstract class TileEntityTransmitter extends CapabilityTileEntity impleme
                 if (transmitter instanceof IUpgradeableTransmitter<?> upgradeableTransmitter && upgradeableTransmitter.canUpgrade(tier)) {
                     TileEntityTransmitter transmitterTile = transmitter.getTransmitterTile();
                     BlockState state = transmitterTile.getBlockState();
-                    BlockState upgradeState = transmitterTile.upgradeResult(state, tier.getBaseTier());
+                    BlockState upgradeState = transmitterTile.upgradeResult(state, tier.getBaseTierLevel());
                     if (state == upgradeState) {
                         //Skip if it would not actually upgrade anything
                         continue;
@@ -393,6 +393,15 @@ public abstract class TileEntityTransmitter extends CapabilityTileEntity impleme
         } else {
             Mekanism.logger.warn("Unhandled upgrade data.", new IllegalStateException());
         }
+    }
+
+    @NotNull
+    protected BlockState upgradeResult(@NotNull BlockState current, int tierLevel) {
+        BaseTier tier = BaseTier.getTier(tierLevel);
+        if (tier == null) {
+            return current;
+        }
+        return upgradeResult(current, tier);
     }
 
     @NotNull
