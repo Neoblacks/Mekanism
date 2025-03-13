@@ -17,6 +17,7 @@ import mekanism.api.datamaps.chemical.ChemicalSolidTag;
 import mekanism.api.recipes.ItemStackToChemicalRecipe;
 import mekanism.api.recipes.basic.BasicItemStackToFluidOptionalItemRecipe;
 import mekanism.api.recipes.ingredients.ChemicalStackIngredient;
+import mekanism.client.MekanismClient;
 import mekanism.client.gui.element.bar.GuiBar.IBarInfoHandler;
 import mekanism.client.gui.element.progress.IProgressInfoHandler;
 import mekanism.common.Mekanism;
@@ -40,6 +41,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public class RecipeViewerUtils {
@@ -172,13 +174,13 @@ public class RecipeViewerUtils {
 
     public static TooltipContext getRVTooltipContext() {
         //Similar to how ItemEmiStack works
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level == null) {
+        Level level = MekanismClient.tryGetClientWorld();
+        if (level == null) {
             return TooltipContext.EMPTY;
-        } else if (minecraft.isSameThread()) {
-            return Item.TooltipContext.of(minecraft.level);
+        } else if (Minecraft.getInstance().isSameThread()) {
+            return Item.TooltipContext.of(level);
         }
         // Don't provide world as context, as it is not thread safe
-        return Item.TooltipContext.of(minecraft.level.registryAccess());
+        return Item.TooltipContext.of(level.registryAccess());
     }
 }
