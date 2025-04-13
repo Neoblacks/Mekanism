@@ -430,6 +430,7 @@ public abstract class TileEntityFactory<RECIPE extends MekanismRecipe<?>> extend
         super.recalculateUpgrades(upgrade);
         if (upgrade == Upgrade.SPEED) {
             ticksRequired = MekanismUtils.getTicks(this, BASE_TICKS_REQUIRED);
+            operationsPerTick = MekanismUtils.getOperationsPerTick(this, BASE_TICKS_REQUIRED, 1);
         }
     }
 
