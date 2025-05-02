@@ -1,6 +1,5 @@
 package mekanism.api.security;
 
-import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,12 +24,7 @@ public interface ISecurityUtils {
      *
      * @since 10.4.0
      */
-    ISecurityUtils INSTANCE = ServiceLoader.load(ISecurityUtils.class).findFirst().orElseThrow(() -> {
-        IllegalStateException illegalStateException = new IllegalStateException("No valid ServiceImpl for ISecurityUtils found");
-        MekanismAPI.logger.error("failed to load security service", illegalStateException);
-        MekanismAPI.logger.error("CL: {} CCL: {}", ISecurityUtils.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
-        return illegalStateException;
-    });
+    ISecurityUtils INSTANCE = MekanismAPI.getService(ISecurityUtils.class);
 
     /**
      * Checks if a player can access the given capability provider; validating that protection is enabled in the config. Additionally, this method also checks to see if
