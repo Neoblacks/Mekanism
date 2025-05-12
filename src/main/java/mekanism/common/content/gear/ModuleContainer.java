@@ -200,7 +200,7 @@ public record ModuleContainer(SequencedMap<ModuleData<?>, Module<?>> typedModule
         if (handlesModeChange || exclusiveFlags != 0) {
             for (Module<?> otherModule : modules()) {
                 ModuleData<?> otherType = otherModule.getUntypedData();
-                if (otherType != type) {
+                if (otherType != type.value()) {
                     // disable other exclusive modules if this is an exclusive module, as this one will now be active
                     if (otherType.isExclusive(exclusiveFlags) && otherModule.isEnabled()) {
                         ModuleConfig<Boolean> disabledConfig = otherModule.<Boolean>getConfigOrThrow(ModuleConfig.ENABLED_KEY).with(false);
