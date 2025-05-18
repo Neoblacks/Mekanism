@@ -8,6 +8,7 @@ import mekanism.common.util.MekanismUtils;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.fluids.FluidStack;
+import org.jetbrains.annotations.Nullable;
 
 @NothingNullByDefault
 public class FluidRenderData extends RenderData {
@@ -49,7 +50,46 @@ public class FluidRenderData extends RenderData {
     }
 
     @Override
-    public boolean equals(Object data) {
-        return super.equals(data) && data instanceof FluidRenderData other && FluidStack.isSameFluidSameComponents(fluidType, other.fluidType);
+    public boolean equals(@Nullable Object data) {
+        if (data == this) {
+            return true;
+        } else if (data == null) {
+            return false;
+        }
+        return data.getClass() == FluidRenderData.class && equalsCommonFluid(data);
+    }
+
+    protected boolean equalsCommonFluid(Object data) {
+        return super.equals(data) && FluidStack.isSameFluidSameComponents(fluidType, ((FluidRenderData) data).fluidType);
+    }
+
+    public static class Scaled extends FluidRenderData implements ScaledRenderData {
+
+        private final float scale;
+
+        public Scaled(BlockPos renderLocation, int width, int height, int length, FluidStack fluidType, float scale) {
+            super(renderLocation, width, height, length, fluidType);
+            this.scale = scale;
+        }
+
+        @Override
+        public float scale() {
+            return scale;
+        }
+
+        @Override
+        public boolean equals(@Nullable Object data) {
+            if (data == this) {
+                return true;
+            } else if (data == null) {
+                return false;
+            }
+            return data.getClass() == Scaled.class && equalsCommonFluid(data) && scale == ((Scaled) data).scale;
+        }
+        
+        @Override
+        public int hashCode() {
+            return 31 * super.hashCode() + Float.hashCode(scale);
+        }
     }
 }

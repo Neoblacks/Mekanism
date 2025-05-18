@@ -209,7 +209,12 @@ public class FissionReactorMultiblockData extends MultiblockData implements IVal
         radiateEntities(world);
 
         // update scales
-        float coolantScale = MekanismUtils.getScale(prevCoolantScale, coolantTank.getFluidTank());
+        float coolantScale;
+        if (coolantTank.getCurrentType() == CurrentType.CHEMICAL) {
+            coolantScale = MekanismUtils.getScale(prevCoolantScale, coolantTank.getChemicalTank());
+        } else {
+            coolantScale = MekanismUtils.getScale(prevCoolantScale, coolantTank.getFluidTank());
+        }
         float fuelScale = MekanismUtils.getScale(prevFuelScale, fuelTank);
         float steamScale = MekanismUtils.getScale(prevHeatedCoolantScale, heatedCoolantTank), wasteScale = MekanismUtils.getScale(prevWasteScale, wasteTank);
         if (MekanismUtils.scaleChanged(coolantScale, prevCoolantScale) || MekanismUtils.scaleChanged(fuelScale, prevFuelScale) ||
