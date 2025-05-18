@@ -1,6 +1,5 @@
 package mekanism.client.render.data;
 
-import java.util.Objects;
 import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.client.render.MekanismRenderer;
 import mekanism.client.render.MekanismRenderer.FluidTextureType;
@@ -46,7 +45,7 @@ public class FluidRenderData extends RenderData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), FluidStack.hashFluidAndComponents(fluidType));
+        return 31 * super.hashCode() + FluidStack.hashFluidAndComponents(fluidType);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class FluidRenderData extends RenderData {
             }
             return data.getClass() == Scaled.class && equalsCommonFluid(data) && scale == ((Scaled) data).scale;
         }
-        
+
         @Override
         public int hashCode() {
             return 31 * super.hashCode() + Float.hashCode(scale);

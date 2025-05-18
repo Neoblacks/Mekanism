@@ -40,7 +40,11 @@ public abstract class RenderData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(height, length, width);
+        int result = location.hashCode();
+        result = 31 * result + height;
+        result = 31 * result + length;
+        result = 31 * result + width;
+        return result;
     }
 
     @Override

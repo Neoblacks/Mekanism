@@ -1,6 +1,5 @@
 package mekanism.client.render.data;
 
-import java.util.Objects;
 import mekanism.api.MekanismAPITags;
 import mekanism.api.annotations.NothingNullByDefault;
 import mekanism.api.chemical.Chemical;
@@ -41,7 +40,7 @@ public class ChemicalRenderData extends RenderData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), chemical);
+        return 31 * super.hashCode() + chemical.hashCode();
     }
 
     @Override
