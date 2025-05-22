@@ -65,6 +65,11 @@ public non-sealed class IntersectionChemicalIngredient extends ChemicalIngredien
     }
 
     @Override
+    public void logMissingTags() {
+        children.forEach(ChemicalIngredient::logMissingTags);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(children);
     }

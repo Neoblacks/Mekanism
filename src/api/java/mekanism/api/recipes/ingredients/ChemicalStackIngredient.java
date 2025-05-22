@@ -164,6 +164,11 @@ public final class ChemicalStackIngredient implements InputIngredient<ChemicalSt
     }
 
     @Override
+    public void logMissingTags() {
+        ingredient.logMissingTags();
+    }
+
+    @Override
     public List<ChemicalStack> getRepresentations() {
         if (this.representations == null) {
             this.representations = ingredient.getChemicalHolders().stream()

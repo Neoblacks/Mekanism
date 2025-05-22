@@ -203,6 +203,7 @@ public class Mekanism {
         NeoForge.EVENT_BUS.addListener(this::onTagsReload);
         NeoForge.EVENT_BUS.addListener(this::onDataMapsUpdated);
         NeoForge.EVENT_BUS.addListener(MekanismPermissions::registerPermissionNodes);
+        NeoForge.EVENT_BUS.register(IncompleteRecipeScanner.class);
         modEventBus.addListener(Capabilities::registerCapabilities);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerChunkTicketControllers);

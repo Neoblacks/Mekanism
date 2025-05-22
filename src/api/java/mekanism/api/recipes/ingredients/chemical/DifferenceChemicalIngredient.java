@@ -71,6 +71,11 @@ public non-sealed class DifferenceChemicalIngredient extends ChemicalIngredient 
     }
 
     @Override
+    public void logMissingTags() {
+        base().logMissingTags();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(base, subtracted);
     }

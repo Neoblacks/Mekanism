@@ -86,6 +86,11 @@ public abstract class SawmillRecipe extends MekanismRecipe<SingleRecipeInput> im
     }
 
     @Override
+    public void logMissingTags() {
+        getInput().logMissingTags();
+    }
+
+    @Override
     public final RecipeType<SawmillRecipe> getType() {
         return MekanismRecipeTypes.TYPE_SAWING.value();
     }

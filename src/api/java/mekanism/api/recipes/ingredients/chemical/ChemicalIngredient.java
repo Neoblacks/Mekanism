@@ -147,6 +147,8 @@ public abstract sealed class ChemicalIngredient implements Predicate<Chemical> p
         return getChemicalHolders().isEmpty();
     }
 
+    public abstract void logMissingTags();
+
     /**
      * {@return The type of this chemical ingredient.}
      *

@@ -97,6 +97,11 @@ public abstract class ChemicalCrystallizerRecipe extends MekanismRecipe<SingleCh
     }
 
     @Override
+    public void logMissingTags() {
+        getInput().logMissingTags();
+    }
+
+    @Override
     public final RecipeType<ChemicalCrystallizerRecipe> getType() {
         return MekanismRecipeTypes.TYPE_CRYSTALLIZING.value();
     }

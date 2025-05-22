@@ -121,7 +121,7 @@ public class RecipeViewerUtils {
         }
         //See if there are any chemical to item mappings
         if (recipeType != null) {
-            for (RecipeHolder<? extends ItemStackToChemicalRecipe> recipeHolder : recipeType.getRecipes(null)) {
+            for (RecipeHolder<? extends ItemStackToChemicalRecipe> recipeHolder : recipeType.getRecipes()) {
                 ItemStackToChemicalRecipe recipe = recipeHolder.value();
                 for (ChemicalStack output : recipe.getOutputDefinition()) {
                     if (supportedTypes.contains(output.getChemical())) {
