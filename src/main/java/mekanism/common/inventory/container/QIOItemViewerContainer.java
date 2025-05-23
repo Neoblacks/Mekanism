@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -761,7 +760,9 @@ public abstract class QIOItemViewerContainer extends MekanismContainer implement
 
         @Override
         public int hashCode() {
-            return Objects.hash(item, count);
+            int result = item.hashCode();
+            result = 31 * result + Long.hashCode(count);
+            return result;
         }
     }
 

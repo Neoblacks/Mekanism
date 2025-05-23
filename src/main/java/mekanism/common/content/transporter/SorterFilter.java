@@ -101,7 +101,13 @@ public abstract class SorterFilter<FILTER extends SorterFilter<FILTER>> extends 
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), color, allowDefault, sizeMode, min, max);
+        int result = super.hashCode();
+        result = 31 * result + Objects.hashCode(color);
+        result = 31 * result + Boolean.hashCode(allowDefault);
+        result = 31 * result + Boolean.hashCode(sizeMode);
+        result = 31 * result + min;
+        result = 31 * result + max;
+        return result;
     }
 
     @Override

@@ -209,7 +209,7 @@ public final class ChemicalStackIngredient implements InputIngredient<ChemicalSt
 
     @Override
     public int hashCode() {
-        return Objects.hash(ingredient, amount);
+        return 31 * ingredient.hashCode() + Long.hashCode(amount);
     }
 
     @Override

@@ -224,7 +224,10 @@ public abstract class OredictionificatorFilter<TYPE, STACK, FILTER extends Oredi
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), filterLocation, selectedOutput);
+        int result = super.hashCode();
+        result = 31 * result + (filterLocation != null ? filterLocation.hashCode() : 0);
+        result = 31 * result + selectedOutput.hashCode();
+        return result;
     }
 
     @Override

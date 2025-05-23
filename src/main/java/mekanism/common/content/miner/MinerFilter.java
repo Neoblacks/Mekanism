@@ -4,7 +4,6 @@ import com.mojang.datafixers.Products.P3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import mekanism.api.SerializationConstants;
@@ -74,7 +73,10 @@ public abstract class MinerFilter<FILTER extends MinerFilter<FILTER>> extends Ba
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), replaceTarget, requiresReplacement);
+        int result = super.hashCode();
+        result = 31 * result + replaceTarget.hashCode();
+        result = 31 * result + Boolean.hashCode(requiresReplacement);
+        return result;
     }
 
     @Override

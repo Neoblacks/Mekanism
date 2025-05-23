@@ -2,7 +2,6 @@ package mekanism.api.recipes.ingredients.chemical;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.Objects;
 import java.util.stream.Stream;
 import mekanism.api.SerializationConstants;
 import mekanism.api.annotations.NothingNullByDefault;
@@ -77,7 +76,7 @@ public non-sealed class DifferenceChemicalIngredient extends ChemicalIngredient 
 
     @Override
     public int hashCode() {
-        return Objects.hash(base, subtracted);
+        return 31 * base.hashCode() + subtracted.hashCode();
     }
 
     @Override

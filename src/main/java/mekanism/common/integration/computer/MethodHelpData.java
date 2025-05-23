@@ -171,7 +171,11 @@ public record MethodHelpData(String methodName, @Nullable List<Param> params, Re
 
         @Override
         public int hashCode() {
-            return Objects.hash(javaType, type, Arrays.hashCode(javaExtra), values);
+            int result = javaType.hashCode();
+            result = 31 * result + type.hashCode();
+            result = 31 * result + Arrays.hashCode(javaExtra);
+            result = 31 * result + Objects.hashCode(values);
+            return result;
         }
     }
 

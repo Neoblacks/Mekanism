@@ -117,7 +117,7 @@ public class BasicSawmillRecipe extends SawmillRecipe {
 
     @Override
     public int hashCode() {
-        int hash = Objects.hash(input, secondaryChance);
+        int hash = 31 * input.hashCode() + Double.hashCode(secondaryChance);
         hash = 31 * hash + ItemStack.hashItemAndComponents(mainOutput);
         hash = 31 * hash + mainOutput.getCount();
         if (!secondaryOutput.isEmpty()) {

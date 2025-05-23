@@ -150,6 +150,9 @@ public class ModuleColorConfig extends ModuleConfig<Integer> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), supportsAlpha, value);
+        int result = super.hashCode();
+        result = 31 * result + Boolean.hashCode(supportsAlpha);
+        result = 31 * result + value;
+        return result;
     }
 }
