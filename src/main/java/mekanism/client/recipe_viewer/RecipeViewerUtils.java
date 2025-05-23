@@ -1,6 +1,7 @@
 package mekanism.client.recipe_viewer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -124,7 +125,7 @@ public class RecipeViewerUtils {
             for (RecipeHolder<? extends ItemStackToChemicalRecipe> recipeHolder : recipeType.getRecipes()) {
                 ItemStackToChemicalRecipe recipe = recipeHolder.value();
                 for (ChemicalStack output : recipe.getOutputDefinition()) {
-                    if (supportedTypes.contains(output.getChemical())) {
+                    if (anyMatch(supportedTypes, output.getChemicalHolder())) {
                         stacks.addAll(recipe.getInput().getRepresentations());
                         break;
                     }
@@ -132,6 +133,16 @@ public class RecipeViewerUtils {
             }
         }
         return stacks;
+    }
+
+    private static <T> boolean anyMatch(Collection<Holder<T>> holders, Holder<T> holder) {
+        for (Holder<T> toCheck : holders) {
+            //noinspection deprecation
+            if (toCheck.is(holder)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Map<ResourceLocation, BasicItemStackToFluidOptionalItemRecipe> getLiquificationRecipes() {
