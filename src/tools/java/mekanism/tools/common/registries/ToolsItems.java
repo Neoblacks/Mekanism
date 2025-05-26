@@ -139,10 +139,13 @@ public class ToolsItems {
     }
 
     private static ItemRegistryObject<ItemMekanismPaxel> registerPaxel(VanillaPaxelMaterialCreator material) {
-        if (material.getVanillaTier() == Tiers.NETHERITE) {
-            return ITEMS.registerUnburnable(material.getRegistryPrefix() + "_paxel", properties -> new ItemMekanismPaxel(material, properties));
-        }
-        return ITEMS.registerItem(material.getRegistryPrefix() + "_paxel", properties -> new ItemMekanismPaxel(material, properties));
+        return ITEMS.register(material.getRegistryPrefix() + "_paxel", () -> {
+            Item.Properties properties = new StrictProperties();
+            if (material.getVanillaTier() == Tiers.NETHERITE) {
+                properties.fireResistant();
+            }
+            return new ItemMekanismPaxel(material, properties);
+        });
     }
 
     private static ItemRegistryObject<ItemMekanismArmor> registerArmor(Holder<ArmorMaterial> armorMaterial, MaterialCreator material, ArmorItem.Type armorType) {
