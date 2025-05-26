@@ -118,4 +118,18 @@ public class ItemDeferredRegister extends MekanismDeferredRegister<Item> {
           int primaryColor, int secondaryColor) {
         return registerItem(entityTypeProvider.getName() + "_spawn_egg", props -> new DeferredSpawnEggItem(entityTypeProvider, primaryColor, secondaryColor, props));
     }
+
+    public static class StrictProperties extends Item.Properties {
+
+        private boolean durabilitySet;
+
+        @Override
+        public Item.Properties durability(int maxDamage) {
+            if (!durabilitySet) {
+                durabilitySet = true;
+                return super.durability(maxDamage);
+            }
+            return this;
+        }
+    }
 }

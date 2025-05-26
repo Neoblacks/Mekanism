@@ -2,6 +2,7 @@ package mekanism.tools.common.registries;
 
 import java.util.function.BiFunction;
 import mekanism.common.registration.impl.ItemDeferredRegister;
+import mekanism.common.registration.impl.ItemDeferredRegister.StrictProperties;
 import mekanism.common.registration.impl.ItemRegistryObject;
 import mekanism.tools.common.MekanismTools;
 import mekanism.tools.common.config.MekanismToolsConfig;
@@ -159,7 +160,7 @@ public class ToolsItems {
     }
 
     private static Item.Properties getBaseProperties(BaseMekanismMaterial material) {
-        Item.Properties properties = new Item.Properties();
+        Item.Properties properties = new StrictProperties();
         if (!material.burnsInFire()) {
             properties = properties.fireResistant();
         }

@@ -49,14 +49,16 @@ public class ItemMekanismPaxel extends DiggerItem {
     private final IPaxelMaterial material;
 
     public ItemMekanismPaxel(MaterialCreator material, Item.Properties properties) {
-        super(material, ToolsTags.Blocks.MINEABLE_WITH_PAXEL, properties.
-              attributes(createAttributes(material, material.getPaxelDamage(), material.getPaxelAtkSpeed())));
+        super(material, ToolsTags.Blocks.MINEABLE_WITH_PAXEL, properties
+              .durability(material.getPaxelDurability())
+              .attributes(createAttributes(material, material.getPaxelDamage(), material.getPaxelAtkSpeed())));
         this.material = material;
     }
 
     public ItemMekanismPaxel(VanillaPaxelMaterialCreator material, Item.Properties properties) {
-        super(material.getVanillaTier(), ToolsTags.Blocks.MINEABLE_WITH_PAXEL, properties.
-              attributes(createAttributes(material.getVanillaTier(), material.getPaxelDamage(), material.getPaxelAtkSpeed())));
+        super(material.getVanillaTier(), ToolsTags.Blocks.MINEABLE_WITH_PAXEL, properties
+              .durability(material.getPaxelDurability())
+              .attributes(createAttributes(material.getVanillaTier(), material.getPaxelDamage(), material.getPaxelAtkSpeed())));
         this.material = material;
     }
 
