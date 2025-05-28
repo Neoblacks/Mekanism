@@ -56,7 +56,7 @@ public class RecipeViewerUtils {
     public static IProgressInfoHandler progressHandler(int processTime) {
         int time = SharedConstants.MILLIS_PER_TICK * processTime;
         return () -> {
-            double subTime = System.currentTimeMillis() % (long) time;
+            double subTime = System.currentTimeMillis() % time;
             return subTime / time;
         };
     }
@@ -72,7 +72,7 @@ public class RecipeViewerUtils {
 
             @Override
             public double getLevel() {
-                double subTime = System.currentTimeMillis() % (long) time;
+                double subTime = System.currentTimeMillis() % time;
                 return subTime / time;
             }
         };
@@ -155,7 +155,7 @@ public class RecipeViewerUtils {
         for (Map.Entry<ResourceKey<Item>, Item> entry : BuiltInRegistries.ITEM.entrySet()) {
             BasicItemStackToFluidOptionalItemRecipe recipe = TileEntityNutritionalLiquifier.getRecipe(entry.getValue().getDefaultInstance());
             if (recipe != null) {
-                liquification.put(RecipeViewerUtils.synthetic(entry.getKey().location(), "liquification", Mekanism.MODID), recipe);
+                liquification.put(synthetic(entry.getKey().location(), "liquification", Mekanism.MODID), recipe);
             }
         }
         return liquification;
