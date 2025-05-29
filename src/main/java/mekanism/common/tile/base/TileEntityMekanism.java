@@ -1454,7 +1454,9 @@ public abstract class TileEntityMekanism extends CapabilityTileEntity implements
             for (int i = 0; i < size; i++) {
                 IHeatCapacitor capacitor = capacitors.get(i);
                 HeatCapacitorData data = stored.get(i);
-                capacitor.setHeat(data.heat());
+                if (data.heat().isPresent()) {
+                    capacitor.setHeat(data.heat().getAsDouble());
+                }
                 if (capacitor instanceof BasicHeatCapacitor basic) {
                     basic.setHeatCapacity(data.capacity(), false);
                 }
@@ -1466,7 +1468,11 @@ public abstract class TileEntityMekanism extends CapabilityTileEntity implements
     public AttachedHeat collectHeatCapacitors(DataComponentMap.Builder builder, List<IHeatCapacitor> capacitors) {
         List<HeatCapacitorData> stored = new ArrayList<>(capacitors.size());
         for (IHeatCapacitor capacitor : capacitors) {
-            stored.add(new HeatCapacitorData(capacitor.getHeat(), capacitor.getHeatCapacity()));
+            if (capacitor.isAmbientTemperature()) {
+                stored.add(new HeatCapacitorData(capacitor.getHeatCapacity()));
+            } else {
+                stored.add(new HeatCapacitorData(capacitor.getHeat(), capacitor.getHeatCapacity()));
+            }
         }
         return new AttachedHeat(stored);
     }
