@@ -1,0 +1,5 @@
+-cp
+.:src/main/java
+-sourcepath
+src/main/java
+src/main/java/mekanism/common/item/block/machine/ItemBlockChemicalCrystallizer.java
