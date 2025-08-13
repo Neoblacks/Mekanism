@@ -233,6 +233,8 @@ public enum MekanismLang implements ILangEntry {
     PROGRESS("gui", "progress"),
     PROCESS_RATE("gui", "process_rate"),
     PROCESS_RATE_MB("gui", "process_rate_mb"),
+    PRODUCTION_RATE("gui", "production_rate"),
+    PRODUCTION_RATE_UPGRADES("gui", "production_rate_upgrades"),
     TICKS_REQUIRED("gui", "ticks_required"),
     MIN("gui", "min"),
     MIN_DIGITAL_MINER("gui", "digital_miner.min"),

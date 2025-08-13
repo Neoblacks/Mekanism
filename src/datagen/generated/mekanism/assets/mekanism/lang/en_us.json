@@ -2389,6 +2389,8 @@
   "gui.mekanism.pin": "Pin this window so that it automatically opens with the GUI",
   "gui.mekanism.process_rate": "Process Rate: %1$s",
   "gui.mekanism.process_rate_mb": "Process Rate: %1$s mB/t",
+  "gui.mekanism.production_rate": "Production Rate: %1$s",
+  "gui.mekanism.production_rate_upgrades": "Rate affected by Speed Upgrades",
   "gui.mekanism.progress": "Progress: %1$s",
   "gui.mekanism.radial_screen": "Radial Selector Screen",
   "gui.mekanism.radiation_decay_time": "Time to Decay: %1$s",
