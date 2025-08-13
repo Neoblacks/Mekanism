@@ -72,6 +72,7 @@ import mekanism.common.item.block.ItemBlockPersonalStorage;
 import mekanism.common.item.block.ItemBlockRadioactiveWasteBarrel;
 import mekanism.common.item.block.ItemBlockSecurityDesk;
 import mekanism.common.item.block.ItemBlockTooltip;
+import mekanism.common.item.block.ItemBlockTooltip;
 import mekanism.common.item.block.machine.ItemBlockFactory;
 import mekanism.common.item.block.machine.ItemBlockFluidTank;
 import mekanism.common.item.block.machine.ItemBlockLaserTractorBeam;
@@ -583,7 +584,7 @@ public class MekanismBlocks {
           );
     public static final BlockRegistryObject<BlockTileModel<TileEntityChemicalCrystallizer, Machine<TileEntityChemicalCrystallizer>>, ItemBlockTooltip<BlockTileModel<TileEntityChemicalCrystallizer, Machine<TileEntityChemicalCrystallizer>>>> CHEMICAL_CRYSTALLIZER =
           BLOCKS.register("chemical_crystallizer", () -> new BlockTileModel<>(MekanismBlockTypes.CHEMICAL_CRYSTALLIZER, properties -> properties.mapColor(BlockResourceInfo.STEEL.getMapColor())),
-                (block, properties) -> new ItemBlockTooltip<>(block, true, properties
+                (block, properties) -> new ItemBlockTooltip<>(block, properties
                       .component(MekanismDataComponents.EJECTOR, AttachedEjector.DEFAULT)
                       .component(MekanismDataComponents.SIDE_CONFIG, AttachedSideConfig.CRYSTALLIZER)
                 )
