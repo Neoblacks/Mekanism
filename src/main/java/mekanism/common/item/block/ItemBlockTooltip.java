@@ -36,6 +36,8 @@ import mekanism.common.util.WorldUtils;
 import mekanism.common.util.text.BooleanStateDisplay.YesNo;
 import mekanism.common.util.text.TextUtils;
 import mekanism.common.util.text.UpgradeDisplay;
+import net.minecraft.SharedConstants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -44,6 +46,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -95,6 +99,7 @@ public class ItemBlockTooltip<BLOCK extends Block & IHasDescription> extends Ite
     }
 
     protected void addStats(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        addMachineProductionRate(tooltip);
     }
 
     protected void addDetails(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
@@ -193,6 +198,86 @@ public class ItemBlockTooltip<BLOCK extends Block & IHasDescription> extends Ite
             ContainerType.ENERGY.addDefaultCreators(energyEventBus, this, () -> addDefaultEnergyContainers(EnergyContainersBuilder.builder()).build(),
                   MekanismConfig.storage, MekanismConfig.usage);
         }
+    }
+
+    /**
+     * Adds production rate tooltip for machines that have a base production speed.
+     * This method detects machines based on their tile entity types and displays appropriate rates.
+     */
+    private void addMachineProductionRate(@NotNull List<Component> tooltip) {
+        BLOCK block = getBlock();
+
+        // Try to get the block entity type from the block
+        if (block instanceof EntityBlock entityBlock) {
+            try {
+                // Create a temporary instance to get the class type
+                BlockEntity blockEntity = entityBlock.newBlockEntity(BlockPos.ZERO,
+                    block.defaultBlockState());
+                if (blockEntity != null) {
+                    Class<?> tileClass = blockEntity.getClass();
+
+                    // Check if this is a progress machine by looking for BASE_TICKS_REQUIRED field
+                    if (hasBaseTicksRequired(tileClass)) {
+                        int baseTicksRequired = getBaseTicksRequired(tileClass);
+                        if (baseTicksRequired > 0) {
+                            double itemsPerSecond = (double) SharedConstants.TICKS_PER_SECOND / baseTicksRequired;
+                            tooltip.add(MekanismLang.PROCESS_RATE.translateColored(EnumColor.GRAY,
+                                TextUtils.format(itemsPerSecond) + "/s"));
+                        }
+                    }
+                    // Check if this is a factory
+                    else if (isFactory(tileClass)) {
+                        // Factories have BASE_TICKS_REQUIRED = 10 * SharedConstants.TICKS_PER_SECOND
+                        int baseTicksRequired = 10 * SharedConstants.TICKS_PER_SECOND;
+                        double itemsPerSecond = (double) SharedConstants.TICKS_PER_SECOND / baseTicksRequired;
+                        tooltip.add(MekanismLang.PROCESS_RATE.translateColored(EnumColor.GRAY,
+                            TextUtils.format(itemsPerSecond) + "/s"));
+                    }
+                }
+            } catch (Exception e) {
+                // Silently ignore reflection errors - not all blocks will have production rates
+            }
+        }
+    }
+
+    /**
+     * Checks if the tile class has a BASE_TICKS_REQUIRED field (indicating it's a progress machine)
+     */
+    private boolean hasBaseTicksRequired(Class<?> tileClass) {
+        try {
+            tileClass.getDeclaredField("BASE_TICKS_REQUIRED");
+            return true;
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Gets the BASE_TICKS_REQUIRED value from a tile class
+     */
+    private int getBaseTicksRequired(Class<?> tileClass) {
+        try {
+            java.lang.reflect.Field field = tileClass.getDeclaredField("BASE_TICKS_REQUIRED");
+            field.setAccessible(true);
+            return field.getInt(null); // Static field
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Checks if the tile class is a factory type
+     */
+    private boolean isFactory(Class<?> tileClass) {
+        // Check if the class extends TileEntityFactory
+        Class<?> currentClass = tileClass;
+        while (currentClass != null) {
+            if (currentClass.getSimpleName().equals("TileEntityFactory")) {
+                return true;
+            }
+            currentClass = currentClass.getSuperclass();
+        }
+        return false;
     }
 
     private static class UpgradeBasedUnsignedLongCache implements LongSupplier {
